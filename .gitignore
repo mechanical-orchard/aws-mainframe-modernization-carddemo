@@ -1,0 +1,13 @@
+.tool-versions
+.local/
+
+zowe.config.json
+zowe.schema.json
+
+zowe.config.user.json
+zowe.schema.user.json
+
+.vscode
+scratch.*
+
+node_modules

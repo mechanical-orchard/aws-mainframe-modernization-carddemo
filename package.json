@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@zowe/cli": "^7.24.2",
+    "prebuild-install": "^7.1.2"
+  }
+}

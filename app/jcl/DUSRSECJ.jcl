@@ -20,10 +20,12 @@
 //* PRE DELETE STEP
 //*-------------------------------------------------------------------*
 //*
-//PREDEL  EXEC PGM=IEFBR14
+//PREDEL  EXEC PGM=IDCAMS
 //*
-//DD01     DD DSN=AWS.M2.CARDDEMO.USRSEC.PS,
-//            DISP=(MOD,DELETE,DELETE)
+//SYSPRINT DD SYSOUT=*
+//SYSIN    DD *
+    DELETE AWS.M2.CARDDEMO.USRSEC.PS PURGE
+/*
 //*
 //*-------------------------------------------------------------------*
 //* CREATE USER SECURITY FILE (PS) FROM IN-STREAM DATA
