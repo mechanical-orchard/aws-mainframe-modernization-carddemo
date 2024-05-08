@@ -35,7 +35,7 @@
 //*  Add Proclib Reference
 //*********************************************************************
 //CCLIBS  JCLLIB ORDER=&HLQ..CARDDEMO.PRC.UTIL
-//STEP1 EXEC BUILDBMS,MAPNAME=CICSMAP,HLQ=&HLQ
+//STEP1 EXEC BUILDBMS,MAPNAME=COACTUP,HLQ=&HLQ
 //*********************************************************************
 //****  CICS commands in batch to Execute NEWCOPY                ******
 //*********************************************************************
@@ -43,5 +43,5 @@
 //ISFOUT DD SYSOUT=*
 //CMDOUT DD SYSOUT=*
 //ISFIN  DD *
- /MODIFY CICSAWSA,'CEMT SET PROG(CICSMAP) NEWCOPY'
+ /MODIFY CICSAWSA,'CEMT SET PROG(COACTUP) NEWCOPY'
 /*
