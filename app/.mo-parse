@@ -1,0 +1,54 @@
+{
+    "ClientProject": "aws-carddemo",
+    "ClientProjectRoot": ".",
+    "Dirs": [
+      [
+        "app-transaction-type-db2/cbl",
+        "cobol"
+      ],
+      [
+        "app-transaction-type-db2/cpy",
+        "cobol"
+      ],
+      [
+        "app-transaction-type-db2/ctl",
+        "control"
+      ],
+      [
+        "app-transaction-type-db2/dcl",
+        "database"
+      ],
+      [
+        "app-transaction-type-db2/ddl",
+        "database"
+      ],
+      [
+        "app-transaction-type-db2/jcl",
+        "jcl"
+      ],
+      [
+        "asm",
+        "assembly"
+      ],
+      [
+        "cbl",
+        "cobol"
+      ],
+      [
+        "cpy",
+        "cobol"
+      ],
+      [
+        "ctl",
+        "control"
+      ],
+      [
+        "jcl",
+        "jcl"
+      ],
+      [
+        "proc",
+        "proc"
+      ]
+    ]
+  }
