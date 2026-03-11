@@ -1,6 +1,6 @@
 {
     "ClientProject": "aws-carddemo",
-    "ClientProjectRoot": ".",
+    "ClientProjectRoot": "app",
     "Dirs": [
       [
         "app-transaction-type-db2/cbl",
