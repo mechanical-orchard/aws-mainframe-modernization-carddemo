@@ -1,6 +1,25 @@
 {
     "ClientProject": "aws-carddemo",
     "ClientProjectRoot": "app",
+    "Directories": [
+      "app-authorization-ims-db2-mq",
+      "app-transaction-type-db2",
+      "app-vsam-mq",
+      "asm",
+      "bms",
+      "catlg",
+      "cbl",
+      "cpy",
+      "cpy-bms",
+      "csd",
+      "ctl",
+      "jcl",
+      "maclib",
+      "proc"
+    ],
+    "OmitFiles": [
+      "app-transaction-type-db2/ctl/REPROCT.ctl"
+    ],
     "Dirs": [
       [
         "app-transaction-type-db2/cbl",
