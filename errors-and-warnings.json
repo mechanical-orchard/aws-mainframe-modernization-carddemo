@@ -2,11 +2,11 @@
   "ShabakehVersion": "0.90.0",
   "ShabakehConfig": {
     "ClientProject": "aws-carddemo",
-    "ClientProjectSHA": "260888b31c26c06d16a97f6ea7f3710637937fbf",
+    "ClientProjectSHA": "53d4b8b560f6a0a2239d71504b177f6003626b66",
     "Targets": [
-      "INTCALC"
+      "POSTTRAN"
     ],
-    "Invocation": "extract -call-trees=./call-trees.json -errors-and-warnings=./errors-and-warnings.json --include-params INTCALC",
+    "Invocation": "extract -call-trees=./call-trees.json -errors-and-warnings=./errors-and-warnings.json --include-params POSTTRAN",
     "IncludeParams": true
   },
   "ErrorsAndWarnings": {
@@ -16,7 +16,7 @@
       "Errors": 0
     },
     "PrefixCounts": {
-      "INTCALC": {
+      "POSTTRAN": {
       "OK": 1,
       "Warnings": 0,
       "Errors": 0
