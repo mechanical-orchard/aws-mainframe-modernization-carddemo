@@ -2,70 +2,70 @@
   "ShabakehVersion": "0.90.0",
   "ShabakehConfig": {
     "ClientProject": "aws-carddemo",
-    "ClientProjectSHA": "aee9345636e155df31e71409040da75c1b5e4028",
+    "ClientProjectSHA": "0f32329bc017b6143ffcd94103180b65b999ca89",
     "Targets": [
-      "READXREF"
+      "READCUST"
     ],
-    "Invocation": "extract -call-trees=./call-trees.json -errors-and-warnings=./errors-and-warnings.json --include-params READXREF",
+    "Invocation": "extract -call-trees=./call-trees.json -errors-and-warnings=./errors-and-warnings.json --include-params READCUST",
     "IncludeParams": true
   },
   "CallTrees": [
     {
-      "Key": "file://jcl/READXREF.jcl",
+      "Key": "file://jcl/READCUST.jcl",
       "Context": "JCL",
-      "CallSite": "file://jcl/READXREF.jcl:0:0",
-      "OnDiskPath": "jcl/READXREF.jcl",
+      "CallSite": "file://jcl/READCUST.jcl:0:0",
+      "OnDiskPath": "jcl/READCUST.jcl",
       "CallFrameType": "Entry",
       "EntryPointDeterminant": "jcl",
       "Complexity": {
-        "NumLines": 32,
-        "NumLinesWithComment": 32,
+        "NumLines": 31,
+        "NumLinesWithComment": 31,
         "JCLSteps": 1,
-        "ComplexityContribution": 66
+        "ComplexityContribution": 65
       },
       "Children": [
         {
-          "Key": "file://jcl/READXREF.jcl",
+          "Key": "file://jcl/READCUST.jcl",
           "Context": "JCL",
-          "CallSite": "file://jcl/READXREF.jcl:1:3",
-          "OnDiskPath": "jcl/READXREF.jcl",
+          "CallSite": "file://jcl/READCUST.jcl:1:3",
+          "OnDiskPath": "jcl/READCUST.jcl",
           "CallFrameType": "JCLJob",
-          "JCLLabel": "READXREF",
+          "JCLLabel": "READCUST",
           "Params": [
             {
-              "Value": "Read Cross Ref file",
-              "Coordinates": "file://jcl/READXREF.jcl:1:16"
+              "Value": "Read Customer Data file",
+              "Coordinates": "file://jcl/READCUST.jcl:1:16"
             },
             {
               "Name": "CLASS",
               "Value": "A",
-              "Coordinates": "file://jcl/READXREF.jcl:1:38"
+              "Coordinates": "file://jcl/READCUST.jcl:1:42"
             },
             {
               "Name": "MSGCLASS",
               "Value": "0",
-              "Coordinates": "file://jcl/READXREF.jcl:1:46"
+              "Coordinates": "file://jcl/READCUST.jcl:1:50"
             },
             {
               "Name": "NOTIFY",
-              "Value": "&SYSUID",
-              "Coordinates": "file://jcl/READXREF.jcl:2:4"
+              "Value": "&SYUID",
+              "Coordinates": "file://jcl/READCUST.jcl:2:4"
             }
           ],
           "Children": [
             {
-              "Key": "file://jcl/READXREF.jcl",
+              "Key": "file://jcl/READCUST.jcl",
               "Context": "JCL",
-              "CallSite": "file://jcl/READXREF.jcl:22:3",
-              "OnDiskPath": "jcl/READXREF.jcl",
+              "CallSite": "file://jcl/READCUST.jcl:21:3",
+              "OnDiskPath": "jcl/READCUST.jcl",
               "CallFrameType": "JCLExec",
               "JCLLabel": "STEP05",
-              "JCLExecStepContentRange": "file://jcl/READXREF.jcl:22:0-28:0",
+              "JCLExecStepContentRange": "file://jcl/READCUST.jcl:21:0-27:0",
               "Params": [
                 {
                   "Name": "PGM",
-                  "Value": "CBACT03C",
-                  "Coordinates": "file://jcl/READXREF.jcl:22:15"
+                  "Value": "CBCUS01C",
+                  "Coordinates": "file://jcl/READCUST.jcl:21:15"
                 }
               ],
               "DDGroups": [
@@ -77,35 +77,35 @@
                         {
                           "Name": "DISP",
                           "Value": "SHR",
-                          "Coordinates": "file://jcl/READXREF.jcl:23:15"
+                          "Coordinates": "file://jcl/READCUST.jcl:22:15"
                         },
                         {
                           "Name": "DSN",
                           "Value": "AWS.M2.CARDDEMO.LOADLIB",
-                          "Coordinates": "file://jcl/READXREF.jcl:24:12"
+                          "Coordinates": "file://jcl/READCUST.jcl:23:12"
                         }
                       ],
-                      "Coordinates": "file://jcl/READXREF.jcl:23:3"
+                      "Coordinates": "file://jcl/READCUST.jcl:22:3"
                     }
                   ]
                 },
                 {
-                  "DDName": "XREFFILE",
+                  "DDName": "CUSTFILE",
                   "DDs": [
                     {
                       "Params": [
                         {
                           "Name": "DISP",
                           "Value": "SHR",
-                          "Coordinates": "file://jcl/READXREF.jcl:25:15"
+                          "Coordinates": "file://jcl/READCUST.jcl:24:15"
                         },
                         {
                           "Name": "DSN",
-                          "Value": "AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS",
-                          "Coordinates": "file://jcl/READXREF.jcl:26:12"
+                          "Value": "AWS.M2.CARDDEMO.CUSTDATA.VSAM.KSDS",
+                          "Coordinates": "file://jcl/READCUST.jcl:25:12"
                         }
                       ],
-                      "Coordinates": "file://jcl/READXREF.jcl:25:3"
+                      "Coordinates": "file://jcl/READCUST.jcl:24:3"
                     }
                   ]
                 },
@@ -117,10 +117,10 @@
                         {
                           "Name": "SYSOUT",
                           "Value": "*",
-                          "Coordinates": "file://jcl/READXREF.jcl:27:15"
+                          "Coordinates": "file://jcl/READCUST.jcl:26:15"
                         }
                       ],
-                      "Coordinates": "file://jcl/READXREF.jcl:27:3"
+                      "Coordinates": "file://jcl/READCUST.jcl:26:3"
                     }
                   ]
                 },
@@ -132,83 +132,83 @@
                         {
                           "Name": "SYSOUT",
                           "Value": "*",
-                          "Coordinates": "file://jcl/READXREF.jcl:28:15"
+                          "Coordinates": "file://jcl/READCUST.jcl:27:15"
                         }
                       ],
-                      "Coordinates": "file://jcl/READXREF.jcl:28:3"
+                      "Coordinates": "file://jcl/READCUST.jcl:27:3"
                     }
                   ]
                 }
               ],
               "Children": [
                 {
-                  "Key": "file://cbl/CBACT03C.cbl",
+                  "Key": "file://cbl/CBCUS01C.cbl",
                   "Context": "COBOL",
-                  "CallSite": "file://jcl/READXREF.jcl:22:3",
-                  "OnDiskPath": "cbl/CBACT03C.cbl",
+                  "CallSite": "file://jcl/READCUST.jcl:21:3",
+                  "OnDiskPath": "cbl/CBCUS01C.cbl",
                   "CallFrameType": "Invocation",
                   "Complexity": {
                     "NumLines": 150,
-                    "NumLinesWithComment": 191,
-                    "NumLinesNoCopybook": 145,
+                    "NumLinesWithComment": 206,
+                    "NumLinesNoCopybook": 130,
                     "NumLinesNoCopybookWithComment": 179,
                     "CyclomaticComplexity": 19,
-                    "ComplexityContribution": 167
+                    "ComplexityContribution": 160
                   },
                   "CobolBindings": {
                     "DDAssignments": [
                       {
-                        "Variable": "XREFFILE-FILE",
+                        "Variable": "CUSTFILE-FILE",
                         "VSAMType": "KSDS",
                         "DDNames": [
-                          "XREFFILE"
+                          "CUSTFILE"
                         ],
                         "References": [
                           {
-                            "Key": "dsn://AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS",
-                            "Coordinates": "file://jcl/READXREF.jcl:25:3",
+                            "Key": "dsn://AWS.M2.CARDDEMO.CUSTDATA.VSAM.KSDS",
+                            "Coordinates": "file://jcl/READCUST.jcl:24:3",
                             "VSAM": "KSDS"
                           }
                         ],
                         "RecordVariables": [
                           {
-                            "Name": "FD-XREFFILE-REC",
-                            "Range": "file://cbl/CBACT03C.cbl:38:0-40:0"
+                            "Name": "FD-CUSTFILE-REC",
+                            "Range": "file://cbl/CBCUS01C.cbl:38:0-40:0"
                           },
                           {
-                            "Name": "CARD-XREF-RECORD",
-                            "Range": "file://cpy/CVACT03Y.cpy:4:0-8:0"
+                            "Name": "CUSTOMER-RECORD",
+                            "Range": "file://cpy/CVCUS01Y.cpy:4:0-23:0"
                           }
                         ],
                         "Mode": "INPUT",
-                        "Coordinates": "file://cbl/CBACT03C.cbl:29:11"
+                        "Coordinates": "file://cbl/CBCUS01C.cbl:29:11"
                       }
                     ],
                     "Copybooks": [
                       {
-                        "Key": "file://cpy/CVACT03Y.cpy",
-                        "OnDiskPath": "cpy/CVACT03Y.cpy",
+                        "Key": "file://cpy/CVCUS01Y.cpy",
+                        "OnDiskPath": "cpy/CVCUS01Y.cpy",
                         "Context": "COBOL_COPYBOOK",
-                        "Coordinates": "file://cbl/CBACT03C.cbl:45:7",
+                        "Coordinates": "file://cbl/CBCUS01C.cbl:45:7",
                         "Division": "DATA DIVISION",
                         "Section": "WORKING-STORAGE SECTION",
-                        "NumLines": 5,
-                        "NumLinesWithComment": 12
+                        "NumLines": 20,
+                        "NumLinesWithComment": 27
                       }
                     ]
                   },
                   "DataFlows": [
                     {
                       "Type": "read",
-                      "ExecStep": "READXREF.STEP05",
-                      "ExecStepCoordinates": "file://jcl/READXREF.jcl:22:3",
-                      "Caller": "file://cbl/CBACT03C.cbl",
+                      "ExecStep": "READCUST.STEP05",
+                      "ExecStepCoordinates": "file://jcl/READCUST.jcl:21:3",
+                      "Caller": "file://cbl/CBCUS01C.cbl",
                       "CallerContext": "COBOL",
-                      "CallerCoordinates": "file://cbl/CBACT03C.cbl:29:11",
+                      "CallerCoordinates": "file://cbl/CBCUS01C.cbl:29:11",
                       "DataReferences": [
                         {
-                          "Key": "dsn://AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS",
-                          "Coordinates": "file://jcl/READXREF.jcl:25:3",
+                          "Key": "dsn://AWS.M2.CARDDEMO.CUSTDATA.VSAM.KSDS",
+                          "Coordinates": "file://jcl/READCUST.jcl:24:3",
                           "VSAM": "KSDS"
                         }
                       ]
