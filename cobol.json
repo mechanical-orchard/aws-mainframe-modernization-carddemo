@@ -4,13 +4,13 @@
     "ClientProject": "aws-carddemo",
     "ClientProjectSHA": "",
     "Targets": [
-      "CBACT03C"
+      "CBCUS01C"
     ]
   },
   "Entries": [
     {
-      "Key": "file://cbl/CBACT03C.cbl",
-      "ProgramID": "CBACT03C",
+      "Key": "file://cbl/CBCUS01C.cbl",
+      "ProgramID": "CBCUS01C",
       "CompilerOptions": {
         "LP": 32,
         "TRUNC": "STD",
@@ -19,17 +19,17 @@
       "IsCICS": false,
       "Complexity": {
         "NumLines": 150,
-        "NumLinesWithComment": 191,
-        "NumLinesNoCopybook": 145,
+        "NumLinesWithComment": 206,
+        "NumLinesNoCopybook": 130,
         "NumLinesNoCopybookWithComment": 179,
         "CyclomaticComplexity": 19
       },
       "Lines": [
         "      ******************************************************************",
-        "      * Program     : CBACT03C.CBL                                      ",
+        "      * Program     : CBCUS01C.CBL                                      ",
         "      * Application : CardDemo                                          ",
         "      * Type        : BATCH COBOL Program                                ",
-        "      * Function    : Read and print account cross reference data file.     ",
+        "      * Function    : Read and print customer data file.                ",
         "      ******************************************************************",
         "      * Copyright Amazon.com, Inc. or its affiliates.                   ",
         "      * All Rights Reserved.                                            ",
@@ -46,255 +46,205 @@
         "      * either express or implied. See the License for the specific     ",
         "      * language governing permissions and limitations under the License",
         "      ******************************************************************",
-        "       IDENTIFICATION DIVISION.                                                 ",
-        "       PROGRAM-ID.    CBACT03C.                                                 ",
-        "       AUTHOR.        AWS.                                                      ",
-        "                                                                                ",
-        "       ENVIRONMENT DIVISION.                                                    ",
-        "       INPUT-OUTPUT SECTION.                                                    ",
-        "       FILE-CONTROL.                                                            ",
-        "           SELECT XREFFILE-FILE ASSIGN TO   XREFFILE                            ",
-        "                  ORGANIZATION IS INDEXED                                       ",
-        "                  ACCESS MODE  IS SEQUENTIAL                                    ",
-        "                  RECORD KEY   IS FD-XREF-CARD-NUM                              ",
-        "                  FILE STATUS  IS XREFFILE-STATUS.                              ",
-        "      *                                                                         ",
-        "       DATA DIVISION.                                                           ",
-        "       FILE SECTION.                                                            ",
-        "       FD  XREFFILE-FILE.                                                       ",
-        "       01  FD-XREFFILE-REC.                                                     ",
-        "           05 FD-XREF-CARD-NUM                  PIC X(16).                      ",
-        "           05 FD-XREF-DATA                      PIC X(34).                      ",
-        "                                                                                ",
-        "       WORKING-STORAGE SECTION.                                                 ",
-        "                                                                                ",
-        "      *****************************************************************         ",
-        "******* MO-PARSE: INLINED COBOL_COPYBOOK CVACT03Y",
-        "      *****************************************************************         ",
-        "      *    Data-structure for card xref (RECLN 50)                              ",
-        "      *****************************************************************         ",
-        "       01 CARD-XREF-RECORD.                                                     ",
-        "           05  XREF-CARD-NUM                     PIC X(16).                     ",
-        "           05  XREF-CUST-ID                      PIC 9(09).                     ",
-        "           05  XREF-ACCT-ID                      PIC 9(11).                     ",
-        "           05  FILLER                            PIC X(14).                     ",
+        "       IDENTIFICATION DIVISION.",
+        "       PROGRAM-ID.    CBCUS01C.",
+        "       AUTHOR.        AWS.",
+        " ",
+        "       ENVIRONMENT DIVISION.",
+        "       INPUT-OUTPUT SECTION.",
+        "       FILE-CONTROL.",
+        "           SELECT CUSTFILE-FILE ASSIGN TO   CUSTFILE",
+        "                  ORGANIZATION IS INDEXED",
+        "                  ACCESS MODE  IS SEQUENTIAL",
+        "                  RECORD KEY   IS FD-CUST-ID",
+        "                  FILE STATUS  IS CUSTFILE-STATUS.",
+        "      *",
+        "       DATA DIVISION.",
+        "       FILE SECTION.",
+        "       FD  CUSTFILE-FILE.",
+        "       01  FD-CUSTFILE-REC.",
+        "           05 FD-CUST-ID                        PIC 9(09).",
+        "           05 FD-CUST-DATA                      PIC X(491).",
+        "",
+        "       WORKING-STORAGE SECTION.",
+        "",
+        "      *****************************************************************",
+        "******* MO-PARSE: INLINED COBOL_COPYBOOK CVCUS01Y",
+        "      *****************************************************************",
+        "      *    Data-structure for Customer entity (RECLN 500)",
+        "      *****************************************************************",
+        "       01  CUSTOMER-RECORD.",
+        "           05  CUST-ID                                 PIC 9(09).",
+        "           05  CUST-FIRST-NAME                         PIC X(25).",
+        "           05  CUST-MIDDLE-NAME                        PIC X(25).",
+        "           05  CUST-LAST-NAME                          PIC X(25).",
+        "           05  CUST-ADDR-LINE-1                        PIC X(50).",
+        "           05  CUST-ADDR-LINE-2                        PIC X(50).",
+        "           05  CUST-ADDR-LINE-3                        PIC X(50).         ",
+        "           05  CUST-ADDR-STATE-CD                      PIC X(02).",
+        "           05  CUST-ADDR-COUNTRY-CD                    PIC X(03).",
+        "           05  CUST-ADDR-ZIP                           PIC X(10).",
+        "           05  CUST-PHONE-NUM-1                        PIC X(15).",
+        "           05  CUST-PHONE-NUM-2                        PIC X(15).",
+        "           05  CUST-SSN                                PIC 9(09).",
+        "           05  CUST-GOVT-ISSUED-ID                     PIC X(20).",
+        "           05  CUST-DOB-YYYY-MM-DD                     PIC X(10).",
+        "           05  CUST-EFT-ACCOUNT-ID                     PIC X(10).",
+        "           05  CUST-PRI-CARD-HOLDER-IND                PIC X(01).",
+        "           05  CUST-FICO-CREDIT-SCORE                  PIC 9(03).",
+        "           05  FILLER                                  PIC X(168).      ",
         "      *",
         "      * Ver: CardDemo_v1.0-15-g27d6c6f-68 Date: 2022-07-19 23:16:00 CDT",
         "      *",
         "",
-        "       01  XREFFILE-STATUS.                                                     ",
-        "           05  XREFFILE-STAT1      PIC X.                                       ",
-        "           05  XREFFILE-STAT2      PIC X.                                       ",
-        "                                                                                ",
-        "       01  IO-STATUS.                                                           ",
-        "           05  IO-STAT1            PIC X.                                       ",
-        "           05  IO-STAT2            PIC X.                                       ",
-        "       01  TWO-BYTES-BINARY        PIC 9(4) BINARY.                             ",
-        "       01  TWO-BYTES-ALPHA         REDEFINES TWO-BYTES-BINARY.                  ",
-        "           05  TWO-BYTES-LEFT      PIC X.                                       ",
-        "           05  TWO-BYTES-RIGHT     PIC X.                                       ",
-        "       01  IO-STATUS-04.                                                        ",
-        "           05  IO-STATUS-0401      PIC 9   VALUE 0.                             ",
-        "           05  IO-STATUS-0403      PIC 999 VALUE 0.                             ",
-        "                                                                                ",
-        "       01  APPL-RESULT             PIC S9(9)   COMP.                            ",
-        "           88  APPL-AOK            VALUE 0.                                     ",
-        "           88  APPL-EOF            VALUE 16.                                    ",
-        "                                                                                ",
-        "       01  END-OF-FILE             PIC X(01)    VALUE 'N'.                      ",
-        "       01  ABCODE                  PIC S9(9) BINARY.                            ",
-        "       01  TIMING                  PIC S9(9) BINARY.                            ",
-        "                                                                                ",
-        "      *****************************************************************         ",
-        "       PROCEDURE DIVISION.                                                      ",
-        "           DISPLAY 'START OF EXECUTION OF PROGRAM CBACT03C'.                    ",
-        "           PERFORM 0000-XREFFILE-OPEN.                                          ",
-        "                                                                                ",
-        "           PERFORM UNTIL END-OF-FILE = 'Y'                                      ",
-        "               IF  END-OF-FILE = 'N'                                            ",
-        "                   PERFORM 1000-XREFFILE-GET-NEXT                               ",
-        "                   IF  END-OF-FILE = 'N'                                        ",
-        "                       DISPLAY CARD-XREF-RECORD                                 ",
-        "                   END-IF                                                       ",
-        "               END-IF                                                           ",
-        "           END-PERFORM.                                                         ",
-        "                                                                                ",
-        "           PERFORM 9000-XREFFILE-CLOSE.                                         ",
-        "                                                                                ",
-        "           DISPLAY 'END OF EXECUTION OF PROGRAM CBACT03C'.                      ",
-        "                                                                                ",
-        "           GOBACK.                                                              ",
-        "                                                                                ",
-        "      *****************************************************************         ",
-        "      * I/O ROUTINES TO ACCESS A KSDS, VSAM DATA SET...               *         ",
-        "      *****************************************************************         ",
-        "       1000-XREFFILE-GET-NEXT.                                                  ",
-        "           READ XREFFILE-FILE INTO CARD-XREF-RECORD.                            ",
-        "           IF  XREFFILE-STATUS = '00'                                           ",
-        "               MOVE 0 TO APPL-RESULT                                            ",
-        "               DISPLAY CARD-XREF-RECORD                                         ",
-        "           ELSE                                                                 ",
-        "               IF  XREFFILE-STATUS = '10'                                       ",
-        "                   MOVE 16 TO APPL-RESULT                                       ",
-        "               ELSE                                                             ",
-        "                   MOVE 12 TO APPL-RESULT                                       ",
-        "               END-IF                                                           ",
-        "           END-IF                                                               ",
-        "           IF  APPL-AOK                                                         ",
-        "               CONTINUE                                                         ",
-        "           ELSE                                                                 ",
-        "               IF  APPL-EOF                                                     ",
-        "                   MOVE 'Y' TO END-OF-FILE                                      ",
-        "               ELSE                                                             ",
-        "                   DISPLAY 'ERROR READING XREFFILE'                             ",
-        "                   MOVE XREFFILE-STATUS TO IO-STATUS                            ",
-        "                   PERFORM 9910-DISPLAY-IO-STATUS                               ",
-        "                   PERFORM 9999-ABEND-PROGRAM                                   ",
-        "               END-IF                                                           ",
-        "           END-IF                                                               ",
-        "           EXIT.                                                                ",
-        "      *---------------------------------------------------------------*         ",
-        "       0000-XREFFILE-OPEN.                                                      ",
-        "           MOVE 8 TO APPL-RESULT.                                               ",
-        "           OPEN INPUT XREFFILE-FILE                                             ",
-        "           IF  XREFFILE-STATUS = '00'                                           ",
-        "               MOVE 0 TO APPL-RESULT                                            ",
-        "           ELSE                                                                 ",
-        "               MOVE 12 TO APPL-RESULT                                           ",
-        "           END-IF                                                               ",
-        "           IF  APPL-AOK                                                         ",
-        "               CONTINUE                                                         ",
-        "           ELSE                                                                 ",
-        "               DISPLAY 'ERROR OPENING XREFFILE'                                 ",
-        "               MOVE XREFFILE-STATUS TO IO-STATUS                                ",
-        "               PERFORM 9910-DISPLAY-IO-STATUS                                   ",
-        "               PERFORM 9999-ABEND-PROGRAM                                       ",
-        "           END-IF                                                               ",
-        "           EXIT.                                                                ",
-        "      *---------------------------------------------------------------*         ",
-        "       9000-XREFFILE-CLOSE.                                                     ",
-        "           ADD 8 TO ZERO GIVING APPL-RESULT.                                    ",
-        "           CLOSE XREFFILE-FILE                                                  ",
-        "           IF  XREFFILE-STATUS = '00'                                           ",
-        "               SUBTRACT APPL-RESULT FROM APPL-RESULT                            ",
-        "           ELSE                                                                 ",
-        "               ADD 12 TO ZERO GIVING APPL-RESULT                                ",
-        "           END-IF                                                               ",
-        "           IF  APPL-AOK                                                         ",
-        "               CONTINUE                                                         ",
-        "           ELSE                                                                 ",
-        "               DISPLAY 'ERROR CLOSING XREFFILE'                                 ",
-        "               MOVE XREFFILE-STATUS TO IO-STATUS                                ",
-        "               PERFORM 9910-DISPLAY-IO-STATUS                                   ",
-        "               PERFORM 9999-ABEND-PROGRAM                                       ",
-        "           END-IF                                                               ",
-        "           EXIT.                                                                ",
-        "                                                                                ",
-        "       9999-ABEND-PROGRAM.                                                      ",
-        "           DISPLAY 'ABENDING PROGRAM'                                           ",
-        "           MOVE 0 TO TIMING                                                     ",
-        "           MOVE 999 TO ABCODE                                                   ",
-        "           CALL 'CEE3ABD' USING ABCODE, TIMING.                                 ",
-        "                                                                                ",
-        "      *****************************************************************         ",
-        "       9910-DISPLAY-IO-STATUS.                                                  ",
-        "           IF  IO-STATUS NOT NUMERIC                                            ",
-        "           OR  IO-STAT1 = '9'                                                   ",
-        "               MOVE IO-STAT1 TO IO-STATUS-04(1:1)                               ",
-        "               MOVE 0        TO TWO-BYTES-BINARY                                ",
-        "               MOVE IO-STAT2 TO TWO-BYTES-RIGHT                                 ",
-        "               MOVE TWO-BYTES-BINARY TO IO-STATUS-0403                          ",
-        "               DISPLAY 'FILE STATUS IS: NNNN' IO-STATUS-04                      ",
-        "           ELSE                                                                 ",
-        "               MOVE '0000' TO IO-STATUS-04                                      ",
-        "               MOVE IO-STATUS TO IO-STATUS-04(3:2)                              ",
-        "               DISPLAY 'FILE STATUS IS: NNNN' IO-STATUS-04                      ",
-        "           END-IF                                                               ",
-        "           EXIT.                                                                ",
-        "                                                                                ",
+        "       01  CUSTFILE-STATUS.",
+        "           05  CUSTFILE-STAT1      PIC X.",
+        "           05  CUSTFILE-STAT2      PIC X.",
+        "",
+        "       01  IO-STATUS.",
+        "           05  IO-STAT1            PIC X.",
+        "           05  IO-STAT2            PIC X.",
+        "       01  TWO-BYTES-BINARY        PIC 9(4) BINARY.",
+        "       01  TWO-BYTES-ALPHA         REDEFINES TWO-BYTES-BINARY.",
+        "           05  TWO-BYTES-LEFT      PIC X.",
+        "           05  TWO-BYTES-RIGHT     PIC X.",
+        "       01  IO-STATUS-04.",
+        "           05  IO-STATUS-0401      PIC 9   VALUE 0.",
+        "           05  IO-STATUS-0403      PIC 999 VALUE 0.",
+        "",
+        "       01  APPL-RESULT             PIC S9(9)   COMP.",
+        "           88  APPL-AOK            VALUE 0.",
+        "           88  APPL-EOF            VALUE 16.",
+        "",
+        "       01  END-OF-FILE             PIC X(01)    VALUE 'N'.",
+        "       01  ABCODE                  PIC S9(9) BINARY.",
+        "       01  TIMING                  PIC S9(9) BINARY. ",
+        "",
+        "      *****************************************************************",
+        "       PROCEDURE DIVISION.",
+        "           DISPLAY 'START OF EXECUTION OF PROGRAM CBCUS01C'.",
+        "           PERFORM 0000-CUSTFILE-OPEN.",
+        "",
+        "           PERFORM UNTIL END-OF-FILE = 'Y'",
+        "               IF  END-OF-FILE = 'N'",
+        "                   PERFORM 1000-CUSTFILE-GET-NEXT",
+        "                   IF  END-OF-FILE = 'N'",
+        "                       DISPLAY CUSTOMER-RECORD ",
+        "                   END-IF",
+        "               END-IF",
+        "           END-PERFORM.",
+        "",
+        "           PERFORM 9000-CUSTFILE-CLOSE.",
+        "",
+        "           DISPLAY 'END OF EXECUTION OF PROGRAM CBCUS01C'.",
+        "",
+        "           GOBACK.",
+        "",
+        "      *****************************************************************",
+        "      * I/O ROUTINES TO ACCESS A KSDS, VSAM DATA SET...               *",
+        "      *****************************************************************",
+        "       1000-CUSTFILE-GET-NEXT.",
+        "           READ CUSTFILE-FILE INTO CUSTOMER-RECORD.",
+        "           IF  CUSTFILE-STATUS = '00'",
+        "               MOVE 0 TO APPL-RESULT",
+        "               DISPLAY CUSTOMER-RECORD ",
+        "           ELSE",
+        "               IF  CUSTFILE-STATUS = '10'",
+        "                   MOVE 16 TO APPL-RESULT",
+        "               ELSE",
+        "                   MOVE 12 TO APPL-RESULT",
+        "               END-IF",
+        "           END-IF",
+        "           IF  APPL-AOK",
+        "               CONTINUE",
+        "           ELSE",
+        "               IF  APPL-EOF",
+        "                   MOVE 'Y' TO END-OF-FILE",
+        "               ELSE",
+        "                   DISPLAY 'ERROR READING CUSTOMER FILE'",
+        "                   MOVE CUSTFILE-STATUS TO IO-STATUS",
+        "                   PERFORM Z-DISPLAY-IO-STATUS",
+        "                   PERFORM Z-ABEND-PROGRAM",
+        "               END-IF",
+        "           END-IF",
+        "           EXIT.",
+        "      *---------------------------------------------------------------*",
+        "       0000-CUSTFILE-OPEN.",
+        "           MOVE 8 TO APPL-RESULT.",
+        "           OPEN INPUT CUSTFILE-FILE",
+        "           IF  CUSTFILE-STATUS = '00'",
+        "               MOVE 0 TO APPL-RESULT",
+        "           ELSE",
+        "               MOVE 12 TO APPL-RESULT",
+        "           END-IF",
+        "           IF  APPL-AOK",
+        "               CONTINUE",
+        "           ELSE",
+        "               DISPLAY 'ERROR OPENING CUSTFILE'",
+        "               MOVE CUSTFILE-STATUS TO IO-STATUS",
+        "               PERFORM Z-DISPLAY-IO-STATUS",
+        "               PERFORM Z-ABEND-PROGRAM",
+        "           END-IF",
+        "           EXIT.",
+        "      *---------------------------------------------------------------*",
+        "       9000-CUSTFILE-CLOSE.",
+        "           ADD 8 TO ZERO GIVING APPL-RESULT.",
+        "           CLOSE CUSTFILE-FILE",
+        "           IF  CUSTFILE-STATUS = '00'",
+        "               SUBTRACT APPL-RESULT FROM APPL-RESULT",
+        "           ELSE",
+        "               ADD 12 TO ZERO GIVING APPL-RESULT",
+        "           END-IF",
+        "           IF  APPL-AOK",
+        "               CONTINUE",
+        "           ELSE",
+        "               DISPLAY 'ERROR CLOSING CUSTOMER FILE'",
+        "               MOVE CUSTFILE-STATUS TO IO-STATUS",
+        "               PERFORM Z-DISPLAY-IO-STATUS",
+        "               PERFORM Z-ABEND-PROGRAM",
+        "           END-IF",
+        "           EXIT.",
+        "",
+        "       Z-ABEND-PROGRAM.",
+        "           DISPLAY 'ABENDING PROGRAM'",
+        "           MOVE 0 TO TIMING",
+        "           MOVE 999 TO ABCODE",
+        "           CALL 'CEE3ABD' USING ABCODE, TIMING.",
+        "",
+        "      *****************************************************************",
+        "       Z-DISPLAY-IO-STATUS.",
+        "           IF  IO-STATUS NOT NUMERIC",
+        "           OR  IO-STAT1 = '9'",
+        "               MOVE IO-STAT1 TO IO-STATUS-04(1:1)",
+        "               MOVE 0        TO TWO-BYTES-BINARY",
+        "               MOVE IO-STAT2 TO TWO-BYTES-RIGHT",
+        "               MOVE TWO-BYTES-BINARY TO IO-STATUS-0403",
+        "               DISPLAY 'FILE STATUS IS: NNNN' IO-STATUS-04 ",
+        "           ELSE",
+        "               MOVE '0000' TO IO-STATUS-04",
+        "               MOVE IO-STATUS TO IO-STATUS-04(3:2)",
+        "               DISPLAY 'FILE STATUS IS: NNNN' IO-STATUS-04 ",
+        "           END-IF",
+        "           EXIT.",
+        "",
         "      *",
-        "      * Ver: CardDemo_v2.0-25-gdb72e6b-235 Date: 2025-04-29 11:01:27 CDT",
+        "      * Ver: CardDemo_v2.0-25-gdb72e6b-235 Date: 2025-04-29 11:01:28 CDT",
         "      *",
         ""
       ],
       "Variables": [
         {
           "Level": 1,
-          "Name": "FD-XREFFILE-REC",
-          "ComputedSize": 50,
+          "Name": "FD-CUSTFILE-REC",
+          "ComputedSize": 500,
           "Offset": [
             0
           ],
-          "Coordinates": "file://cbl/CBACT03C.cbl:38:7",
+          "Coordinates": "file://cbl/CBCUS01C.cbl:38:7",
           "Children": [
             {
               "Level": 5,
-              "Name": "FD-XREF-CARD-NUM",
-              "Pic": "X(16)",
-              "ParsedPic": [
-                "X"
-              ],
-              "ParsedPicCounts": [
-                16
-              ],
-              "InferredUsage": "DISPLAY",
-              "InferredType": "string",
-              "ComputedSize": 16,
-              "Offset": [
-                0
-              ],
-              "Coordinates": "file://cbl/CBACT03C.cbl:39:11"
-            },
-            {
-              "Level": 5,
-              "Name": "FD-XREF-DATA",
-              "Pic": "X(34)",
-              "ParsedPic": [
-                "X"
-              ],
-              "ParsedPicCounts": [
-                34
-              ],
-              "InferredUsage": "DISPLAY",
-              "InferredType": "string",
-              "ComputedSize": 34,
-              "Offset": [
-                16
-              ],
-              "Coordinates": "file://cbl/CBACT03C.cbl:40:11"
-            }
-          ]
-        },
-        {
-          "Level": 1,
-          "Name": "CARD-XREF-RECORD",
-          "ComputedSize": 50,
-          "Offset": [
-            0
-          ],
-          "Coordinates": "file://cpy/CVACT03Y.cpy:4:7",
-          "Children": [
-            {
-              "Level": 5,
-              "Name": "XREF-CARD-NUM",
-              "Pic": "X(16)",
-              "ParsedPic": [
-                "X"
-              ],
-              "ParsedPicCounts": [
-                16
-              ],
-              "InferredUsage": "DISPLAY",
-              "InferredType": "string",
-              "ComputedSize": 16,
-              "Offset": [
-                0
-              ],
-              "Coordinates": "file://cpy/CVACT03Y.cpy:5:11"
-            },
-            {
-              "Level": 5,
-              "Name": "XREF-CUST-ID",
+              "Name": "FD-CUST-ID",
               "Pic": "9(09)",
               "ParsedPic": [
                 "9"
@@ -306,59 +256,394 @@
               "InferredType": "disp-int",
               "ComputedSize": 9,
               "Offset": [
-                16
+                0
               ],
-              "Coordinates": "file://cpy/CVACT03Y.cpy:6:11"
+              "Coordinates": "file://cbl/CBCUS01C.cbl:39:11"
             },
             {
               "Level": 5,
-              "Name": "XREF-ACCT-ID",
-              "Pic": "9(11)",
-              "ParsedPic": [
-                "9"
-              ],
-              "ParsedPicCounts": [
-                11
-              ],
-              "InferredUsage": "DISPLAY",
-              "InferredType": "disp-int",
-              "ComputedSize": 11,
-              "Offset": [
-                25
-              ],
-              "Coordinates": "file://cpy/CVACT03Y.cpy:7:11"
-            },
-            {
-              "Level": 5,
-              "Pic": "X(14)",
+              "Name": "FD-CUST-DATA",
+              "Pic": "X(491)",
               "ParsedPic": [
                 "X"
               ],
               "ParsedPicCounts": [
-                14
+                491
               ],
               "InferredUsage": "DISPLAY",
               "InferredType": "string",
-              "ComputedSize": 14,
+              "ComputedSize": 491,
               "Offset": [
-                36
+                9
               ],
-              "Coordinates": "file://cpy/CVACT03Y.cpy:8:11"
+              "Coordinates": "file://cbl/CBCUS01C.cbl:40:11"
             }
           ]
         },
         {
           "Level": 1,
-          "Name": "XREFFILE-STATUS",
+          "Name": "CUSTOMER-RECORD",
+          "ComputedSize": 500,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cpy/CVCUS01Y.cpy:4:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "CUST-ID",
+              "Pic": "9(09)",
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                9
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 9,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://cpy/CVCUS01Y.cpy:5:11"
+            },
+            {
+              "Level": 5,
+              "Name": "CUST-FIRST-NAME",
+              "Pic": "X(25)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                25
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 25,
+              "Offset": [
+                9
+              ],
+              "Coordinates": "file://cpy/CVCUS01Y.cpy:6:11"
+            },
+            {
+              "Level": 5,
+              "Name": "CUST-MIDDLE-NAME",
+              "Pic": "X(25)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                25
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 25,
+              "Offset": [
+                34
+              ],
+              "Coordinates": "file://cpy/CVCUS01Y.cpy:7:11"
+            },
+            {
+              "Level": 5,
+              "Name": "CUST-LAST-NAME",
+              "Pic": "X(25)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                25
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 25,
+              "Offset": [
+                59
+              ],
+              "Coordinates": "file://cpy/CVCUS01Y.cpy:8:11"
+            },
+            {
+              "Level": 5,
+              "Name": "CUST-ADDR-LINE-1",
+              "Pic": "X(50)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                50
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 50,
+              "Offset": [
+                84
+              ],
+              "Coordinates": "file://cpy/CVCUS01Y.cpy:9:11"
+            },
+            {
+              "Level": 5,
+              "Name": "CUST-ADDR-LINE-2",
+              "Pic": "X(50)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                50
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 50,
+              "Offset": [
+                134
+              ],
+              "Coordinates": "file://cpy/CVCUS01Y.cpy:10:11"
+            },
+            {
+              "Level": 5,
+              "Name": "CUST-ADDR-LINE-3",
+              "Pic": "X(50)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                50
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 50,
+              "Offset": [
+                184
+              ],
+              "Coordinates": "file://cpy/CVCUS01Y.cpy:11:11"
+            },
+            {
+              "Level": 5,
+              "Name": "CUST-ADDR-STATE-CD",
+              "Pic": "X(02)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                2
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 2,
+              "Offset": [
+                234
+              ],
+              "Coordinates": "file://cpy/CVCUS01Y.cpy:12:11"
+            },
+            {
+              "Level": 5,
+              "Name": "CUST-ADDR-COUNTRY-CD",
+              "Pic": "X(03)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                3
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 3,
+              "Offset": [
+                236
+              ],
+              "Coordinates": "file://cpy/CVCUS01Y.cpy:13:11"
+            },
+            {
+              "Level": 5,
+              "Name": "CUST-ADDR-ZIP",
+              "Pic": "X(10)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                10
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 10,
+              "Offset": [
+                239
+              ],
+              "Coordinates": "file://cpy/CVCUS01Y.cpy:14:11"
+            },
+            {
+              "Level": 5,
+              "Name": "CUST-PHONE-NUM-1",
+              "Pic": "X(15)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                15
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 15,
+              "Offset": [
+                249
+              ],
+              "Coordinates": "file://cpy/CVCUS01Y.cpy:15:11"
+            },
+            {
+              "Level": 5,
+              "Name": "CUST-PHONE-NUM-2",
+              "Pic": "X(15)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                15
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 15,
+              "Offset": [
+                264
+              ],
+              "Coordinates": "file://cpy/CVCUS01Y.cpy:16:11"
+            },
+            {
+              "Level": 5,
+              "Name": "CUST-SSN",
+              "Pic": "9(09)",
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                9
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 9,
+              "Offset": [
+                279
+              ],
+              "Coordinates": "file://cpy/CVCUS01Y.cpy:17:11"
+            },
+            {
+              "Level": 5,
+              "Name": "CUST-GOVT-ISSUED-ID",
+              "Pic": "X(20)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                20
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 20,
+              "Offset": [
+                288
+              ],
+              "Coordinates": "file://cpy/CVCUS01Y.cpy:18:11"
+            },
+            {
+              "Level": 5,
+              "Name": "CUST-DOB-YYYY-MM-DD",
+              "Pic": "X(10)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                10
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 10,
+              "Offset": [
+                308
+              ],
+              "Coordinates": "file://cpy/CVCUS01Y.cpy:19:11"
+            },
+            {
+              "Level": 5,
+              "Name": "CUST-EFT-ACCOUNT-ID",
+              "Pic": "X(10)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                10
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 10,
+              "Offset": [
+                318
+              ],
+              "Coordinates": "file://cpy/CVCUS01Y.cpy:20:11"
+            },
+            {
+              "Level": 5,
+              "Name": "CUST-PRI-CARD-HOLDER-IND",
+              "Pic": "X(01)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                328
+              ],
+              "Coordinates": "file://cpy/CVCUS01Y.cpy:21:11"
+            },
+            {
+              "Level": 5,
+              "Name": "CUST-FICO-CREDIT-SCORE",
+              "Pic": "9(03)",
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                3
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 3,
+              "Offset": [
+                329
+              ],
+              "Coordinates": "file://cpy/CVCUS01Y.cpy:22:11"
+            },
+            {
+              "Level": 5,
+              "Pic": "X(168)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                168
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 168,
+              "Offset": [
+                332
+              ],
+              "Coordinates": "file://cpy/CVCUS01Y.cpy:23:11"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "CUSTFILE-STATUS",
           "ComputedSize": 2,
           "Offset": [
             0
           ],
-          "Coordinates": "file://cbl/CBACT03C.cbl:46:7",
+          "Coordinates": "file://cbl/CBCUS01C.cbl:46:7",
           "Children": [
             {
               "Level": 5,
-              "Name": "XREFFILE-STAT1",
+              "Name": "CUSTFILE-STAT1",
               "Pic": "X",
               "ParsedPic": [
                 "X"
@@ -372,11 +657,11 @@
               "Offset": [
                 0
               ],
-              "Coordinates": "file://cbl/CBACT03C.cbl:47:11"
+              "Coordinates": "file://cbl/CBCUS01C.cbl:47:11"
             },
             {
               "Level": 5,
-              "Name": "XREFFILE-STAT2",
+              "Name": "CUSTFILE-STAT2",
               "Pic": "X",
               "ParsedPic": [
                 "X"
@@ -390,7 +675,7 @@
               "Offset": [
                 1
               ],
-              "Coordinates": "file://cbl/CBACT03C.cbl:48:11"
+              "Coordinates": "file://cbl/CBCUS01C.cbl:48:11"
             }
           ]
         },
@@ -401,7 +686,7 @@
           "Offset": [
             0
           ],
-          "Coordinates": "file://cbl/CBACT03C.cbl:50:7",
+          "Coordinates": "file://cbl/CBCUS01C.cbl:50:7",
           "Children": [
             {
               "Level": 5,
@@ -419,7 +704,7 @@
               "Offset": [
                 0
               ],
-              "Coordinates": "file://cbl/CBACT03C.cbl:51:11"
+              "Coordinates": "file://cbl/CBCUS01C.cbl:51:11"
             },
             {
               "Level": 5,
@@ -437,7 +722,7 @@
               "Offset": [
                 1
               ],
-              "Coordinates": "file://cbl/CBACT03C.cbl:52:11"
+              "Coordinates": "file://cbl/CBCUS01C.cbl:52:11"
             }
           ]
         },
@@ -458,7 +743,7 @@
           "Offset": [
             0
           ],
-          "Coordinates": "file://cbl/CBACT03C.cbl:53:7"
+          "Coordinates": "file://cbl/CBCUS01C.cbl:53:7"
         },
         {
           "Level": 1,
@@ -468,7 +753,7 @@
           "Offset": [
             0
           ],
-          "Coordinates": "file://cbl/CBACT03C.cbl:54:7",
+          "Coordinates": "file://cbl/CBCUS01C.cbl:54:7",
           "Children": [
             {
               "Level": 5,
@@ -486,7 +771,7 @@
               "Offset": [
                 0
               ],
-              "Coordinates": "file://cbl/CBACT03C.cbl:55:11"
+              "Coordinates": "file://cbl/CBCUS01C.cbl:55:11"
             },
             {
               "Level": 5,
@@ -504,7 +789,7 @@
               "Offset": [
                 1
               ],
-              "Coordinates": "file://cbl/CBACT03C.cbl:56:11"
+              "Coordinates": "file://cbl/CBCUS01C.cbl:56:11"
             }
           ]
         },
@@ -515,7 +800,7 @@
           "Offset": [
             0
           ],
-          "Coordinates": "file://cbl/CBACT03C.cbl:57:7",
+          "Coordinates": "file://cbl/CBCUS01C.cbl:57:7",
           "Children": [
             {
               "Level": 5,
@@ -541,7 +826,7 @@
               "Offset": [
                 0
               ],
-              "Coordinates": "file://cbl/CBACT03C.cbl:58:11"
+              "Coordinates": "file://cbl/CBCUS01C.cbl:58:11"
             },
             {
               "Level": 5,
@@ -567,7 +852,7 @@
               "Offset": [
                 1
               ],
-              "Coordinates": "file://cbl/CBACT03C.cbl:59:11"
+              "Coordinates": "file://cbl/CBCUS01C.cbl:59:11"
             }
           ]
         },
@@ -590,7 +875,7 @@
           "Offset": [
             0
           ],
-          "Coordinates": "file://cbl/CBACT03C.cbl:61:7",
+          "Coordinates": "file://cbl/CBCUS01C.cbl:61:7",
           "Children": [
             {
               "Level": 88,
@@ -606,7 +891,7 @@
               "Offset": [
                 0
               ],
-              "Coordinates": "file://cbl/CBACT03C.cbl:62:11"
+              "Coordinates": "file://cbl/CBCUS01C.cbl:62:11"
             },
             {
               "Level": 88,
@@ -623,7 +908,7 @@
               "Offset": [
                 0
               ],
-              "Coordinates": "file://cbl/CBACT03C.cbl:63:11"
+              "Coordinates": "file://cbl/CBCUS01C.cbl:63:11"
             }
           ]
         },
@@ -651,7 +936,7 @@
           "Offset": [
             0
           ],
-          "Coordinates": "file://cbl/CBACT03C.cbl:65:7"
+          "Coordinates": "file://cbl/CBCUS01C.cbl:65:7"
         },
         {
           "Level": 1,
@@ -672,7 +957,7 @@
           "Offset": [
             0
           ],
-          "Coordinates": "file://cbl/CBACT03C.cbl:66:7"
+          "Coordinates": "file://cbl/CBCUS01C.cbl:66:7"
         },
         {
           "Level": 1,
@@ -693,22 +978,22 @@
           "Offset": [
             0
           ],
-          "Coordinates": "file://cbl/CBACT03C.cbl:67:7"
+          "Coordinates": "file://cbl/CBCUS01C.cbl:67:7"
         }
       ],
       "Chunks": {
         "ChunkType": "PROCEDURE_DIVISION",
-        "Range": [82,192],
-        "Sentences": [83,104],
+        "Range": [97,207],
+        "Sentences": [98,119],
         "ReferencedProcedures": [
           {
-            "Name": "0000-XREFFILE-OPEN"
+            "Name": "0000-CUSTFILE-OPEN"
           },
           {
-            "Name": "1000-XREFFILE-GET-NEXT"
+            "Name": "1000-CUSTFILE-GET-NEXT"
           },
           {
-            "Name": "9000-XREFFILE-CLOSE"
+            "Name": "9000-CUSTFILE-CLOSE"
           }
         ],
         "ReferencedVariables": [
@@ -718,47 +1003,47 @@
                 "Name": "END-OF-FILE"
               }
             ],
-            "Range": [77,78]
+            "Range": [92,93]
           },
           {
             "References": [
               {
-                "Name": "CARD-XREF-RECORD"
+                "Name": "CUSTOMER-RECORD"
               }
             ],
-            "Range": [49,54]
+            "Range": [49,69]
           }
         ],
         "Children": [
           {
             "ChunkType": "PARAGRAPH",
-            "Name": "1000-XREFFILE-GET-NEXT",
-            "Range": [104,130],
-            "Sentences": [105,130],
+            "Name": "1000-CUSTFILE-GET-NEXT",
+            "Range": [119,145],
+            "Sentences": [120,145],
             "ReferencedProcedures": [
               {
-                "Name": "9910-DISPLAY-IO-STATUS"
+                "Name": "Z-DISPLAY-IO-STATUS"
               },
               {
-                "Name": "9999-ABEND-PROGRAM"
+                "Name": "Z-ABEND-PROGRAM"
               }
             ],
             "ReferencedVariables": [
               {
                 "References": [
                   {
-                    "Name": "CARD-XREF-RECORD"
+                    "Name": "CUSTOMER-RECORD"
                   }
                 ],
-                "Range": [49,54]
+                "Range": [49,69]
               },
               {
                 "References": [
                   {
-                    "Name": "XREFFILE-STATUS"
+                    "Name": "CUSTFILE-STATUS"
                   }
                 ],
-                "Range": [58,61]
+                "Range": [73,76]
               },
               {
                 "References": [
@@ -772,7 +1057,7 @@
                     "Name": "APPL-EOF"
                   }
                 ],
-                "Range": [73,76]
+                "Range": [88,91]
               },
               {
                 "References": [
@@ -780,7 +1065,7 @@
                     "Name": "END-OF-FILE"
                   }
                 ],
-                "Range": [77,78]
+                "Range": [92,93]
               },
               {
                 "References": [
@@ -788,27 +1073,27 @@
                     "Name": "IO-STATUS"
                   }
                 ],
-                "Range": [62,65]
+                "Range": [77,80]
               }
             ],
             "ReferencedFiles": [
               {
-                "Name": "XREFFILE-FILE",
+                "Name": "CUSTFILE-FILE",
                 "Range": [37,41]
               }
             ]
           },
           {
             "ChunkType": "PARAGRAPH",
-            "Name": "0000-XREFFILE-OPEN",
-            "Range": [130,148],
-            "Sentences": [131,148],
+            "Name": "0000-CUSTFILE-OPEN",
+            "Range": [145,163],
+            "Sentences": [146,163],
             "ReferencedProcedures": [
               {
-                "Name": "9910-DISPLAY-IO-STATUS"
+                "Name": "Z-DISPLAY-IO-STATUS"
               },
               {
-                "Name": "9999-ABEND-PROGRAM"
+                "Name": "Z-ABEND-PROGRAM"
               }
             ],
             "ReferencedVariables": [
@@ -821,15 +1106,15 @@
                     "Name": "APPL-AOK"
                   }
                 ],
-                "Range": [73,76]
+                "Range": [88,91]
               },
               {
                 "References": [
                   {
-                    "Name": "XREFFILE-STATUS"
+                    "Name": "CUSTFILE-STATUS"
                   }
                 ],
-                "Range": [58,61]
+                "Range": [73,76]
               },
               {
                 "References": [
@@ -837,27 +1122,27 @@
                     "Name": "IO-STATUS"
                   }
                 ],
-                "Range": [62,65]
+                "Range": [77,80]
               }
             ],
             "ReferencedFiles": [
               {
-                "Name": "XREFFILE-FILE",
+                "Name": "CUSTFILE-FILE",
                 "Range": [37,41]
               }
             ]
           },
           {
             "ChunkType": "PARAGRAPH",
-            "Name": "9000-XREFFILE-CLOSE",
-            "Range": [148,166],
-            "Sentences": [149,166],
+            "Name": "9000-CUSTFILE-CLOSE",
+            "Range": [163,181],
+            "Sentences": [164,181],
             "ReferencedProcedures": [
               {
-                "Name": "9910-DISPLAY-IO-STATUS"
+                "Name": "Z-DISPLAY-IO-STATUS"
               },
               {
-                "Name": "9999-ABEND-PROGRAM"
+                "Name": "Z-ABEND-PROGRAM"
               }
             ],
             "ReferencedVariables": [
@@ -870,15 +1155,15 @@
                     "Name": "APPL-AOK"
                   }
                 ],
-                "Range": [73,76]
+                "Range": [88,91]
               },
               {
                 "References": [
                   {
-                    "Name": "XREFFILE-STATUS"
+                    "Name": "CUSTFILE-STATUS"
                   }
                 ],
-                "Range": [58,61]
+                "Range": [73,76]
               },
               {
                 "References": [
@@ -886,21 +1171,21 @@
                     "Name": "IO-STATUS"
                   }
                 ],
-                "Range": [62,65]
+                "Range": [77,80]
               }
             ],
             "ReferencedFiles": [
               {
-                "Name": "XREFFILE-FILE",
+                "Name": "CUSTFILE-FILE",
                 "Range": [37,41]
               }
             ]
           },
           {
             "ChunkType": "PARAGRAPH",
-            "Name": "9999-ABEND-PROGRAM",
-            "Range": [166,173],
-            "Sentences": [167,173],
+            "Name": "Z-ABEND-PROGRAM",
+            "Range": [181,188],
+            "Sentences": [182,188],
             "ReferencedVariables": [
               {
                 "References": [
@@ -908,7 +1193,7 @@
                     "Name": "TIMING"
                   }
                 ],
-                "Range": [79,80]
+                "Range": [94,95]
               },
               {
                 "References": [
@@ -916,15 +1201,15 @@
                     "Name": "ABCODE"
                   }
                 ],
-                "Range": [78,79]
+                "Range": [93,94]
               }
             ]
           },
           {
             "ChunkType": "PARAGRAPH",
-            "Name": "9910-DISPLAY-IO-STATUS",
-            "Range": [173,192],
-            "Sentences": [174,192],
+            "Name": "Z-DISPLAY-IO-STATUS",
+            "Range": [188,207],
+            "Sentences": [189,207],
             "ReferencedVariables": [
               {
                 "References": [
@@ -938,7 +1223,7 @@
                     "Name": "IO-STAT2"
                   }
                 ],
-                "Range": [62,65]
+                "Range": [77,80]
               },
               {
                 "References": [
@@ -949,7 +1234,7 @@
                     "Name": "IO-STATUS-0403"
                   }
                 ],
-                "Range": [69,72]
+                "Range": [84,87]
               },
               {
                 "References": [
@@ -957,7 +1242,7 @@
                     "Name": "TWO-BYTES-BINARY"
                   }
                 ],
-                "Range": [65,66]
+                "Range": [80,81]
               },
               {
                 "References": [
@@ -965,7 +1250,7 @@
                     "Name": "TWO-BYTES-RIGHT"
                   }
                 ],
-                "Range": [66,69]
+                "Range": [81,84]
               }
             ]
           }
@@ -982,7 +1267,7 @@
           "Targets": [
             "APPL-RESULT"
           ],
-          "Coordinates": "file://cbl/CBACT03C.cbl:95:15"
+          "Coordinates": "file://cbl/CBCUS01C.cbl:95:15"
         },
         {
           "Value": {
@@ -995,7 +1280,7 @@
           "Targets": [
             "APPL-RESULT"
           ],
-          "Coordinates": "file://cbl/CBACT03C.cbl:99:19"
+          "Coordinates": "file://cbl/CBCUS01C.cbl:99:19"
         },
         {
           "Value": {
@@ -1008,7 +1293,7 @@
           "Targets": [
             "APPL-RESULT"
           ],
-          "Coordinates": "file://cbl/CBACT03C.cbl:101:19"
+          "Coordinates": "file://cbl/CBCUS01C.cbl:101:19"
         },
         {
           "Value": {
@@ -1020,7 +1305,7 @@
           "Targets": [
             "END-OF-FILE"
           ],
-          "Coordinates": "file://cbl/CBACT03C.cbl:108:19"
+          "Coordinates": "file://cbl/CBCUS01C.cbl:108:19"
         },
         {
           "Value": {
@@ -1029,7 +1314,7 @@
           "Targets": [
             "IO-STATUS"
           ],
-          "Coordinates": "file://cbl/CBACT03C.cbl:111:19"
+          "Coordinates": "file://cbl/CBCUS01C.cbl:111:19"
         },
         {
           "Value": {
@@ -1041,7 +1326,7 @@
           "Targets": [
             "APPL-RESULT"
           ],
-          "Coordinates": "file://cbl/CBACT03C.cbl:119:11"
+          "Coordinates": "file://cbl/CBCUS01C.cbl:119:11"
         },
         {
           "Value": {
@@ -1053,7 +1338,7 @@
           "Targets": [
             "APPL-RESULT"
           ],
-          "Coordinates": "file://cbl/CBACT03C.cbl:122:15"
+          "Coordinates": "file://cbl/CBCUS01C.cbl:122:15"
         },
         {
           "Value": {
@@ -1066,7 +1351,7 @@
           "Targets": [
             "APPL-RESULT"
           ],
-          "Coordinates": "file://cbl/CBACT03C.cbl:124:15"
+          "Coordinates": "file://cbl/CBCUS01C.cbl:124:15"
         },
         {
           "Value": {
@@ -1075,7 +1360,7 @@
           "Targets": [
             "IO-STATUS"
           ],
-          "Coordinates": "file://cbl/CBACT03C.cbl:130:15"
+          "Coordinates": "file://cbl/CBCUS01C.cbl:130:15"
         },
         {
           "Value": {
@@ -1084,7 +1369,7 @@
           "Targets": [
             "IO-STATUS"
           ],
-          "Coordinates": "file://cbl/CBACT03C.cbl:148:15"
+          "Coordinates": "file://cbl/CBCUS01C.cbl:148:15"
         },
         {
           "Value": {
@@ -1096,7 +1381,7 @@
           "Targets": [
             "TIMING"
           ],
-          "Coordinates": "file://cbl/CBACT03C.cbl:156:11"
+          "Coordinates": "file://cbl/CBCUS01C.cbl:156:11"
         },
         {
           "Value": {
@@ -1110,7 +1395,7 @@
           "Targets": [
             "ABCODE"
           ],
-          "Coordinates": "file://cbl/CBACT03C.cbl:157:11"
+          "Coordinates": "file://cbl/CBCUS01C.cbl:157:11"
         },
         {
           "Value": {
@@ -1122,7 +1407,7 @@
             "1:1",
             ")"
           ],
-          "Coordinates": "file://cbl/CBACT03C.cbl:164:15"
+          "Coordinates": "file://cbl/CBCUS01C.cbl:164:15"
         },
         {
           "Value": {
@@ -1134,7 +1419,7 @@
           "Targets": [
             "TWO-BYTES-BINARY"
           ],
-          "Coordinates": "file://cbl/CBACT03C.cbl:165:15"
+          "Coordinates": "file://cbl/CBCUS01C.cbl:165:15"
         },
         {
           "Value": {
@@ -1143,7 +1428,7 @@
           "Targets": [
             "TWO-BYTES-RIGHT"
           ],
-          "Coordinates": "file://cbl/CBACT03C.cbl:166:15"
+          "Coordinates": "file://cbl/CBCUS01C.cbl:166:15"
         },
         {
           "Value": {
@@ -1152,7 +1437,7 @@
           "Targets": [
             "IO-STATUS-0403"
           ],
-          "Coordinates": "file://cbl/CBACT03C.cbl:167:15"
+          "Coordinates": "file://cbl/CBCUS01C.cbl:167:15"
         },
         {
           "Value": {
@@ -1167,7 +1452,7 @@
           "Targets": [
             "IO-STATUS-04"
           ],
-          "Coordinates": "file://cbl/CBACT03C.cbl:170:15"
+          "Coordinates": "file://cbl/CBCUS01C.cbl:170:15"
         },
         {
           "Value": {
@@ -1179,37 +1464,37 @@
             "3:2",
             ")"
           ],
-          "Coordinates": "file://cbl/CBACT03C.cbl:171:15"
+          "Coordinates": "file://cbl/CBCUS01C.cbl:171:15"
         }
       ],
       "FileIO": [
         {
-          "FileVariable": "XREFFILE-FILE",
+          "FileVariable": "CUSTFILE-FILE",
           "Optional": false,
           "IsSortFile": false,
           "DDNames": [
-            "XREFFILE"
+            "CUSTFILE"
           ],
           "RecordVariables": [
             {
-              "Name": "FD-XREFFILE-REC",
-              "Range": "file://cbl/CBACT03C.cbl:38:0-40:0"
+              "Name": "FD-CUSTFILE-REC",
+              "Range": "file://cbl/CBCUS01C.cbl:38:0-40:0"
             },
             {
-              "Name": "CARD-XREF-RECORD",
-              "Range": "file://cpy/CVACT03Y.cpy:4:0-8:0"
+              "Name": "CUSTOMER-RECORD",
+              "Range": "file://cpy/CVCUS01Y.cpy:4:0-23:0"
             }
           ],
           "Mode": "INPUT",
-          "Coordinates": "file://cbl/CBACT03C.cbl:29:11"
+          "Coordinates": "file://cbl/CBCUS01C.cbl:29:11"
         }
       ],
       "Copybooks": [
         {
-          "Name": "CVACT03Y",
+          "Name": "CVCUS01Y",
           "Division": "DATA DIVISION",
           "Section": "WORKING-STORAGE SECTION",
-          "Coordinates": "file://cbl/CBACT03C.cbl:45:7"
+          "Coordinates": "file://cbl/CBCUS01C.cbl:45:7"
         }
       ]
     }
