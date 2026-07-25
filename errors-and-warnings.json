@@ -2,11 +2,11 @@
   "ShabakehVersion": "0.90.0",
   "ShabakehConfig": {
     "ClientProject": "aws-carddemo",
-    "ClientProjectSHA": "0f32329bc017b6143ffcd94103180b65b999ca89",
+    "ClientProjectSHA": "260888b31c26c06d16a97f6ea7f3710637937fbf",
     "Targets": [
-      "READCUST"
+      "INTCALC"
     ],
-    "Invocation": "extract -call-trees=./call-trees.json -errors-and-warnings=./errors-and-warnings.json --include-params READCUST",
+    "Invocation": "extract -call-trees=./call-trees.json -errors-and-warnings=./errors-and-warnings.json --include-params INTCALC",
     "IncludeParams": true
   },
   "ErrorsAndWarnings": {
@@ -16,7 +16,7 @@
       "Errors": 0
     },
     "PrefixCounts": {
-      "READCUST": {
+      "INTCALC": {
       "OK": 1,
       "Warnings": 0,
       "Errors": 0
