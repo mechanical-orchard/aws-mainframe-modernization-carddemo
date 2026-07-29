@@ -1,0 +1,29 @@
+{
+  "ShabakehVersion": "0.90.0",
+  "ShabakehConfig": {
+    "ClientProject": "aws-carddemo",
+    "ClientProjectSHA": "18c480044a085c9ad3353255a6752e40288d27de",
+    "Targets": [
+      "POSTTRAN.jcl"
+    ],
+    "Invocation": "extract -call-trees=POSTTRAN/call-trees.json -errors-and-warnings=POSTTRAN/errors-and-warnings.json --include-params POSTTRAN.jcl",
+    "IncludeParams": true
+  },
+  "ErrorsAndWarnings": {
+    "EntryPointCounts": {
+      "OK": 1,
+      "Warnings": 0,
+      "Errors": 0
+    },
+    "PrefixCounts": {
+      "POSTTRAN": {
+      "OK": 1,
+      "Warnings": 0,
+      "Errors": 0
+    }
+    }
+  },
+  "DebugInformation": {
+    
+  }
+}
