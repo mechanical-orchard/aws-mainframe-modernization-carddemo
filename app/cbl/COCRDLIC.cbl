@@ -786,8 +786,7 @@
                                                                                 
            IF   WS-EACH-CARD(4)            EQUAL LOW-VALUES                     
            OR   FLG-PROTECT-SELECT-ROWS-YES                                     
-              MOVE DFHBMPRO                TO CRDSEL4A OF CCRDLIAI              
-              I                                                                 
+              MOVE DFHBMPRO                TO CRDSEL4A OF CCRDLIAI                                                                             
            ELSE                                                                 
               IF WS-ROW-CRDSELECT-ERROR(4) = '1'                                
                  MOVE DFHRED               TO CRDSEL4C OF CCRDLIAO              
