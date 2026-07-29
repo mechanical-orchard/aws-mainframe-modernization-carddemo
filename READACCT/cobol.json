@@ -1,0 +1,4358 @@
+{
+  "ShabakehVersion": "0.90.0",
+  "ShabakehConfig": {
+    "ClientProject": "aws-carddemo",
+    "ClientProjectSHA": "",
+    "Targets": [
+      "CBACT01C"
+    ]
+  },
+  "Entries": [
+    {
+      "Key": "file://cbl/CBACT01C.cbl",
+      "ProgramID": "CBACT01C",
+      "CompilerOptions": {
+        "LP": 32,
+        "TRUNC": "STD",
+        "NSYMBOL": "NATIONAL"
+      },
+      "IsCICS": false,
+      "Complexity": {
+        "NumLines": 408,
+        "NumLinesWithComment": 505,
+        "NumLinesNoCopybook": 358,
+        "NumLinesNoCopybookWithComment": 431,
+        "CyclomaticComplexity": 49
+      },
+      "Lines": [
+        "000100******************************************************************",
+        "000200* PROGRAM     : CBACT01C.CBL",
+        "000300* Application : CardDemo",
+        "000400* Type        : BATCH COBOL Program",
+        "000500* FUNCTION    : READ THE ACCOUNT FILE AND WRITE INTO FILES.",
+        "000600******************************************************************",
+        "000700* Copyright Amazon.com, Inc. or its affiliates.",
+        "000800* All Rights Reserved.",
+        "000900*",
+        "001000* Licensed under the Apache License, Version 2.0 (the \"License\").",
+        "001100* You may not use this file except in compliance with the License.",
+        "001200* You may obtain a copy of the License at",
+        "001300*",
+        "001400*    http://www.apache.org/licenses/LICENSE-2.0",
+        "001500*",
+        "001600* Unless required by applicable law or agreed to in writing,",
+        "001700* software distributed under the License is distributed on an",
+        "001800* \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,",
+        "001900* either express or implied. See the License for the specific",
+        "002000* language governing permissions and limitations under the License",
+        "002100******************************************************************",
+        "       IDENTIFICATION DIVISION.",
+        "       PROGRAM-ID.    CBACT01C.",
+        "       AUTHOR.        AWS.",
+        "",
+        "       ENVIRONMENT DIVISION.",
+        "       INPUT-OUTPUT SECTION.",
+        "       FILE-CONTROL.",
+        "           SELECT ACCTFILE-FILE ASSIGN TO ACCTFILE",
+        "                  ORGANIZATION IS INDEXED",
+        "                  ACCESS MODE  IS SEQUENTIAL",
+        "                  RECORD KEY   IS FD-ACCT-ID",
+        "                  FILE STATUS  IS ACCTFILE-STATUS.",
+        "      *",
+        "           SELECT OUT-FILE ASSIGN TO OUTFILE",
+        "                  ORGANIZATION IS SEQUENTIAL",
+        "                  ACCESS MODE IS SEQUENTIAL",
+        "                  FILE STATUS IS OUTFILE-STATUS.",
+        "      *",
+        "           SELECT ARRY-FILE ASSIGN TO ARRYFILE",
+        "                  ORGANIZATION IS SEQUENTIAL",
+        "                  ACCESS MODE IS SEQUENTIAL",
+        "                  FILE STATUS IS ARRYFILE-STATUS.",
+        "      *",
+        "           SELECT VBRC-FILE ASSIGN TO VBRCFILE",
+        "                  ORGANIZATION IS SEQUENTIAL",
+        "                  ACCESS MODE IS SEQUENTIAL",
+        "                  FILE STATUS IS VBRCFILE-STATUS.",
+        "      *",
+        "       DATA DIVISION.",
+        "       FILE SECTION.",
+        "       FD  ACCTFILE-FILE.",
+        "       01  FD-ACCTFILE-REC.",
+        "           05 FD-ACCT-ID                        PIC 9(11).",
+        "           05 FD-ACCT-DATA                      PIC X(289).",
+        "       FD OUT-FILE.",
+        "       01 OUT-ACCT-REC.",
+        "          05  OUT-ACCT-ID                PIC 9(11).",
+        "          05  OUT-ACCT-ACTIVE-STATUS     PIC X(01).",
+        "          05  OUT-ACCT-CURR-BAL          PIC S9(10)V99.",
+        "          05  OUT-ACCT-CREDIT-LIMIT      PIC S9(10)V99.",
+        "          05  OUT-ACCT-CASH-CREDIT-LIMIT PIC S9(10)V99.",
+        "          05  OUT-ACCT-OPEN-DATE         PIC X(10).",
+        "          05  OUT-ACCT-EXPIRAION-DATE    PIC X(10).",
+        "          05  OUT-ACCT-REISSUE-DATE      PIC X(10).",
+        "          05  OUT-ACCT-CURR-CYC-CREDIT   PIC S9(10)V99.",
+        "          05  OUT-ACCT-CURR-CYC-DEBIT    PIC S9(10)V99",
+        "                                         USAGE IS COMP-3.",
+        "          05  OUT-ACCT-GROUP-ID          PIC X(10).",
+        "      *",
+        "       FD ARRY-FILE.",
+        "       01 ARR-ARRAY-REC.",
+        "          05  ARR-ACCT-ID                PIC 9(11).",
+        "          05  ARR-ACCT-BAL OCCURS 5  TIMES.",
+        "            10  ARR-ACCT-CURR-BAL        PIC S9(10)V99.",
+        "            10  ARR-ACCT-CURR-CYC-DEBIT  PIC S9(10)V99",
+        "                                         USAGE IS COMP-3.",
+        "          05  ARR-FILLER                 PIC X(04).",
+        "      *",
+        "       FD VBRC-FILE",
+        "                  RECORDING MODE IS V",
+        "                  RECORD IS VARYING IN SIZE",
+        "                  FROM 10 TO 80 DEPENDING",
+        "                  ON WS-RECD-LEN.",
+        "       01 VBR-REC                        PIC X(80).",
+        "       WORKING-STORAGE SECTION.",
+        "",
+        "      ****0************************************************************",
+        "******* MO-PARSE: INLINED COBOL_COPYBOOK CVACT01Y",
+        "      *****************************************************************",
+        "      *    Data-structure for  account entity (RECLN 300)",
+        "      *****************************************************************",
+        "       01  ACCOUNT-RECORD.",
+        "           05  ACCT-ID                           PIC 9(11).",
+        "           05  ACCT-ACTIVE-STATUS                PIC X(01).",
+        "           05  ACCT-CURR-BAL                     PIC S9(10)V99.",
+        "           05  ACCT-CREDIT-LIMIT                 PIC S9(10)V99.",
+        "           05  ACCT-CASH-CREDIT-LIMIT            PIC S9(10)V99.",
+        "           05  ACCT-OPEN-DATE                    PIC X(10).",
+        "           05  ACCT-EXPIRAION-DATE               PIC X(10). ",
+        "           05  ACCT-REISSUE-DATE                 PIC X(10).",
+        "           05  ACCT-CURR-CYC-CREDIT              PIC S9(10)V99.",
+        "           05  ACCT-CURR-CYC-DEBIT               PIC S9(10)V99.",
+        "           05  ACCT-ADDR-ZIP                     PIC X(10).",
+        "           05  ACCT-GROUP-ID                     PIC X(10).",
+        "           05  FILLER                            PIC X(178).      ",
+        "      *",
+        "      * Ver: CardDemo_v1.0-15-g27d6c6f-68 Date: 2022-07-19 23:15:59 CDT",
+        "      *",
+        "",
+        "******* MO-PARSE: INLINED COBOL_COPYBOOK CODATECN",
+        "      ******************************************************************",
+        "      * Copyright Amazon.com, Inc. or its affiliates.",
+        "      * All Rights Reserved.",
+        "      *",
+        "      * Licensed under the Apache License, Version 2.0 (the \"License\").",
+        "      * You may not use this file except in compliance with the License.",
+        "      * You may obtain a copy of the License at",
+        "      *",
+        "      *    http://www.apache.org/licenses/LICENSE-2.0",
+        "      *",
+        "      * Unless required by applicable law or agreed to in writing,",
+        "      * software distributed under the License is distributed on an",
+        "      * \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,",
+        "      * either express or implied. See the License for the specific",
+        "      * language governing permissions and limitations under the License",
+        "      ******************************************************************",
+        "       01  CODATECN-REC.",
+        "           05  CODATECN-IN-REC.",
+        "               10  CODATECN-TYPE             PIC X.",
+        "                   88  YYYYMMDD-IN           VALUE \"1\".",
+        "                   88  YYYY-MM-DD-IN         VALUE \"2\".",
+        "               10  CODATECN-INP-DATE         PIC X(20).",
+        "               10  CODATECN-1INP REDEFINES CODATECN-INP-DATE.",
+        "                   15  CODATECN-1YYYY    PIC XXXX.",
+        "                   15  CODATECN-1MM      PIC XX.",
+        "                   15  CODATECN-1DD      PIC XX.",
+        "                   15  CODATECN-1FIL     PIC X(12).",
+        "               10  CODATECN-2INP REDEFINES CODATECN-INP-DATE.",
+        "                   15  CODATECN-1O-YYYY  PIC XXXX.",
+        "                   15  CODATECN-1I-S1    PIC X.",
+        "                   15  CODATECN-1MM      PIC XX.",
+        "                   15  CODATECN-1I-S2    PIC X.",
+        "                   15  CODATECN-2YY      PIC XX.",
+        "                   15  CODATECN-2FIL     PIC X(10).",
+        "           05  CODATECN-OUT-REC.",
+        "               10  CODATECN-OUTTYPE          PIC X.",
+        "                   88  YYYY-MM-DD-OP         VALUE \"1\".",
+        "                   88  YYYYMMDD-OP           VALUE \"2\".",
+        "               10  CODATECN-0UT-DATE         PIC X(20).",
+        "               10  CODATECN-1OUT REDEFINES CODATECN-0UT-DATE.",
+        "                   15  CODATECN-1O-YYYY  PIC XXXX.",
+        "                   15  CODATECN-1O-S1    PIC X.",
+        "                   15  CODATECN-1O-MM    PIC XX.",
+        "                   15  CODATECN-1O-S2    PIC X.",
+        "                   15  CODATECN-1O-DD    PIC XX.",
+        "                   15  CODATECN-1OFIl    PIC X(10).",
+        "               10  CODATECN-2OUT REDEFINES CODATECN-0UT-DATE.",
+        "                   15  CODATECN-2O-YYYY  PIC XXXX.",
+        "                   15  CODATECN-2O-MM    PIC XX.",
+        "                   15  CODATECN-2O-DD    PIC XX.",
+        "                   15  CODATECN-2OFIl    PIC X(12).",
+        "           05  CODATECN-ERROR-MSG        PIC X(38).",
+        "",
+        "       01  ACCTFILE-STATUS.",
+        "           05  ACCTFILE-STAT1      PIC X.",
+        "           05  ACCTFILE-STAT2      PIC X.",
+        "       01  OUTFILE-STATUS.",
+        "           05  OUTFILE-STAT1       PIC X.",
+        "           05  OUTFILE-STAT2       PIC X.",
+        "       01  ARRYFILE-STATUS.",
+        "           05  ARRYFILE-STAT1      PIC X.",
+        "           05  ARRYFILE-STAT2      PIC X.",
+        "       01  VBRCFILE-STATUS.",
+        "           05  VBRCFILE-STAT1      PIC X.",
+        "           05  VBRCFILE-STAT2      PIC X.",
+        "",
+        "       01  IO-STATUS.",
+        "           05  IO-STAT1            PIC X.",
+        "           05  IO-STAT2            PIC X.",
+        "       01  TWO-BYTES-BINARY        PIC 9(4) BINARY.",
+        "       01  TWO-BYTES-ALPHA         REDEFINES TWO-BYTES-BINARY.",
+        "           05  TWO-BYTES-LEFT      PIC X.",
+        "           05  TWO-BYTES-RIGHT     PIC X.",
+        "       01  IO-STATUS-04.",
+        "           05  IO-STATUS-0401      PIC 9   VALUE 0.",
+        "           05  IO-STATUS-0403      PIC 999 VALUE 0.",
+        "",
+        "       01  APPL-RESULT             PIC S9(9)   COMP.",
+        "           88  APPL-AOK            VALUE 0.",
+        "           88  APPL-EOF            VALUE 16.",
+        "",
+        "       01  END-OF-FILE             PIC X(01)    VALUE 'N'.",
+        "       01  ABCODE                  PIC S9(9) BINARY.",
+        "       01  TIMING                  PIC S9(9) BINARY.",
+        "       01  WS-RECD-LEN             PIC  9(04).",
+        "       01 VBRC-REC1.",
+        "          05  VB1-ACCT-ID                PIC 9(11).",
+        "          05  VB1-ACCT-ACTIVE-STATUS     PIC X(01).",
+        "       01 VBRC-REC2.",
+        "          05  VB2-ACCT-ID                PIC 9(11).",
+        "          05  VB2-ACCT-CURR-BAL          PIC S9(10)V99.",
+        "          05  VB2-ACCT-CREDIT-LIMIT      PIC S9(10)V99.",
+        "          05  VB2-ACCT-REISSUE-YYYY      PIC X(04).",
+        "       01 WS-ACCT-REISSUE-DATE.",
+        "          05  WS-ACCT-REISSUE-YYYY       PIC X(04).",
+        "          05  WS-FILLER-1                PIC X(01).",
+        "          05  WS-ACCT-REISSUE-MM         PIC X(02).",
+        "          05  WS-FILLER-2                PIC X(01).",
+        "          05  WS-ACCT-REISSUE-DD         PIC X(02).",
+        "       01 WS-REISSUE-DATE REDEFINES WS-ACCT-REISSUE-DATE  PIC X(10).",
+        "",
+        "      *****************************************************************",
+        "       PROCEDURE DIVISION.",
+        "           DISPLAY 'START OF EXECUTION OF PROGRAM CBACT01C'.",
+        "           PERFORM 0000-ACCTFILE-OPEN.",
+        "           PERFORM 2000-OUTFILE-OPEN.",
+        "           PERFORM 3000-ARRFILE-OPEN.",
+        "           PERFORM 4000-VBRFILE-OPEN.",
+        "",
+        "           PERFORM UNTIL END-OF-FILE = 'Y'",
+        "               IF  END-OF-FILE = 'N'",
+        "                   PERFORM 1000-ACCTFILE-GET-NEXT",
+        "                   IF  END-OF-FILE = 'N'",
+        "                       DISPLAY ACCOUNT-RECORD",
+        "                   END-IF",
+        "               END-IF",
+        "           END-PERFORM.",
+        "",
+        "           PERFORM 9000-ACCTFILE-CLOSE.",
+        "",
+        "           DISPLAY 'END OF EXECUTION OF PROGRAM CBACT01C'.",
+        "",
+        "           GOBACK.",
+        "",
+        "      *****************************************************************",
+        "      * I/O ROUTINES TO ACCESS A KSDS, VSAM DATA SET...               *",
+        "      *****************************************************************",
+        "       1000-ACCTFILE-GET-NEXT.",
+        "           READ ACCTFILE-FILE INTO ACCOUNT-RECORD.",
+        "           IF  ACCTFILE-STATUS = '00'",
+        "               MOVE 0 TO APPL-RESULT",
+        "               INITIALIZE ARR-ARRAY-REC",
+        "               PERFORM 1100-DISPLAY-ACCT-RECORD",
+        "               PERFORM 1300-POPUL-ACCT-RECORD",
+        "               PERFORM 1350-WRITE-ACCT-RECORD",
+        "               PERFORM 1400-POPUL-ARRAY-RECORD",
+        "               PERFORM 1450-WRITE-ARRY-RECORD",
+        "               INITIALIZE VBRC-REC1",
+        "               PERFORM 1500-POPUL-VBRC-RECORD",
+        "               PERFORM 1550-WRITE-VB1-RECORD",
+        "               PERFORM 1575-WRITE-VB2-RECORD",
+        "           ELSE",
+        "               IF  ACCTFILE-STATUS = '10'",
+        "                   MOVE 16 TO APPL-RESULT",
+        "               ELSE",
+        "                   MOVE 12 TO APPL-RESULT",
+        "               END-IF",
+        "           END-IF",
+        "           IF  APPL-AOK",
+        "               CONTINUE",
+        "           ELSE",
+        "               IF  APPL-EOF",
+        "                   MOVE 'Y' TO END-OF-FILE",
+        "               ELSE",
+        "                   DISPLAY 'ERROR READING ACCOUNT FILE'",
+        "                   MOVE ACCTFILE-STATUS TO IO-STATUS",
+        "                   PERFORM 9910-DISPLAY-IO-STATUS",
+        "                   PERFORM 9999-ABEND-PROGRAM",
+        "               END-IF",
+        "           END-IF",
+        "           EXIT.",
+        "      *---------------------------------------------------------------*",
+        "       1100-DISPLAY-ACCT-RECORD.",
+        "           DISPLAY 'ACCT-ID                 :'   ACCT-ID",
+        "           DISPLAY 'ACCT-ACTIVE-STATUS      :'   ACCT-ACTIVE-STATUS",
+        "           DISPLAY 'ACCT-CURR-BAL           :'   ACCT-CURR-BAL",
+        "           DISPLAY 'ACCT-CREDIT-LIMIT       :'   ACCT-CREDIT-LIMIT",
+        "           DISPLAY 'ACCT-CASH-CREDIT-LIMIT  :'   ACCT-CASH-CREDIT-LIMIT",
+        "           DISPLAY 'ACCT-OPEN-DATE          :'   ACCT-OPEN-DATE",
+        "           DISPLAY 'ACCT-EXPIRAION-DATE     :'   ACCT-EXPIRAION-DATE",
+        "           DISPLAY 'ACCT-REISSUE-DATE       :'   ACCT-REISSUE-DATE",
+        "           DISPLAY 'ACCT-CURR-CYC-CREDIT    :'   ACCT-CURR-CYC-CREDIT",
+        "           DISPLAY 'ACCT-CURR-CYC-DEBIT     :'   ACCT-CURR-CYC-DEBIT",
+        "           DISPLAY 'ACCT-GROUP-ID           :'   ACCT-GROUP-ID",
+        "           DISPLAY '-------------------------------------------------'",
+        "           EXIT.",
+        "      *---------------------------------------------------------------*",
+        "       1300-POPUL-ACCT-RECORD.",
+        "           MOVE   ACCT-ID                 TO   OUT-ACCT-ID.",
+        "           MOVE   ACCT-ACTIVE-STATUS      TO   OUT-ACCT-ACTIVE-STATUS.",
+        "           MOVE   ACCT-CURR-BAL           TO   OUT-ACCT-CURR-BAL.",
+        "           MOVE   ACCT-CREDIT-LIMIT       TO   OUT-ACCT-CREDIT-LIMIT.",
+        "           MOVE   ACCT-CASH-CREDIT-LIMIT  TO OUT-ACCT-CASH-CREDIT-LIMIT.",
+        "           MOVE   ACCT-OPEN-DATE          TO   OUT-ACCT-OPEN-DATE.",
+        "           MOVE   ACCT-EXPIRAION-DATE     TO   OUT-ACCT-EXPIRAION-DATE.",
+        "           MOVE   ACCT-REISSUE-DATE       TO   CODATECN-INP-DATE",
+        "                                               WS-REISSUE-DATE.",
+        "           MOVE   '2'                     TO   CODATECN-TYPE.",
+        "           MOVE   '2'                     TO   CODATECN-OUTTYPE.",
+        "",
+        "      *---------------------------------------------------------------*",
+        "      *CALL ASSEMBLER PROGRAM FOR DATE FORMATTING                     *",
+        "      *---------------------------------------------------------------*",
+        "           CALL 'COBDATFT'       USING CODATECN-REC.",
+        "",
+        "           MOVE   CODATECN-0UT-DATE       TO   OUT-ACCT-REISSUE-DATE.",
+        "",
+        "           MOVE   ACCT-CURR-CYC-CREDIT    TO   OUT-ACCT-CURR-CYC-CREDIT.",
+        "           IF  ACCT-CURR-CYC-DEBIT EQUAL TO ZERO",
+        "               MOVE 2525.00         TO   OUT-ACCT-CURR-CYC-DEBIT",
+        "           END-IF.",
+        "           MOVE   ACCT-GROUP-ID           TO   OUT-ACCT-GROUP-ID.",
+        "           EXIT.",
+        "      *---------------------------------------------------------------*",
+        "       1350-WRITE-ACCT-RECORD.",
+        "           WRITE OUT-ACCT-REC.",
+        "",
+        "           IF OUTFILE-STATUS NOT = '00' AND OUTFILE-STATUS NOT = '10'",
+        "              DISPLAY 'ACCOUNT FILE WRITE STATUS IS:'  OUTFILE-STATUS",
+        "              MOVE OUTFILE-STATUS  TO IO-STATUS",
+        "              PERFORM 9910-DISPLAY-IO-STATUS",
+        "              PERFORM 9999-ABEND-PROGRAM",
+        "           END-IF.",
+        "           EXIT.",
+        "      *---------------------------------------------------------------*",
+        "       1400-POPUL-ARRAY-RECORD.",
+        "           MOVE   ACCT-ID         TO   ARR-ACCT-ID.",
+        "           MOVE   ACCT-CURR-BAL   TO   ARR-ACCT-CURR-BAL(1).",
+        "           MOVE   1005.00         TO   ARR-ACCT-CURR-CYC-DEBIT(1).",
+        "           MOVE   ACCT-CURR-BAL   TO   ARR-ACCT-CURR-BAL(2).",
+        "           MOVE   1525.00         TO   ARR-ACCT-CURR-CYC-DEBIT(2).",
+        "           MOVE   -1025.00        TO   ARR-ACCT-CURR-BAL(3).",
+        "           MOVE   -2500.00        TO   ARR-ACCT-CURR-CYC-DEBIT(3).",
+        "           EXIT.",
+        "      *---------------------------------------------------------------*",
+        "       1450-WRITE-ARRY-RECORD.",
+        "           WRITE ARR-ARRAY-REC.",
+        "",
+        "           IF ARRYFILE-STATUS NOT = '00'",
+        "                        AND ARRYFILE-STATUS NOT = '10'",
+        "              DISPLAY 'ACCOUNT FILE WRITE STATUS IS:'",
+        "                                        ARRYFILE-STATUS",
+        "              MOVE ARRYFILE-STATUS TO IO-STATUS",
+        "              PERFORM 9910-DISPLAY-IO-STATUS",
+        "              PERFORM 9999-ABEND-PROGRAM",
+        "           END-IF.",
+        "           EXIT.",
+        "      *---------------------------------------------------------------*",
+        "       1500-POPUL-VBRC-RECORD.",
+        "           MOVE   ACCT-ID            TO VB1-ACCT-ID",
+        "                                        VB2-ACCT-ID.",
+        "           MOVE   ACCT-ACTIVE-STATUS TO VB1-ACCT-ACTIVE-STATUS.",
+        "           MOVE   ACCT-CURR-BAL           TO  VB2-ACCT-CURR-BAL.",
+        "           MOVE   ACCT-CREDIT-LIMIT       TO  VB2-ACCT-CREDIT-LIMIT.",
+        "           MOVE   WS-ACCT-REISSUE-YYYY    TO  VB2-ACCT-REISSUE-YYYY.",
+        "           DISPLAY 'VBRC-REC1:' VBRC-REC1.",
+        "           DISPLAY 'VBRC-REC2:' VBRC-REC2.",
+        "           EXIT.",
+        "      *---------------------------------------------------------------*",
+        "       1550-WRITE-VB1-RECORD.",
+        "           MOVE 12 TO WS-RECD-LEN.",
+        "           MOVE VBRC-REC1 TO VBR-REC(1:WS-RECD-LEN).",
+        "           WRITE VBR-REC.",
+        "",
+        "           IF VBRCFILE-STATUS NOT = '00'",
+        "                        AND VBRCFILE-STATUS NOT = '10'",
+        "              DISPLAY 'ACCOUNT FILE WRITE STATUS IS:'",
+        "                                        VBRCFILE-STATUS",
+        "              MOVE VBRCFILE-STATUS TO IO-STATUS",
+        "              PERFORM 9910-DISPLAY-IO-STATUS",
+        "              PERFORM 9999-ABEND-PROGRAM",
+        "           END-IF.",
+        "           EXIT.",
+        "      *---------------------------------------------------------------*",
+        "       1575-WRITE-VB2-RECORD.",
+        "           MOVE 39 TO WS-RECD-LEN.",
+        "           MOVE VBRC-REC2 TO VBR-REC(1:WS-RECD-LEN).",
+        "           WRITE VBR-REC.",
+        "",
+        "           IF VBRCFILE-STATUS NOT = '00'",
+        "                        AND VBRCFILE-STATUS NOT = '10'",
+        "              DISPLAY 'ACCOUNT FILE WRITE STATUS IS:'",
+        "                                        VBRCFILE-STATUS",
+        "              MOVE VBRCFILE-STATUS TO IO-STATUS",
+        "              PERFORM 9910-DISPLAY-IO-STATUS",
+        "              PERFORM 9999-ABEND-PROGRAM",
+        "           END-IF.",
+        "           EXIT.",
+        "      *---------------------------------------------------------------*",
+        "       0000-ACCTFILE-OPEN.",
+        "           MOVE 8 TO APPL-RESULT.",
+        "           OPEN INPUT ACCTFILE-FILE",
+        "           IF  ACCTFILE-STATUS = '00'",
+        "               MOVE 0 TO APPL-RESULT",
+        "           ELSE",
+        "               MOVE 12 TO APPL-RESULT",
+        "           END-IF",
+        "           IF  APPL-AOK",
+        "               CONTINUE",
+        "           ELSE",
+        "               DISPLAY 'ERROR OPENING ACCTFILE'",
+        "               MOVE ACCTFILE-STATUS TO IO-STATUS",
+        "               PERFORM 9910-DISPLAY-IO-STATUS",
+        "               PERFORM 9999-ABEND-PROGRAM",
+        "           END-IF",
+        "           EXIT.",
+        "       2000-OUTFILE-OPEN.",
+        "           MOVE 8 TO APPL-RESULT.",
+        "           OPEN OUTPUT OUT-FILE",
+        "           IF   OUTFILE-STATUS = '00'",
+        "               MOVE 0 TO APPL-RESULT",
+        "           ELSE",
+        "               MOVE 12 TO APPL-RESULT",
+        "           END-IF",
+        "           IF  APPL-AOK",
+        "               CONTINUE",
+        "           ELSE",
+        "               DISPLAY 'ERROR OPENING OUTFILE'  OUTFILE-STATUS",
+        "               MOVE  OUTFILE-STATUS TO IO-STATUS",
+        "               PERFORM 9910-DISPLAY-IO-STATUS",
+        "               PERFORM 9999-ABEND-PROGRAM",
+        "           END-IF",
+        "           EXIT.",
+        "      *---------------------------------------------------------------*",
+        "       3000-ARRFILE-OPEN.",
+        "           MOVE 8 TO APPL-RESULT.",
+        "           OPEN OUTPUT ARRY-FILE",
+        "           IF   ARRYFILE-STATUS = '00'",
+        "               MOVE 0 TO APPL-RESULT",
+        "           ELSE",
+        "               MOVE 12 TO APPL-RESULT",
+        "           END-IF",
+        "           IF  APPL-AOK",
+        "               CONTINUE",
+        "           ELSE",
+        "               DISPLAY 'ERROR OPENING ARRAYFILE'  ARRYFILE-STATUS",
+        "               MOVE  ARRYFILE-STATUS TO IO-STATUS",
+        "               PERFORM 9910-DISPLAY-IO-STATUS",
+        "               PERFORM 9999-ABEND-PROGRAM",
+        "           END-IF",
+        "           EXIT.",
+        "      *---------------------------------------------------------------*",
+        "       4000-VBRFILE-OPEN.",
+        "           MOVE 8 TO APPL-RESULT.",
+        "           OPEN OUTPUT VBRC-FILE",
+        "           IF   VBRCFILE-STATUS = '00'",
+        "               MOVE 0 TO APPL-RESULT",
+        "           ELSE",
+        "               MOVE 12 TO APPL-RESULT",
+        "           END-IF",
+        "           IF  APPL-AOK",
+        "               CONTINUE",
+        "           ELSE",
+        "               DISPLAY 'ERROR OPENING VBRC FILE'  VBRCFILE-STATUS",
+        "               MOVE  VBRCFILE-STATUS TO IO-STATUS",
+        "               PERFORM 9910-DISPLAY-IO-STATUS",
+        "               PERFORM 9999-ABEND-PROGRAM",
+        "           END-IF",
+        "           EXIT.",
+        "      *---------------------------------------------------------------*",
+        "       9000-ACCTFILE-CLOSE.",
+        "           ADD 8 TO ZERO GIVING APPL-RESULT.",
+        "           CLOSE ACCTFILE-FILE",
+        "           IF  ACCTFILE-STATUS = '00'",
+        "               SUBTRACT APPL-RESULT FROM APPL-RESULT",
+        "           ELSE",
+        "               ADD 12 TO ZERO GIVING APPL-RESULT",
+        "           END-IF",
+        "           IF  APPL-AOK",
+        "               CONTINUE",
+        "           ELSE",
+        "               DISPLAY 'ERROR CLOSING ACCOUNT FILE'",
+        "               MOVE ACCTFILE-STATUS TO IO-STATUS",
+        "               PERFORM 9910-DISPLAY-IO-STATUS",
+        "               PERFORM 9999-ABEND-PROGRAM",
+        "           END-IF",
+        "           EXIT.",
+        "",
+        "       9999-ABEND-PROGRAM.",
+        "           DISPLAY 'ABENDING PROGRAM'",
+        "           MOVE 0 TO TIMING",
+        "           MOVE 999 TO ABCODE",
+        "           CALL 'CEE3ABD' USING ABCODE, TIMING.",
+        "",
+        "      *****************************************************************",
+        "       9910-DISPLAY-IO-STATUS.",
+        "           IF  IO-STATUS NOT NUMERIC",
+        "           OR  IO-STAT1 = '9'",
+        "               MOVE IO-STAT1 TO IO-STATUS-04(1:1)",
+        "               MOVE 0        TO TWO-BYTES-BINARY",
+        "               MOVE IO-STAT2 TO TWO-BYTES-RIGHT",
+        "               MOVE TWO-BYTES-BINARY TO IO-STATUS-0403",
+        "               DISPLAY 'FILE STATUS IS: NNNN' IO-STATUS-04",
+        "           ELSE",
+        "               MOVE '0000' TO IO-STATUS-04",
+        "               MOVE IO-STATUS TO IO-STATUS-04(3:2)",
+        "               DISPLAY 'FILE STATUS IS: NNNN' IO-STATUS-04",
+        "           END-IF",
+        "           EXIT.",
+        "",
+        "      *",
+        "      * Ver: CardDemo_v2.0-25-gdb72e6b-235 Date: 2025-04-29 11:01:27 CDT",
+        "      *",
+        ""
+      ],
+      "Variables": [
+        {
+          "Level": 1,
+          "Name": "FD-ACCTFILE-REC",
+          "ComputedSize": 300,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:53:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "FD-ACCT-ID",
+              "Pic": "9(11)",
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                11
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 11,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://cbl/CBACT01C.cbl:54:11"
+            },
+            {
+              "Level": 5,
+              "Name": "FD-ACCT-DATA",
+              "Pic": "X(289)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                289
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 289,
+              "Offset": [
+                11
+              ],
+              "Coordinates": "file://cbl/CBACT01C.cbl:55:11"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "OUT-ACCT-REC",
+          "ComputedSize": 107,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:57:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "OUT-ACCT-ID",
+              "Pic": "9(11)",
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                11
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 11,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://cbl/CBACT01C.cbl:58:10"
+            },
+            {
+              "Level": 5,
+              "Name": "OUT-ACCT-ACTIVE-STATUS",
+              "Pic": "X(01)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                11
+              ],
+              "Coordinates": "file://cbl/CBACT01C.cbl:59:10"
+            },
+            {
+              "Level": 5,
+              "Name": "OUT-ACCT-CURR-BAL",
+              "Pic": "S9(10)V99",
+              "ParsedPic": [
+                "S",
+                "9",
+                "V",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1,
+                10,
+                1,
+                2
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-float",
+              "ComputedSize": 12,
+              "Offset": [
+                12
+              ],
+              "Coordinates": "file://cbl/CBACT01C.cbl:60:10"
+            },
+            {
+              "Level": 5,
+              "Name": "OUT-ACCT-CREDIT-LIMIT",
+              "Pic": "S9(10)V99",
+              "ParsedPic": [
+                "S",
+                "9",
+                "V",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1,
+                10,
+                1,
+                2
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-float",
+              "ComputedSize": 12,
+              "Offset": [
+                24
+              ],
+              "Coordinates": "file://cbl/CBACT01C.cbl:61:10"
+            },
+            {
+              "Level": 5,
+              "Name": "OUT-ACCT-CASH-CREDIT-LIMIT",
+              "Pic": "S9(10)V99",
+              "ParsedPic": [
+                "S",
+                "9",
+                "V",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1,
+                10,
+                1,
+                2
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-float",
+              "ComputedSize": 12,
+              "Offset": [
+                36
+              ],
+              "Coordinates": "file://cbl/CBACT01C.cbl:62:10"
+            },
+            {
+              "Level": 5,
+              "Name": "OUT-ACCT-OPEN-DATE",
+              "Pic": "X(10)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                10
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 10,
+              "Offset": [
+                48
+              ],
+              "Coordinates": "file://cbl/CBACT01C.cbl:63:10"
+            },
+            {
+              "Level": 5,
+              "Name": "OUT-ACCT-EXPIRAION-DATE",
+              "Pic": "X(10)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                10
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 10,
+              "Offset": [
+                58
+              ],
+              "Coordinates": "file://cbl/CBACT01C.cbl:64:10"
+            },
+            {
+              "Level": 5,
+              "Name": "OUT-ACCT-REISSUE-DATE",
+              "Pic": "X(10)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                10
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 10,
+              "Offset": [
+                68
+              ],
+              "Coordinates": "file://cbl/CBACT01C.cbl:65:10"
+            },
+            {
+              "Level": 5,
+              "Name": "OUT-ACCT-CURR-CYC-CREDIT",
+              "Pic": "S9(10)V99",
+              "ParsedPic": [
+                "S",
+                "9",
+                "V",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1,
+                10,
+                1,
+                2
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-float",
+              "ComputedSize": 12,
+              "Offset": [
+                78
+              ],
+              "Coordinates": "file://cbl/CBACT01C.cbl:66:10"
+            },
+            {
+              "Level": 5,
+              "Name": "OUT-ACCT-CURR-CYC-DEBIT",
+              "Pic": "S9(10)V99",
+              "Usage": "COMP-3",
+              "ParsedPic": [
+                "S",
+                "9",
+                "V",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1,
+                10,
+                1,
+                2
+              ],
+              "InferredUsage": "COMP-3",
+              "InferredType": "comp-float",
+              "ComputedSize": 7,
+              "Offset": [
+                90
+              ],
+              "Coordinates": "file://cbl/CBACT01C.cbl:67:10"
+            },
+            {
+              "Level": 5,
+              "Name": "OUT-ACCT-GROUP-ID",
+              "Pic": "X(10)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                10
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 10,
+              "Offset": [
+                97
+              ],
+              "Coordinates": "file://cbl/CBACT01C.cbl:69:10"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "ARR-ARRAY-REC",
+          "ComputedSize": 110,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:72:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "ARR-ACCT-ID",
+              "Pic": "9(11)",
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                11
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 11,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://cbl/CBACT01C.cbl:73:10"
+            },
+            {
+              "Level": 5,
+              "Name": "ARR-ACCT-BAL",
+              "Occurs": {
+                "Type": "Fixed",
+                "Fixed": 5
+              },
+              "ComputedSize": 95,
+              "ElementSize": 19,
+              "Offset": [
+                11,
+                19,
+                0
+              ],
+              "Coordinates": "file://cbl/CBACT01C.cbl:74:10",
+              "Children": [
+                {
+                  "Level": 10,
+                  "Name": "ARR-ACCT-CURR-BAL",
+                  "Pic": "S9(10)V99",
+                  "ParsedPic": [
+                    "S",
+                    "9",
+                    "V",
+                    "9"
+                  ],
+                  "ParsedPicCounts": [
+                    1,
+                    10,
+                    1,
+                    2
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "disp-float",
+                  "ComputedSize": 12,
+                  "Offset": [
+                    11,
+                    19,
+                    0
+                  ],
+                  "Coordinates": "file://cbl/CBACT01C.cbl:75:12"
+                },
+                {
+                  "Level": 10,
+                  "Name": "ARR-ACCT-CURR-CYC-DEBIT",
+                  "Pic": "S9(10)V99",
+                  "Usage": "COMP-3",
+                  "ParsedPic": [
+                    "S",
+                    "9",
+                    "V",
+                    "9"
+                  ],
+                  "ParsedPicCounts": [
+                    1,
+                    10,
+                    1,
+                    2
+                  ],
+                  "InferredUsage": "COMP-3",
+                  "InferredType": "comp-float",
+                  "ComputedSize": 7,
+                  "Offset": [
+                    11,
+                    19,
+                    12
+                  ],
+                  "Coordinates": "file://cbl/CBACT01C.cbl:76:12"
+                }
+              ]
+            },
+            {
+              "Level": 5,
+              "Name": "ARR-FILLER",
+              "Pic": "X(04)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                4
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 4,
+              "Offset": [
+                106
+              ],
+              "Coordinates": "file://cbl/CBACT01C.cbl:78:10"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "VBR-REC",
+          "Pic": "X(80)",
+          "ParsedPic": [
+            "X"
+          ],
+          "ParsedPicCounts": [
+            80
+          ],
+          "InferredUsage": "DISPLAY",
+          "InferredType": "string",
+          "ComputedSize": 80,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:85:7"
+        },
+        {
+          "Level": 1,
+          "Name": "ACCOUNT-RECORD",
+          "ComputedSize": 300,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cpy/CVACT01Y.cpy:4:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "ACCT-ID",
+              "Pic": "9(11)",
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                11
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 11,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://cpy/CVACT01Y.cpy:5:11"
+            },
+            {
+              "Level": 5,
+              "Name": "ACCT-ACTIVE-STATUS",
+              "Pic": "X(01)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                11
+              ],
+              "Coordinates": "file://cpy/CVACT01Y.cpy:6:11"
+            },
+            {
+              "Level": 5,
+              "Name": "ACCT-CURR-BAL",
+              "Pic": "S9(10)V99",
+              "ParsedPic": [
+                "S",
+                "9",
+                "V",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1,
+                10,
+                1,
+                2
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-float",
+              "ComputedSize": 12,
+              "Offset": [
+                12
+              ],
+              "Coordinates": "file://cpy/CVACT01Y.cpy:7:11"
+            },
+            {
+              "Level": 5,
+              "Name": "ACCT-CREDIT-LIMIT",
+              "Pic": "S9(10)V99",
+              "ParsedPic": [
+                "S",
+                "9",
+                "V",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1,
+                10,
+                1,
+                2
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-float",
+              "ComputedSize": 12,
+              "Offset": [
+                24
+              ],
+              "Coordinates": "file://cpy/CVACT01Y.cpy:8:11"
+            },
+            {
+              "Level": 5,
+              "Name": "ACCT-CASH-CREDIT-LIMIT",
+              "Pic": "S9(10)V99",
+              "ParsedPic": [
+                "S",
+                "9",
+                "V",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1,
+                10,
+                1,
+                2
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-float",
+              "ComputedSize": 12,
+              "Offset": [
+                36
+              ],
+              "Coordinates": "file://cpy/CVACT01Y.cpy:9:11"
+            },
+            {
+              "Level": 5,
+              "Name": "ACCT-OPEN-DATE",
+              "Pic": "X(10)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                10
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 10,
+              "Offset": [
+                48
+              ],
+              "Coordinates": "file://cpy/CVACT01Y.cpy:10:11"
+            },
+            {
+              "Level": 5,
+              "Name": "ACCT-EXPIRAION-DATE",
+              "Pic": "X(10)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                10
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 10,
+              "Offset": [
+                58
+              ],
+              "Coordinates": "file://cpy/CVACT01Y.cpy:11:11"
+            },
+            {
+              "Level": 5,
+              "Name": "ACCT-REISSUE-DATE",
+              "Pic": "X(10)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                10
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 10,
+              "Offset": [
+                68
+              ],
+              "Coordinates": "file://cpy/CVACT01Y.cpy:12:11"
+            },
+            {
+              "Level": 5,
+              "Name": "ACCT-CURR-CYC-CREDIT",
+              "Pic": "S9(10)V99",
+              "ParsedPic": [
+                "S",
+                "9",
+                "V",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1,
+                10,
+                1,
+                2
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-float",
+              "ComputedSize": 12,
+              "Offset": [
+                78
+              ],
+              "Coordinates": "file://cpy/CVACT01Y.cpy:13:11"
+            },
+            {
+              "Level": 5,
+              "Name": "ACCT-CURR-CYC-DEBIT",
+              "Pic": "S9(10)V99",
+              "ParsedPic": [
+                "S",
+                "9",
+                "V",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1,
+                10,
+                1,
+                2
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-float",
+              "ComputedSize": 12,
+              "Offset": [
+                90
+              ],
+              "Coordinates": "file://cpy/CVACT01Y.cpy:14:11"
+            },
+            {
+              "Level": 5,
+              "Name": "ACCT-ADDR-ZIP",
+              "Pic": "X(10)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                10
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 10,
+              "Offset": [
+                102
+              ],
+              "Coordinates": "file://cpy/CVACT01Y.cpy:15:11"
+            },
+            {
+              "Level": 5,
+              "Name": "ACCT-GROUP-ID",
+              "Pic": "X(10)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                10
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 10,
+              "Offset": [
+                112
+              ],
+              "Coordinates": "file://cpy/CVACT01Y.cpy:16:11"
+            },
+            {
+              "Level": 5,
+              "Pic": "X(178)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                178
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 178,
+              "Offset": [
+                122
+              ],
+              "Coordinates": "file://cpy/CVACT01Y.cpy:17:11"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "CODATECN-REC",
+          "ComputedSize": 80,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cpy/CODATECN.cpy:17:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "CODATECN-IN-REC",
+              "ComputedSize": 21,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://cpy/CODATECN.cpy:18:11",
+              "Children": [
+                {
+                  "Level": 10,
+                  "Name": "CODATECN-TYPE",
+                  "Pic": "X",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    1
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 1,
+                  "Offset": [
+                    0
+                  ],
+                  "Coordinates": "file://cpy/CODATECN.cpy:19:15",
+                  "Children": [
+                    {
+                      "Level": 88,
+                      "Name": "YYYYMMDD-IN",
+                      "Values": [
+                        {
+                          "Literal": "1",
+                          "RawLiteral": [
+                            49
+                          ]
+                        }
+                      ],
+                      "Offset": [
+                        0
+                      ],
+                      "Coordinates": "file://cpy/CODATECN.cpy:20:19"
+                    },
+                    {
+                      "Level": 88,
+                      "Name": "YYYY-MM-DD-IN",
+                      "Values": [
+                        {
+                          "Literal": "2",
+                          "RawLiteral": [
+                            50
+                          ]
+                        }
+                      ],
+                      "Offset": [
+                        0
+                      ],
+                      "Coordinates": "file://cpy/CODATECN.cpy:21:19"
+                    }
+                  ]
+                },
+                {
+                  "Level": 10,
+                  "Name": "CODATECN-INP-DATE",
+                  "Pic": "X(20)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    20
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 20,
+                  "Offset": [
+                    1
+                  ],
+                  "Coordinates": "file://cpy/CODATECN.cpy:22:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "CODATECN-1INP",
+                  "Redefines": "CODATECN-INP-DATE",
+                  "ComputedSize": 20,
+                  "Offset": [
+                    1
+                  ],
+                  "Coordinates": "file://cpy/CODATECN.cpy:23:15",
+                  "Children": [
+                    {
+                      "Level": 15,
+                      "Name": "CODATECN-1YYYY",
+                      "Pic": "XXXX",
+                      "ParsedPic": [
+                        "X"
+                      ],
+                      "ParsedPicCounts": [
+                        4
+                      ],
+                      "InferredUsage": "DISPLAY",
+                      "InferredType": "string",
+                      "ComputedSize": 4,
+                      "Offset": [
+                        1
+                      ],
+                      "Coordinates": "file://cpy/CODATECN.cpy:24:19"
+                    },
+                    {
+                      "Level": 15,
+                      "Name": "CODATECN-1MM",
+                      "Pic": "XX",
+                      "ParsedPic": [
+                        "X"
+                      ],
+                      "ParsedPicCounts": [
+                        2
+                      ],
+                      "InferredUsage": "DISPLAY",
+                      "InferredType": "string",
+                      "ComputedSize": 2,
+                      "Offset": [
+                        5
+                      ],
+                      "Coordinates": "file://cpy/CODATECN.cpy:25:19"
+                    },
+                    {
+                      "Level": 15,
+                      "Name": "CODATECN-1DD",
+                      "Pic": "XX",
+                      "ParsedPic": [
+                        "X"
+                      ],
+                      "ParsedPicCounts": [
+                        2
+                      ],
+                      "InferredUsage": "DISPLAY",
+                      "InferredType": "string",
+                      "ComputedSize": 2,
+                      "Offset": [
+                        7
+                      ],
+                      "Coordinates": "file://cpy/CODATECN.cpy:26:19"
+                    },
+                    {
+                      "Level": 15,
+                      "Name": "CODATECN-1FIL",
+                      "Pic": "X(12)",
+                      "ParsedPic": [
+                        "X"
+                      ],
+                      "ParsedPicCounts": [
+                        12
+                      ],
+                      "InferredUsage": "DISPLAY",
+                      "InferredType": "string",
+                      "ComputedSize": 12,
+                      "Offset": [
+                        9
+                      ],
+                      "Coordinates": "file://cpy/CODATECN.cpy:27:19"
+                    }
+                  ]
+                },
+                {
+                  "Level": 10,
+                  "Name": "CODATECN-2INP",
+                  "Redefines": "CODATECN-INP-DATE",
+                  "ComputedSize": 20,
+                  "Offset": [
+                    1
+                  ],
+                  "Coordinates": "file://cpy/CODATECN.cpy:28:15",
+                  "Children": [
+                    {
+                      "Level": 15,
+                      "Name": "CODATECN-1O-YYYY",
+                      "Pic": "XXXX",
+                      "ParsedPic": [
+                        "X"
+                      ],
+                      "ParsedPicCounts": [
+                        4
+                      ],
+                      "InferredUsage": "DISPLAY",
+                      "InferredType": "string",
+                      "ComputedSize": 4,
+                      "Offset": [
+                        1
+                      ],
+                      "Coordinates": "file://cpy/CODATECN.cpy:29:19"
+                    },
+                    {
+                      "Level": 15,
+                      "Name": "CODATECN-1I-S1",
+                      "Pic": "X",
+                      "ParsedPic": [
+                        "X"
+                      ],
+                      "ParsedPicCounts": [
+                        1
+                      ],
+                      "InferredUsage": "DISPLAY",
+                      "InferredType": "string",
+                      "ComputedSize": 1,
+                      "Offset": [
+                        5
+                      ],
+                      "Coordinates": "file://cpy/CODATECN.cpy:30:19"
+                    },
+                    {
+                      "Level": 15,
+                      "Name": "CODATECN-1MM",
+                      "Pic": "XX",
+                      "ParsedPic": [
+                        "X"
+                      ],
+                      "ParsedPicCounts": [
+                        2
+                      ],
+                      "InferredUsage": "DISPLAY",
+                      "InferredType": "string",
+                      "ComputedSize": 2,
+                      "Offset": [
+                        6
+                      ],
+                      "Coordinates": "file://cpy/CODATECN.cpy:31:19"
+                    },
+                    {
+                      "Level": 15,
+                      "Name": "CODATECN-1I-S2",
+                      "Pic": "X",
+                      "ParsedPic": [
+                        "X"
+                      ],
+                      "ParsedPicCounts": [
+                        1
+                      ],
+                      "InferredUsage": "DISPLAY",
+                      "InferredType": "string",
+                      "ComputedSize": 1,
+                      "Offset": [
+                        8
+                      ],
+                      "Coordinates": "file://cpy/CODATECN.cpy:32:19"
+                    },
+                    {
+                      "Level": 15,
+                      "Name": "CODATECN-2YY",
+                      "Pic": "XX",
+                      "ParsedPic": [
+                        "X"
+                      ],
+                      "ParsedPicCounts": [
+                        2
+                      ],
+                      "InferredUsage": "DISPLAY",
+                      "InferredType": "string",
+                      "ComputedSize": 2,
+                      "Offset": [
+                        9
+                      ],
+                      "Coordinates": "file://cpy/CODATECN.cpy:33:19"
+                    },
+                    {
+                      "Level": 15,
+                      "Name": "CODATECN-2FIL",
+                      "Pic": "X(10)",
+                      "ParsedPic": [
+                        "X"
+                      ],
+                      "ParsedPicCounts": [
+                        10
+                      ],
+                      "InferredUsage": "DISPLAY",
+                      "InferredType": "string",
+                      "ComputedSize": 10,
+                      "Offset": [
+                        11
+                      ],
+                      "Coordinates": "file://cpy/CODATECN.cpy:34:19"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "Level": 5,
+              "Name": "CODATECN-OUT-REC",
+              "ComputedSize": 21,
+              "Offset": [
+                21
+              ],
+              "Coordinates": "file://cpy/CODATECN.cpy:35:11",
+              "Children": [
+                {
+                  "Level": 10,
+                  "Name": "CODATECN-OUTTYPE",
+                  "Pic": "X",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    1
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 1,
+                  "Offset": [
+                    21
+                  ],
+                  "Coordinates": "file://cpy/CODATECN.cpy:36:15",
+                  "Children": [
+                    {
+                      "Level": 88,
+                      "Name": "YYYY-MM-DD-OP",
+                      "Values": [
+                        {
+                          "Literal": "1",
+                          "RawLiteral": [
+                            49
+                          ]
+                        }
+                      ],
+                      "Offset": [
+                        0
+                      ],
+                      "Coordinates": "file://cpy/CODATECN.cpy:37:19"
+                    },
+                    {
+                      "Level": 88,
+                      "Name": "YYYYMMDD-OP",
+                      "Values": [
+                        {
+                          "Literal": "2",
+                          "RawLiteral": [
+                            50
+                          ]
+                        }
+                      ],
+                      "Offset": [
+                        0
+                      ],
+                      "Coordinates": "file://cpy/CODATECN.cpy:38:19"
+                    }
+                  ]
+                },
+                {
+                  "Level": 10,
+                  "Name": "CODATECN-0UT-DATE",
+                  "Pic": "X(20)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    20
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 20,
+                  "Offset": [
+                    22
+                  ],
+                  "Coordinates": "file://cpy/CODATECN.cpy:39:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "CODATECN-1OUT",
+                  "Redefines": "CODATECN-0UT-DATE",
+                  "ComputedSize": 20,
+                  "Offset": [
+                    22
+                  ],
+                  "Coordinates": "file://cpy/CODATECN.cpy:40:15",
+                  "Children": [
+                    {
+                      "Level": 15,
+                      "Name": "CODATECN-1O-YYYY",
+                      "Pic": "XXXX",
+                      "ParsedPic": [
+                        "X"
+                      ],
+                      "ParsedPicCounts": [
+                        4
+                      ],
+                      "InferredUsage": "DISPLAY",
+                      "InferredType": "string",
+                      "ComputedSize": 4,
+                      "Offset": [
+                        22
+                      ],
+                      "Coordinates": "file://cpy/CODATECN.cpy:41:19"
+                    },
+                    {
+                      "Level": 15,
+                      "Name": "CODATECN-1O-S1",
+                      "Pic": "X",
+                      "ParsedPic": [
+                        "X"
+                      ],
+                      "ParsedPicCounts": [
+                        1
+                      ],
+                      "InferredUsage": "DISPLAY",
+                      "InferredType": "string",
+                      "ComputedSize": 1,
+                      "Offset": [
+                        26
+                      ],
+                      "Coordinates": "file://cpy/CODATECN.cpy:42:19"
+                    },
+                    {
+                      "Level": 15,
+                      "Name": "CODATECN-1O-MM",
+                      "Pic": "XX",
+                      "ParsedPic": [
+                        "X"
+                      ],
+                      "ParsedPicCounts": [
+                        2
+                      ],
+                      "InferredUsage": "DISPLAY",
+                      "InferredType": "string",
+                      "ComputedSize": 2,
+                      "Offset": [
+                        27
+                      ],
+                      "Coordinates": "file://cpy/CODATECN.cpy:43:19"
+                    },
+                    {
+                      "Level": 15,
+                      "Name": "CODATECN-1O-S2",
+                      "Pic": "X",
+                      "ParsedPic": [
+                        "X"
+                      ],
+                      "ParsedPicCounts": [
+                        1
+                      ],
+                      "InferredUsage": "DISPLAY",
+                      "InferredType": "string",
+                      "ComputedSize": 1,
+                      "Offset": [
+                        29
+                      ],
+                      "Coordinates": "file://cpy/CODATECN.cpy:44:19"
+                    },
+                    {
+                      "Level": 15,
+                      "Name": "CODATECN-1O-DD",
+                      "Pic": "XX",
+                      "ParsedPic": [
+                        "X"
+                      ],
+                      "ParsedPicCounts": [
+                        2
+                      ],
+                      "InferredUsage": "DISPLAY",
+                      "InferredType": "string",
+                      "ComputedSize": 2,
+                      "Offset": [
+                        30
+                      ],
+                      "Coordinates": "file://cpy/CODATECN.cpy:45:19"
+                    },
+                    {
+                      "Level": 15,
+                      "Name": "CODATECN-1OFIl",
+                      "Pic": "X(10)",
+                      "ParsedPic": [
+                        "X"
+                      ],
+                      "ParsedPicCounts": [
+                        10
+                      ],
+                      "InferredUsage": "DISPLAY",
+                      "InferredType": "string",
+                      "ComputedSize": 10,
+                      "Offset": [
+                        32
+                      ],
+                      "Coordinates": "file://cpy/CODATECN.cpy:46:19"
+                    }
+                  ]
+                },
+                {
+                  "Level": 10,
+                  "Name": "CODATECN-2OUT",
+                  "Redefines": "CODATECN-0UT-DATE",
+                  "ComputedSize": 20,
+                  "Offset": [
+                    22
+                  ],
+                  "Coordinates": "file://cpy/CODATECN.cpy:47:15",
+                  "Children": [
+                    {
+                      "Level": 15,
+                      "Name": "CODATECN-2O-YYYY",
+                      "Pic": "XXXX",
+                      "ParsedPic": [
+                        "X"
+                      ],
+                      "ParsedPicCounts": [
+                        4
+                      ],
+                      "InferredUsage": "DISPLAY",
+                      "InferredType": "string",
+                      "ComputedSize": 4,
+                      "Offset": [
+                        22
+                      ],
+                      "Coordinates": "file://cpy/CODATECN.cpy:48:19"
+                    },
+                    {
+                      "Level": 15,
+                      "Name": "CODATECN-2O-MM",
+                      "Pic": "XX",
+                      "ParsedPic": [
+                        "X"
+                      ],
+                      "ParsedPicCounts": [
+                        2
+                      ],
+                      "InferredUsage": "DISPLAY",
+                      "InferredType": "string",
+                      "ComputedSize": 2,
+                      "Offset": [
+                        26
+                      ],
+                      "Coordinates": "file://cpy/CODATECN.cpy:49:19"
+                    },
+                    {
+                      "Level": 15,
+                      "Name": "CODATECN-2O-DD",
+                      "Pic": "XX",
+                      "ParsedPic": [
+                        "X"
+                      ],
+                      "ParsedPicCounts": [
+                        2
+                      ],
+                      "InferredUsage": "DISPLAY",
+                      "InferredType": "string",
+                      "ComputedSize": 2,
+                      "Offset": [
+                        28
+                      ],
+                      "Coordinates": "file://cpy/CODATECN.cpy:50:19"
+                    },
+                    {
+                      "Level": 15,
+                      "Name": "CODATECN-2OFIl",
+                      "Pic": "X(12)",
+                      "ParsedPic": [
+                        "X"
+                      ],
+                      "ParsedPicCounts": [
+                        12
+                      ],
+                      "InferredUsage": "DISPLAY",
+                      "InferredType": "string",
+                      "ComputedSize": 12,
+                      "Offset": [
+                        30
+                      ],
+                      "Coordinates": "file://cpy/CODATECN.cpy:51:19"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "Level": 5,
+              "Name": "CODATECN-ERROR-MSG",
+              "Pic": "X(38)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                38
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 38,
+              "Offset": [
+                42
+              ],
+              "Coordinates": "file://cpy/CODATECN.cpy:52:11"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "ACCTFILE-STATUS",
+          "ComputedSize": 2,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:91:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "ACCTFILE-STAT1",
+              "Pic": "X",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://cbl/CBACT01C.cbl:92:11"
+            },
+            {
+              "Level": 5,
+              "Name": "ACCTFILE-STAT2",
+              "Pic": "X",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                1
+              ],
+              "Coordinates": "file://cbl/CBACT01C.cbl:93:11"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "OUTFILE-STATUS",
+          "ComputedSize": 2,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:94:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "OUTFILE-STAT1",
+              "Pic": "X",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://cbl/CBACT01C.cbl:95:11"
+            },
+            {
+              "Level": 5,
+              "Name": "OUTFILE-STAT2",
+              "Pic": "X",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                1
+              ],
+              "Coordinates": "file://cbl/CBACT01C.cbl:96:11"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "ARRYFILE-STATUS",
+          "ComputedSize": 2,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:97:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "ARRYFILE-STAT1",
+              "Pic": "X",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://cbl/CBACT01C.cbl:98:11"
+            },
+            {
+              "Level": 5,
+              "Name": "ARRYFILE-STAT2",
+              "Pic": "X",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                1
+              ],
+              "Coordinates": "file://cbl/CBACT01C.cbl:99:11"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "VBRCFILE-STATUS",
+          "ComputedSize": 2,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:100:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "VBRCFILE-STAT1",
+              "Pic": "X",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://cbl/CBACT01C.cbl:101:11"
+            },
+            {
+              "Level": 5,
+              "Name": "VBRCFILE-STAT2",
+              "Pic": "X",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                1
+              ],
+              "Coordinates": "file://cbl/CBACT01C.cbl:102:11"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "IO-STATUS",
+          "ComputedSize": 2,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:104:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "IO-STAT1",
+              "Pic": "X",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://cbl/CBACT01C.cbl:105:11"
+            },
+            {
+              "Level": 5,
+              "Name": "IO-STAT2",
+              "Pic": "X",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                1
+              ],
+              "Coordinates": "file://cbl/CBACT01C.cbl:106:11"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "TWO-BYTES-BINARY",
+          "Pic": "9(4)",
+          "Usage": "COMP",
+          "ParsedPic": [
+            "9"
+          ],
+          "ParsedPicCounts": [
+            4
+          ],
+          "InferredUsage": "COMP",
+          "InferredType": "comp-int",
+          "ComputedSize": 2,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:107:7"
+        },
+        {
+          "Level": 1,
+          "Name": "TWO-BYTES-ALPHA",
+          "Redefines": "TWO-BYTES-BINARY",
+          "ComputedSize": 2,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:108:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "TWO-BYTES-LEFT",
+              "Pic": "X",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://cbl/CBACT01C.cbl:109:11"
+            },
+            {
+              "Level": 5,
+              "Name": "TWO-BYTES-RIGHT",
+              "Pic": "X",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                1
+              ],
+              "Coordinates": "file://cbl/CBACT01C.cbl:110:11"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "IO-STATUS-04",
+          "ComputedSize": 4,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:111:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "IO-STATUS-0401",
+              "Pic": "9",
+              "Values": [
+                {
+                  "Literal": "0",
+                  "RawLiteral": [
+                    48
+                  ]
+                }
+              ],
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 1,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://cbl/CBACT01C.cbl:112:11"
+            },
+            {
+              "Level": 5,
+              "Name": "IO-STATUS-0403",
+              "Pic": "999",
+              "Values": [
+                {
+                  "Literal": "0",
+                  "RawLiteral": [
+                    48
+                  ]
+                }
+              ],
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                3
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 3,
+              "Offset": [
+                1
+              ],
+              "Coordinates": "file://cbl/CBACT01C.cbl:113:11"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "APPL-RESULT",
+          "Pic": "S9(9)",
+          "Usage": "COMP",
+          "ParsedPic": [
+            "S",
+            "9"
+          ],
+          "ParsedPicCounts": [
+            1,
+            9
+          ],
+          "InferredUsage": "COMP",
+          "InferredType": "comp-int",
+          "ComputedSize": 4,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:115:7",
+          "Children": [
+            {
+              "Level": 88,
+              "Name": "APPL-AOK",
+              "Values": [
+                {
+                  "Literal": "0",
+                  "RawLiteral": [
+                    48
+                  ]
+                }
+              ],
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://cbl/CBACT01C.cbl:116:11"
+            },
+            {
+              "Level": 88,
+              "Name": "APPL-EOF",
+              "Values": [
+                {
+                  "Literal": "16",
+                  "RawLiteral": [
+                    49,
+                    54
+                  ]
+                }
+              ],
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://cbl/CBACT01C.cbl:117:11"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "END-OF-FILE",
+          "Pic": "X(01)",
+          "Values": [
+            {
+              "Literal": "N",
+              "RawLiteral": [
+                78
+              ]
+            }
+          ],
+          "ParsedPic": [
+            "X"
+          ],
+          "ParsedPicCounts": [
+            1
+          ],
+          "InferredUsage": "DISPLAY",
+          "InferredType": "string",
+          "ComputedSize": 1,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:119:7"
+        },
+        {
+          "Level": 1,
+          "Name": "ABCODE",
+          "Pic": "S9(9)",
+          "Usage": "COMP",
+          "ParsedPic": [
+            "S",
+            "9"
+          ],
+          "ParsedPicCounts": [
+            1,
+            9
+          ],
+          "InferredUsage": "COMP",
+          "InferredType": "comp-int",
+          "ComputedSize": 4,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:120:7"
+        },
+        {
+          "Level": 1,
+          "Name": "TIMING",
+          "Pic": "S9(9)",
+          "Usage": "COMP",
+          "ParsedPic": [
+            "S",
+            "9"
+          ],
+          "ParsedPicCounts": [
+            1,
+            9
+          ],
+          "InferredUsage": "COMP",
+          "InferredType": "comp-int",
+          "ComputedSize": 4,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:121:7"
+        },
+        {
+          "Level": 1,
+          "Name": "WS-RECD-LEN",
+          "Pic": "9(04)",
+          "ParsedPic": [
+            "9"
+          ],
+          "ParsedPicCounts": [
+            4
+          ],
+          "InferredUsage": "DISPLAY",
+          "InferredType": "disp-int",
+          "ComputedSize": 4,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:122:7"
+        },
+        {
+          "Level": 1,
+          "Name": "VBRC-REC1",
+          "ComputedSize": 12,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:123:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "VB1-ACCT-ID",
+              "Pic": "9(11)",
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                11
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 11,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://cbl/CBACT01C.cbl:124:10"
+            },
+            {
+              "Level": 5,
+              "Name": "VB1-ACCT-ACTIVE-STATUS",
+              "Pic": "X(01)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                11
+              ],
+              "Coordinates": "file://cbl/CBACT01C.cbl:125:10"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "VBRC-REC2",
+          "ComputedSize": 39,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:126:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "VB2-ACCT-ID",
+              "Pic": "9(11)",
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                11
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 11,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://cbl/CBACT01C.cbl:127:10"
+            },
+            {
+              "Level": 5,
+              "Name": "VB2-ACCT-CURR-BAL",
+              "Pic": "S9(10)V99",
+              "ParsedPic": [
+                "S",
+                "9",
+                "V",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1,
+                10,
+                1,
+                2
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-float",
+              "ComputedSize": 12,
+              "Offset": [
+                11
+              ],
+              "Coordinates": "file://cbl/CBACT01C.cbl:128:10"
+            },
+            {
+              "Level": 5,
+              "Name": "VB2-ACCT-CREDIT-LIMIT",
+              "Pic": "S9(10)V99",
+              "ParsedPic": [
+                "S",
+                "9",
+                "V",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1,
+                10,
+                1,
+                2
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-float",
+              "ComputedSize": 12,
+              "Offset": [
+                23
+              ],
+              "Coordinates": "file://cbl/CBACT01C.cbl:129:10"
+            },
+            {
+              "Level": 5,
+              "Name": "VB2-ACCT-REISSUE-YYYY",
+              "Pic": "X(04)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                4
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 4,
+              "Offset": [
+                35
+              ],
+              "Coordinates": "file://cbl/CBACT01C.cbl:130:10"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "WS-ACCT-REISSUE-DATE",
+          "ComputedSize": 10,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:131:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "WS-ACCT-REISSUE-YYYY",
+              "Pic": "X(04)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                4
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 4,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://cbl/CBACT01C.cbl:132:10"
+            },
+            {
+              "Level": 5,
+              "Name": "WS-FILLER-1",
+              "Pic": "X(01)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                4
+              ],
+              "Coordinates": "file://cbl/CBACT01C.cbl:133:10"
+            },
+            {
+              "Level": 5,
+              "Name": "WS-ACCT-REISSUE-MM",
+              "Pic": "X(02)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                2
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 2,
+              "Offset": [
+                5
+              ],
+              "Coordinates": "file://cbl/CBACT01C.cbl:134:10"
+            },
+            {
+              "Level": 5,
+              "Name": "WS-FILLER-2",
+              "Pic": "X(01)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                7
+              ],
+              "Coordinates": "file://cbl/CBACT01C.cbl:135:10"
+            },
+            {
+              "Level": 5,
+              "Name": "WS-ACCT-REISSUE-DD",
+              "Pic": "X(02)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                2
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 2,
+              "Offset": [
+                8
+              ],
+              "Coordinates": "file://cbl/CBACT01C.cbl:136:10"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "WS-REISSUE-DATE",
+          "Pic": "X(10)",
+          "Redefines": "WS-ACCT-REISSUE-DATE",
+          "ParsedPic": [
+            "X"
+          ],
+          "ParsedPicCounts": [
+            10
+          ],
+          "InferredUsage": "DISPLAY",
+          "InferredType": "string",
+          "ComputedSize": 10,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:137:7"
+        }
+      ],
+      "Chunks": {
+        "ChunkType": "PROCEDURE_DIVISION",
+        "Range": [214,506],
+        "Sentences": [215,239],
+        "ReferencedProcedures": [
+          {
+            "Name": "0000-ACCTFILE-OPEN"
+          },
+          {
+            "Name": "2000-OUTFILE-OPEN"
+          },
+          {
+            "Name": "3000-ARRFILE-OPEN"
+          },
+          {
+            "Name": "4000-VBRFILE-OPEN"
+          },
+          {
+            "Name": "1000-ACCTFILE-GET-NEXT"
+          },
+          {
+            "Name": "9000-ACCTFILE-CLOSE"
+          }
+        ],
+        "ReferencedVariables": [
+          {
+            "References": [
+              {
+                "Name": "END-OF-FILE"
+              }
+            ],
+            "Range": [193,194]
+          },
+          {
+            "References": [
+              {
+                "Name": "ACCOUNT-RECORD"
+              }
+            ],
+            "Range": [93,107]
+          }
+        ],
+        "Children": [
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "1000-ACCTFILE-GET-NEXT",
+            "Range": [239,274],
+            "Sentences": [240,274],
+            "ReferencedProcedures": [
+              {
+                "Name": "1100-DISPLAY-ACCT-RECORD"
+              },
+              {
+                "Name": "1300-POPUL-ACCT-RECORD"
+              },
+              {
+                "Name": "1350-WRITE-ACCT-RECORD"
+              },
+              {
+                "Name": "1400-POPUL-ARRAY-RECORD"
+              },
+              {
+                "Name": "1450-WRITE-ARRY-RECORD"
+              },
+              {
+                "Name": "1500-POPUL-VBRC-RECORD"
+              },
+              {
+                "Name": "1550-WRITE-VB1-RECORD"
+              },
+              {
+                "Name": "1575-WRITE-VB2-RECORD"
+              },
+              {
+                "Name": "9910-DISPLAY-IO-STATUS"
+              },
+              {
+                "Name": "9999-ABEND-PROGRAM"
+              }
+            ],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "ACCOUNT-RECORD"
+                  }
+                ],
+                "Range": [93,107]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "ACCTFILE-STATUS"
+                  }
+                ],
+                "Range": [165,168]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "APPL-RESULT"
+                  },
+                  {
+                    "Name": "APPL-AOK"
+                  },
+                  {
+                    "Name": "APPL-EOF"
+                  }
+                ],
+                "Range": [189,192]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "ARR-ARRAY-REC"
+                  }
+                ],
+                "Range": [72,79]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "VBRC-REC1"
+                  }
+                ],
+                "Range": [197,200]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "END-OF-FILE"
+                  }
+                ],
+                "Range": [193,194]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "IO-STATUS"
+                  }
+                ],
+                "Range": [178,181]
+              }
+            ],
+            "ReferencedFiles": [
+              {
+                "Name": "ACCTFILE-FILE",
+                "Range": [52,56]
+              }
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "1100-DISPLAY-ACCT-RECORD",
+            "Range": [274,289],
+            "Sentences": [275,289],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "ACCT-ID"
+                  },
+                  {
+                    "Name": "ACCT-ACTIVE-STATUS"
+                  },
+                  {
+                    "Name": "ACCT-CURR-BAL"
+                  },
+                  {
+                    "Name": "ACCT-CREDIT-LIMIT"
+                  },
+                  {
+                    "Name": "ACCT-CASH-CREDIT-LIMIT"
+                  },
+                  {
+                    "Name": "ACCT-OPEN-DATE"
+                  },
+                  {
+                    "Name": "ACCT-EXPIRAION-DATE"
+                  },
+                  {
+                    "Name": "ACCT-REISSUE-DATE"
+                  },
+                  {
+                    "Name": "ACCT-CURR-CYC-CREDIT"
+                  },
+                  {
+                    "Name": "ACCT-CURR-CYC-DEBIT"
+                  },
+                  {
+                    "Name": "ACCT-GROUP-ID"
+                  }
+                ],
+                "Range": [93,107]
+              }
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "1300-POPUL-ACCT-RECORD",
+            "Range": [289,316],
+            "Sentences": [290,316],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "ACCT-ID"
+                  },
+                  {
+                    "Name": "ACCT-ACTIVE-STATUS"
+                  },
+                  {
+                    "Name": "ACCT-CURR-BAL"
+                  },
+                  {
+                    "Name": "ACCT-CREDIT-LIMIT"
+                  },
+                  {
+                    "Name": "ACCT-CASH-CREDIT-LIMIT"
+                  },
+                  {
+                    "Name": "ACCT-OPEN-DATE"
+                  },
+                  {
+                    "Name": "ACCT-EXPIRAION-DATE"
+                  },
+                  {
+                    "Name": "ACCT-REISSUE-DATE"
+                  },
+                  {
+                    "Name": "ACCT-CURR-CYC-CREDIT"
+                  },
+                  {
+                    "Name": "ACCT-CURR-CYC-DEBIT"
+                  },
+                  {
+                    "Name": "ACCT-GROUP-ID"
+                  }
+                ],
+                "Range": [93,107]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "OUT-ACCT-ID"
+                  },
+                  {
+                    "Name": "OUT-ACCT-ACTIVE-STATUS"
+                  },
+                  {
+                    "Name": "OUT-ACCT-CURR-BAL"
+                  },
+                  {
+                    "Name": "OUT-ACCT-CREDIT-LIMIT"
+                  },
+                  {
+                    "Name": "OUT-ACCT-CASH-CREDIT-LIMIT"
+                  },
+                  {
+                    "Name": "OUT-ACCT-OPEN-DATE"
+                  },
+                  {
+                    "Name": "OUT-ACCT-EXPIRAION-DATE"
+                  },
+                  {
+                    "Name": "OUT-ACCT-REISSUE-DATE"
+                  },
+                  {
+                    "Name": "OUT-ACCT-CURR-CYC-CREDIT"
+                  },
+                  {
+                    "Name": "OUT-ACCT-CURR-CYC-DEBIT"
+                  },
+                  {
+                    "Name": "OUT-ACCT-GROUP-ID"
+                  }
+                ],
+                "Range": [57,70]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "CODATECN-INP-DATE"
+                  },
+                  {
+                    "Name": "CODATECN-TYPE"
+                  },
+                  {
+                    "Name": "CODATECN-OUTTYPE"
+                  },
+                  {
+                    "Name": "CODATECN-REC"
+                  },
+                  {
+                    "Name": "CODATECN-0UT-DATE"
+                  }
+                ],
+                "Range": [128,164]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "WS-REISSUE-DATE"
+                  }
+                ],
+                "Range": [211,212]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "WS-ACCT-REISSUE-DATE"
+                  }
+                ],
+                "Range": [205,211]
+              }
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "1350-WRITE-ACCT-RECORD",
+            "Range": [316,327],
+            "Sentences": [317,327],
+            "ReferencedProcedures": [
+              {
+                "Name": "9910-DISPLAY-IO-STATUS"
+              },
+              {
+                "Name": "9999-ABEND-PROGRAM"
+              }
+            ],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "OUT-ACCT-REC"
+                  }
+                ],
+                "Range": [57,70]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "OUTFILE-STATUS"
+                  }
+                ],
+                "Range": [168,171]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "IO-STATUS"
+                  }
+                ],
+                "Range": [178,181]
+              }
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "1400-POPUL-ARRAY-RECORD",
+            "Range": [327,337],
+            "Sentences": [328,337],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "ACCT-ID"
+                  },
+                  {
+                    "Name": "ACCT-CURR-BAL"
+                  }
+                ],
+                "Range": [93,107]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "ARR-ACCT-ID"
+                  },
+                  {
+                    "Name": "ARR-ACCT-CURR-BAL"
+                  },
+                  {
+                    "Name": "ARR-ACCT-CURR-CYC-DEBIT"
+                  }
+                ],
+                "Range": [72,79]
+              }
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "1450-WRITE-ARRY-RECORD",
+            "Range": [337,350],
+            "Sentences": [338,350],
+            "ReferencedProcedures": [
+              {
+                "Name": "9910-DISPLAY-IO-STATUS"
+              },
+              {
+                "Name": "9999-ABEND-PROGRAM"
+              }
+            ],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "ARR-ARRAY-REC"
+                  }
+                ],
+                "Range": [72,79]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "ARRYFILE-STATUS"
+                  }
+                ],
+                "Range": [171,174]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "IO-STATUS"
+                  }
+                ],
+                "Range": [178,181]
+              }
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "1500-POPUL-VBRC-RECORD",
+            "Range": [350,361],
+            "Sentences": [351,361],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "ACCT-ID"
+                  },
+                  {
+                    "Name": "ACCT-ACTIVE-STATUS"
+                  },
+                  {
+                    "Name": "ACCT-CURR-BAL"
+                  },
+                  {
+                    "Name": "ACCT-CREDIT-LIMIT"
+                  }
+                ],
+                "Range": [93,107]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "VB1-ACCT-ID"
+                  },
+                  {
+                    "Name": "VB1-ACCT-ACTIVE-STATUS"
+                  },
+                  {
+                    "Name": "VBRC-REC1"
+                  }
+                ],
+                "Range": [197,200]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "VB2-ACCT-ID"
+                  },
+                  {
+                    "Name": "VB2-ACCT-CURR-BAL"
+                  },
+                  {
+                    "Name": "VB2-ACCT-CREDIT-LIMIT"
+                  },
+                  {
+                    "Name": "VB2-ACCT-REISSUE-YYYY"
+                  },
+                  {
+                    "Name": "VBRC-REC2"
+                  }
+                ],
+                "Range": [200,205]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "WS-ACCT-REISSUE-YYYY"
+                  }
+                ],
+                "Range": [205,211]
+              }
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "1550-WRITE-VB1-RECORD",
+            "Range": [361,376],
+            "Sentences": [362,376],
+            "ReferencedProcedures": [
+              {
+                "Name": "9910-DISPLAY-IO-STATUS"
+              },
+              {
+                "Name": "9999-ABEND-PROGRAM"
+              }
+            ],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "WS-RECD-LEN"
+                  }
+                ],
+                "Range": [196,197]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "VBRC-REC1"
+                  }
+                ],
+                "Range": [197,200]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "VBR-REC"
+                  }
+                ],
+                "Range": [85,86]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "VBRCFILE-STATUS"
+                  }
+                ],
+                "Range": [174,177]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "IO-STATUS"
+                  }
+                ],
+                "Range": [178,181]
+              }
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "1575-WRITE-VB2-RECORD",
+            "Range": [376,391],
+            "Sentences": [377,391],
+            "ReferencedProcedures": [
+              {
+                "Name": "9910-DISPLAY-IO-STATUS"
+              },
+              {
+                "Name": "9999-ABEND-PROGRAM"
+              }
+            ],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "WS-RECD-LEN"
+                  }
+                ],
+                "Range": [196,197]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "VBRC-REC2"
+                  }
+                ],
+                "Range": [200,205]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "VBR-REC"
+                  }
+                ],
+                "Range": [85,86]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "VBRCFILE-STATUS"
+                  }
+                ],
+                "Range": [174,177]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "IO-STATUS"
+                  }
+                ],
+                "Range": [178,181]
+              }
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "0000-ACCTFILE-OPEN",
+            "Range": [391,408],
+            "Sentences": [392,408],
+            "ReferencedProcedures": [
+              {
+                "Name": "9910-DISPLAY-IO-STATUS"
+              },
+              {
+                "Name": "9999-ABEND-PROGRAM"
+              }
+            ],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "APPL-RESULT"
+                  },
+                  {
+                    "Name": "APPL-AOK"
+                  }
+                ],
+                "Range": [189,192]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "ACCTFILE-STATUS"
+                  }
+                ],
+                "Range": [165,168]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "IO-STATUS"
+                  }
+                ],
+                "Range": [178,181]
+              }
+            ],
+            "ReferencedFiles": [
+              {
+                "Name": "ACCTFILE-FILE",
+                "Range": [52,56]
+              }
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "2000-OUTFILE-OPEN",
+            "Range": [408,426],
+            "Sentences": [409,426],
+            "ReferencedProcedures": [
+              {
+                "Name": "9910-DISPLAY-IO-STATUS"
+              },
+              {
+                "Name": "9999-ABEND-PROGRAM"
+              }
+            ],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "APPL-RESULT"
+                  },
+                  {
+                    "Name": "APPL-AOK"
+                  }
+                ],
+                "Range": [189,192]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "OUTFILE-STATUS"
+                  }
+                ],
+                "Range": [168,171]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "IO-STATUS"
+                  }
+                ],
+                "Range": [178,181]
+              }
+            ],
+            "ReferencedFiles": [
+              {
+                "Name": "OUT-FILE",
+                "Range": [56,70]
+              }
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "3000-ARRFILE-OPEN",
+            "Range": [426,444],
+            "Sentences": [427,444],
+            "ReferencedProcedures": [
+              {
+                "Name": "9910-DISPLAY-IO-STATUS"
+              },
+              {
+                "Name": "9999-ABEND-PROGRAM"
+              }
+            ],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "APPL-RESULT"
+                  },
+                  {
+                    "Name": "APPL-AOK"
+                  }
+                ],
+                "Range": [189,192]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "ARRYFILE-STATUS"
+                  }
+                ],
+                "Range": [171,174]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "IO-STATUS"
+                  }
+                ],
+                "Range": [178,181]
+              }
+            ],
+            "ReferencedFiles": [
+              {
+                "Name": "ARRY-FILE",
+                "Range": [71,79]
+              }
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "4000-VBRFILE-OPEN",
+            "Range": [444,462],
+            "Sentences": [445,462],
+            "ReferencedProcedures": [
+              {
+                "Name": "9910-DISPLAY-IO-STATUS"
+              },
+              {
+                "Name": "9999-ABEND-PROGRAM"
+              }
+            ],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "APPL-RESULT"
+                  },
+                  {
+                    "Name": "APPL-AOK"
+                  }
+                ],
+                "Range": [189,192]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "VBRCFILE-STATUS"
+                  }
+                ],
+                "Range": [174,177]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "IO-STATUS"
+                  }
+                ],
+                "Range": [178,181]
+              }
+            ],
+            "ReferencedFiles": [
+              {
+                "Name": "VBRC-FILE",
+                "Range": [80,86]
+              }
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "9000-ACCTFILE-CLOSE",
+            "Range": [462,480],
+            "Sentences": [463,480],
+            "ReferencedProcedures": [
+              {
+                "Name": "9910-DISPLAY-IO-STATUS"
+              },
+              {
+                "Name": "9999-ABEND-PROGRAM"
+              }
+            ],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "APPL-RESULT"
+                  },
+                  {
+                    "Name": "APPL-AOK"
+                  }
+                ],
+                "Range": [189,192]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "ACCTFILE-STATUS"
+                  }
+                ],
+                "Range": [165,168]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "IO-STATUS"
+                  }
+                ],
+                "Range": [178,181]
+              }
+            ],
+            "ReferencedFiles": [
+              {
+                "Name": "ACCTFILE-FILE",
+                "Range": [52,56]
+              }
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "9999-ABEND-PROGRAM",
+            "Range": [480,487],
+            "Sentences": [481,487],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "TIMING"
+                  }
+                ],
+                "Range": [195,196]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "ABCODE"
+                  }
+                ],
+                "Range": [194,195]
+              }
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "9910-DISPLAY-IO-STATUS",
+            "Range": [487,506],
+            "Sentences": [488,506],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "IO-STATUS"
+                  },
+                  {
+                    "Name": "IO-STAT1"
+                  },
+                  {
+                    "Name": "IO-STAT2"
+                  }
+                ],
+                "Range": [178,181]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "IO-STATUS-04"
+                  },
+                  {
+                    "Name": "IO-STATUS-0403"
+                  }
+                ],
+                "Range": [185,188]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "TWO-BYTES-BINARY"
+                  }
+                ],
+                "Range": [181,182]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "TWO-BYTES-RIGHT"
+                  }
+                ],
+                "Range": [182,185]
+              }
+            ]
+          }
+        ]
+      },
+      "MoveStatements": [
+        {
+          "Value": {
+            "Literal": "0",
+            "RawLiteral": [
+              48
+            ]
+          },
+          "Targets": [
+            "APPL-RESULT"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:168:15"
+        },
+        {
+          "Value": {
+            "Literal": "16",
+            "RawLiteral": [
+              49,
+              54
+            ]
+          },
+          "Targets": [
+            "APPL-RESULT"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:181:19"
+        },
+        {
+          "Value": {
+            "Literal": "12",
+            "RawLiteral": [
+              49,
+              50
+            ]
+          },
+          "Targets": [
+            "APPL-RESULT"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:183:19"
+        },
+        {
+          "Value": {
+            "Literal": "Y",
+            "RawLiteral": [
+              89
+            ]
+          },
+          "Targets": [
+            "END-OF-FILE"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:190:19"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "IO-STATUS"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:193:19"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "OUT-ACCT-ID"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:216:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "OUT-ACCT-ACTIVE-STATUS"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:217:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "OUT-ACCT-CURR-BAL"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:218:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "OUT-ACCT-CREDIT-LIMIT"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:219:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "OUT-ACCT-CASH-CREDIT-LIMIT"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:220:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "OUT-ACCT-OPEN-DATE"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:221:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "OUT-ACCT-EXPIRAION-DATE"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:222:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "CODATECN-INP-DATE",
+            "WS-REISSUE-DATE"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:223:11"
+        },
+        {
+          "Value": {
+            "Literal": "2",
+            "RawLiteral": [
+              50
+            ]
+          },
+          "Targets": [
+            "CODATECN-TYPE"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:225:11"
+        },
+        {
+          "Value": {
+            "Literal": "2",
+            "RawLiteral": [
+              50
+            ]
+          },
+          "Targets": [
+            "CODATECN-OUTTYPE"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:226:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "OUT-ACCT-REISSUE-DATE"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:233:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "OUT-ACCT-CURR-CYC-CREDIT"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:235:11"
+        },
+        {
+          "Value": {
+            "Literal": "2525.00",
+            "RawLiteral": [
+              50,
+              53,
+              50,
+              53,
+              46,
+              48,
+              48
+            ]
+          },
+          "Targets": [
+            "OUT-ACCT-CURR-CYC-DEBIT"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:237:15"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "OUT-ACCT-GROUP-ID"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:239:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "IO-STATUS"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:247:14"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "ARR-ACCT-ID"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:254:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "ARR-ACCT-CURR-BAL",
+            "(",
+            "1",
+            ")"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:255:11"
+        },
+        {
+          "Value": {
+            "Literal": "1005.00",
+            "RawLiteral": [
+              49,
+              48,
+              48,
+              53,
+              46,
+              48,
+              48
+            ]
+          },
+          "Targets": [
+            "ARR-ACCT-CURR-CYC-DEBIT",
+            "(",
+            "1",
+            ")"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:256:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "ARR-ACCT-CURR-BAL",
+            "(",
+            "2",
+            ")"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:257:11"
+        },
+        {
+          "Value": {
+            "Literal": "1525.00",
+            "RawLiteral": [
+              49,
+              53,
+              50,
+              53,
+              46,
+              48,
+              48
+            ]
+          },
+          "Targets": [
+            "ARR-ACCT-CURR-CYC-DEBIT",
+            "(",
+            "2",
+            ")"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:258:11"
+        },
+        {
+          "Value": {
+            "Literal": "-1025.00",
+            "RawLiteral": [
+              45,
+              49,
+              48,
+              50,
+              53,
+              46,
+              48,
+              48
+            ]
+          },
+          "Targets": [
+            "ARR-ACCT-CURR-BAL",
+            "(",
+            "3",
+            ")"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:259:11"
+        },
+        {
+          "Value": {
+            "Literal": "-2500.00",
+            "RawLiteral": [
+              45,
+              50,
+              53,
+              48,
+              48,
+              46,
+              48,
+              48
+            ]
+          },
+          "Targets": [
+            "ARR-ACCT-CURR-CYC-DEBIT",
+            "(",
+            "3",
+            ")"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:260:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "IO-STATUS"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:270:14"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "VB1-ACCT-ID",
+            "VB2-ACCT-ID"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:277:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "VB1-ACCT-ACTIVE-STATUS"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:279:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "VB2-ACCT-CURR-BAL"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:280:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "VB2-ACCT-CREDIT-LIMIT"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:281:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "VB2-ACCT-REISSUE-YYYY"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:282:11"
+        },
+        {
+          "Value": {
+            "Literal": "12",
+            "RawLiteral": [
+              49,
+              50
+            ]
+          },
+          "Targets": [
+            "WS-RECD-LEN"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:288:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "VBR-REC",
+            "(",
+            "1:WS-RECD-LEN",
+            ")"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:289:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "IO-STATUS"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:296:14"
+        },
+        {
+          "Value": {
+            "Literal": "39",
+            "RawLiteral": [
+              51,
+              57
+            ]
+          },
+          "Targets": [
+            "WS-RECD-LEN"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:303:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "VBR-REC",
+            "(",
+            "1:WS-RECD-LEN",
+            ")"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:304:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "IO-STATUS"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:311:14"
+        },
+        {
+          "Value": {
+            "Literal": "8",
+            "RawLiteral": [
+              56
+            ]
+          },
+          "Targets": [
+            "APPL-RESULT"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:318:11"
+        },
+        {
+          "Value": {
+            "Literal": "0",
+            "RawLiteral": [
+              48
+            ]
+          },
+          "Targets": [
+            "APPL-RESULT"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:321:15"
+        },
+        {
+          "Value": {
+            "Literal": "12",
+            "RawLiteral": [
+              49,
+              50
+            ]
+          },
+          "Targets": [
+            "APPL-RESULT"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:323:15"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "IO-STATUS"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:329:15"
+        },
+        {
+          "Value": {
+            "Literal": "8",
+            "RawLiteral": [
+              56
+            ]
+          },
+          "Targets": [
+            "APPL-RESULT"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:335:11"
+        },
+        {
+          "Value": {
+            "Literal": "0",
+            "RawLiteral": [
+              48
+            ]
+          },
+          "Targets": [
+            "APPL-RESULT"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:338:15"
+        },
+        {
+          "Value": {
+            "Literal": "12",
+            "RawLiteral": [
+              49,
+              50
+            ]
+          },
+          "Targets": [
+            "APPL-RESULT"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:340:15"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "IO-STATUS"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:346:15"
+        },
+        {
+          "Value": {
+            "Literal": "8",
+            "RawLiteral": [
+              56
+            ]
+          },
+          "Targets": [
+            "APPL-RESULT"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:353:11"
+        },
+        {
+          "Value": {
+            "Literal": "0",
+            "RawLiteral": [
+              48
+            ]
+          },
+          "Targets": [
+            "APPL-RESULT"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:356:15"
+        },
+        {
+          "Value": {
+            "Literal": "12",
+            "RawLiteral": [
+              49,
+              50
+            ]
+          },
+          "Targets": [
+            "APPL-RESULT"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:358:15"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "IO-STATUS"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:364:15"
+        },
+        {
+          "Value": {
+            "Literal": "8",
+            "RawLiteral": [
+              56
+            ]
+          },
+          "Targets": [
+            "APPL-RESULT"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:371:11"
+        },
+        {
+          "Value": {
+            "Literal": "0",
+            "RawLiteral": [
+              48
+            ]
+          },
+          "Targets": [
+            "APPL-RESULT"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:374:15"
+        },
+        {
+          "Value": {
+            "Literal": "12",
+            "RawLiteral": [
+              49,
+              50
+            ]
+          },
+          "Targets": [
+            "APPL-RESULT"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:376:15"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "IO-STATUS"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:382:15"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "IO-STATUS"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:400:15"
+        },
+        {
+          "Value": {
+            "Literal": "0",
+            "RawLiteral": [
+              48
+            ]
+          },
+          "Targets": [
+            "TIMING"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:408:11"
+        },
+        {
+          "Value": {
+            "Literal": "999",
+            "RawLiteral": [
+              57,
+              57,
+              57
+            ]
+          },
+          "Targets": [
+            "ABCODE"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:409:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "IO-STATUS-04",
+            "(",
+            "1:1",
+            ")"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:416:15"
+        },
+        {
+          "Value": {
+            "Literal": "0",
+            "RawLiteral": [
+              48
+            ]
+          },
+          "Targets": [
+            "TWO-BYTES-BINARY"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:417:15"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "TWO-BYTES-RIGHT"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:418:15"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "IO-STATUS-0403"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:419:15"
+        },
+        {
+          "Value": {
+            "Literal": "0000",
+            "RawLiteral": [
+              48,
+              48,
+              48,
+              48
+            ]
+          },
+          "Targets": [
+            "IO-STATUS-04"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:422:15"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "IO-STATUS-04",
+            "(",
+            "3:2",
+            ")"
+          ],
+          "Coordinates": "file://cbl/CBACT01C.cbl:423:15"
+        }
+      ],
+      "FileIO": [
+        {
+          "FileVariable": "ACCTFILE-FILE",
+          "Optional": false,
+          "IsSortFile": false,
+          "DDNames": [
+            "ACCTFILE"
+          ],
+          "RecordVariables": [
+            {
+              "Name": "FD-ACCTFILE-REC",
+              "Range": "file://cbl/CBACT01C.cbl:53:0-55:0"
+            },
+            {
+              "Name": "ACCOUNT-RECORD",
+              "Range": "file://cpy/CVACT01Y.cpy:4:0-17:0"
+            }
+          ],
+          "Mode": "INPUT",
+          "Coordinates": "file://cbl/CBACT01C.cbl:29:11"
+        },
+        {
+          "FileVariable": "OUT-FILE",
+          "Optional": false,
+          "IsSortFile": false,
+          "DDNames": [
+            "OUTFILE"
+          ],
+          "RecordVariables": [
+            {
+              "Name": "OUT-ACCT-REC",
+              "Range": "file://cbl/CBACT01C.cbl:57:0-69:0"
+            }
+          ],
+          "Mode": "OUTPUT",
+          "Coordinates": "file://cbl/CBACT01C.cbl:35:11"
+        },
+        {
+          "FileVariable": "ARRY-FILE",
+          "Optional": false,
+          "IsSortFile": false,
+          "DDNames": [
+            "ARRYFILE"
+          ],
+          "RecordVariables": [
+            {
+              "Name": "ARR-ARRAY-REC",
+              "Range": "file://cbl/CBACT01C.cbl:72:0-78:0"
+            }
+          ],
+          "Mode": "OUTPUT",
+          "Coordinates": "file://cbl/CBACT01C.cbl:40:11"
+        },
+        {
+          "FileVariable": "VBRC-FILE",
+          "Optional": false,
+          "IsSortFile": false,
+          "DDNames": [
+            "VBRCFILE"
+          ],
+          "RecordVariables": [
+            {
+              "Name": "VBR-REC",
+              "Range": "file://cbl/CBACT01C.cbl:85:0-85:0"
+            }
+          ],
+          "Mode": "OUTPUT",
+          "Coordinates": "file://cbl/CBACT01C.cbl:45:11"
+        }
+      ],
+      "Copybooks": [
+        {
+          "Name": "CVACT01Y",
+          "Division": "DATA DIVISION",
+          "Section": "WORKING-STORAGE SECTION",
+          "Coordinates": "file://cbl/CBACT01C.cbl:89:7"
+        },
+        {
+          "Name": "CODATECN",
+          "Division": "DATA DIVISION",
+          "Section": "WORKING-STORAGE SECTION",
+          "Coordinates": "file://cbl/CBACT01C.cbl:90:7"
+        }
+      ]
+    }
+  ]
+}

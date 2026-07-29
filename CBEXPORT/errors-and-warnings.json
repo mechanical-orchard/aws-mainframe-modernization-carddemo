@@ -1,0 +1,29 @@
+{
+  "ShabakehVersion": "0.90.0",
+  "ShabakehConfig": {
+    "ClientProject": "aws-carddemo",
+    "ClientProjectSHA": "d2fd98676eeb7ea7d238e534e7071e238eda345e",
+    "Targets": [
+      "CBEXPORT.jcl"
+    ],
+    "Invocation": "extract -call-trees=CBEXPORT/call-trees.json -errors-and-warnings=CBEXPORT/errors-and-warnings.json --include-params CBEXPORT.jcl",
+    "IncludeParams": true
+  },
+  "ErrorsAndWarnings": {
+    "EntryPointCounts": {
+      "OK": 1,
+      "Warnings": 0,
+      "Errors": 0
+    },
+    "PrefixCounts": {
+      "CBEXPORT": {
+      "OK": 1,
+      "Warnings": 0,
+      "Errors": 0
+    }
+    }
+  },
+  "DebugInformation": {
+    
+  }
+}

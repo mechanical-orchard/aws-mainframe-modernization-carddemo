@@ -1,0 +1,1217 @@
+{
+  "ShabakehVersion": "0.90.0",
+  "ShabakehConfig": {
+    "ClientProject": "aws-carddemo",
+    "ClientProjectSHA": "",
+    "Targets": [
+      "CBACT03C"
+    ]
+  },
+  "Entries": [
+    {
+      "Key": "file://cbl/CBACT03C.cbl",
+      "ProgramID": "CBACT03C",
+      "CompilerOptions": {
+        "LP": 32,
+        "TRUNC": "STD",
+        "NSYMBOL": "NATIONAL"
+      },
+      "IsCICS": false,
+      "Complexity": {
+        "NumLines": 150,
+        "NumLinesWithComment": 191,
+        "NumLinesNoCopybook": 145,
+        "NumLinesNoCopybookWithComment": 179,
+        "CyclomaticComplexity": 19
+      },
+      "Lines": [
+        "      ******************************************************************",
+        "      * Program     : CBACT03C.CBL                                      ",
+        "      * Application : CardDemo                                          ",
+        "      * Type        : BATCH COBOL Program                                ",
+        "      * Function    : Read and print account cross reference data file.     ",
+        "      ******************************************************************",
+        "      * Copyright Amazon.com, Inc. or its affiliates.                   ",
+        "      * All Rights Reserved.                                            ",
+        "      *                                                                 ",
+        "      * Licensed under the Apache License, Version 2.0 (the \"License\"). ",
+        "      * You may not use this file except in compliance with the License.",
+        "      * You may obtain a copy of the License at                         ",
+        "      *                                                                 ",
+        "      *    http://www.apache.org/licenses/LICENSE-2.0                   ",
+        "      *                                                                 ",
+        "      * Unless required by applicable law or agreed to in writing,      ",
+        "      * software distributed under the License is distributed on an     ",
+        "      * \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,    ",
+        "      * either express or implied. See the License for the specific     ",
+        "      * language governing permissions and limitations under the License",
+        "      ******************************************************************",
+        "       IDENTIFICATION DIVISION.                                                 ",
+        "       PROGRAM-ID.    CBACT03C.                                                 ",
+        "       AUTHOR.        AWS.                                                      ",
+        "                                                                                ",
+        "       ENVIRONMENT DIVISION.                                                    ",
+        "       INPUT-OUTPUT SECTION.                                                    ",
+        "       FILE-CONTROL.                                                            ",
+        "           SELECT XREFFILE-FILE ASSIGN TO   XREFFILE                            ",
+        "                  ORGANIZATION IS INDEXED                                       ",
+        "                  ACCESS MODE  IS SEQUENTIAL                                    ",
+        "                  RECORD KEY   IS FD-XREF-CARD-NUM                              ",
+        "                  FILE STATUS  IS XREFFILE-STATUS.                              ",
+        "      *                                                                         ",
+        "       DATA DIVISION.                                                           ",
+        "       FILE SECTION.                                                            ",
+        "       FD  XREFFILE-FILE.                                                       ",
+        "       01  FD-XREFFILE-REC.                                                     ",
+        "           05 FD-XREF-CARD-NUM                  PIC X(16).                      ",
+        "           05 FD-XREF-DATA                      PIC X(34).                      ",
+        "                                                                                ",
+        "       WORKING-STORAGE SECTION.                                                 ",
+        "                                                                                ",
+        "      *****************************************************************         ",
+        "******* MO-PARSE: INLINED COBOL_COPYBOOK CVACT03Y",
+        "      *****************************************************************         ",
+        "      *    Data-structure for card xref (RECLN 50)                              ",
+        "      *****************************************************************         ",
+        "       01 CARD-XREF-RECORD.                                                     ",
+        "           05  XREF-CARD-NUM                     PIC X(16).                     ",
+        "           05  XREF-CUST-ID                      PIC 9(09).                     ",
+        "           05  XREF-ACCT-ID                      PIC 9(11).                     ",
+        "           05  FILLER                            PIC X(14).                     ",
+        "      *",
+        "      * Ver: CardDemo_v1.0-15-g27d6c6f-68 Date: 2022-07-19 23:16:00 CDT",
+        "      *",
+        "",
+        "       01  XREFFILE-STATUS.                                                     ",
+        "           05  XREFFILE-STAT1      PIC X.                                       ",
+        "           05  XREFFILE-STAT2      PIC X.                                       ",
+        "                                                                                ",
+        "       01  IO-STATUS.                                                           ",
+        "           05  IO-STAT1            PIC X.                                       ",
+        "           05  IO-STAT2            PIC X.                                       ",
+        "       01  TWO-BYTES-BINARY        PIC 9(4) BINARY.                             ",
+        "       01  TWO-BYTES-ALPHA         REDEFINES TWO-BYTES-BINARY.                  ",
+        "           05  TWO-BYTES-LEFT      PIC X.                                       ",
+        "           05  TWO-BYTES-RIGHT     PIC X.                                       ",
+        "       01  IO-STATUS-04.                                                        ",
+        "           05  IO-STATUS-0401      PIC 9   VALUE 0.                             ",
+        "           05  IO-STATUS-0403      PIC 999 VALUE 0.                             ",
+        "                                                                                ",
+        "       01  APPL-RESULT             PIC S9(9)   COMP.                            ",
+        "           88  APPL-AOK            VALUE 0.                                     ",
+        "           88  APPL-EOF            VALUE 16.                                    ",
+        "                                                                                ",
+        "       01  END-OF-FILE             PIC X(01)    VALUE 'N'.                      ",
+        "       01  ABCODE                  PIC S9(9) BINARY.                            ",
+        "       01  TIMING                  PIC S9(9) BINARY.                            ",
+        "                                                                                ",
+        "      *****************************************************************         ",
+        "       PROCEDURE DIVISION.                                                      ",
+        "           DISPLAY 'START OF EXECUTION OF PROGRAM CBACT03C'.                    ",
+        "           PERFORM 0000-XREFFILE-OPEN.                                          ",
+        "                                                                                ",
+        "           PERFORM UNTIL END-OF-FILE = 'Y'                                      ",
+        "               IF  END-OF-FILE = 'N'                                            ",
+        "                   PERFORM 1000-XREFFILE-GET-NEXT                               ",
+        "                   IF  END-OF-FILE = 'N'                                        ",
+        "                       DISPLAY CARD-XREF-RECORD                                 ",
+        "                   END-IF                                                       ",
+        "               END-IF                                                           ",
+        "           END-PERFORM.                                                         ",
+        "                                                                                ",
+        "           PERFORM 9000-XREFFILE-CLOSE.                                         ",
+        "                                                                                ",
+        "           DISPLAY 'END OF EXECUTION OF PROGRAM CBACT03C'.                      ",
+        "                                                                                ",
+        "           GOBACK.                                                              ",
+        "                                                                                ",
+        "      *****************************************************************         ",
+        "      * I/O ROUTINES TO ACCESS A KSDS, VSAM DATA SET...               *         ",
+        "      *****************************************************************         ",
+        "       1000-XREFFILE-GET-NEXT.                                                  ",
+        "           READ XREFFILE-FILE INTO CARD-XREF-RECORD.                            ",
+        "           IF  XREFFILE-STATUS = '00'                                           ",
+        "               MOVE 0 TO APPL-RESULT                                            ",
+        "               DISPLAY CARD-XREF-RECORD                                         ",
+        "           ELSE                                                                 ",
+        "               IF  XREFFILE-STATUS = '10'                                       ",
+        "                   MOVE 16 TO APPL-RESULT                                       ",
+        "               ELSE                                                             ",
+        "                   MOVE 12 TO APPL-RESULT                                       ",
+        "               END-IF                                                           ",
+        "           END-IF                                                               ",
+        "           IF  APPL-AOK                                                         ",
+        "               CONTINUE                                                         ",
+        "           ELSE                                                                 ",
+        "               IF  APPL-EOF                                                     ",
+        "                   MOVE 'Y' TO END-OF-FILE                                      ",
+        "               ELSE                                                             ",
+        "                   DISPLAY 'ERROR READING XREFFILE'                             ",
+        "                   MOVE XREFFILE-STATUS TO IO-STATUS                            ",
+        "                   PERFORM 9910-DISPLAY-IO-STATUS                               ",
+        "                   PERFORM 9999-ABEND-PROGRAM                                   ",
+        "               END-IF                                                           ",
+        "           END-IF                                                               ",
+        "           EXIT.                                                                ",
+        "      *---------------------------------------------------------------*         ",
+        "       0000-XREFFILE-OPEN.                                                      ",
+        "           MOVE 8 TO APPL-RESULT.                                               ",
+        "           OPEN INPUT XREFFILE-FILE                                             ",
+        "           IF  XREFFILE-STATUS = '00'                                           ",
+        "               MOVE 0 TO APPL-RESULT                                            ",
+        "           ELSE                                                                 ",
+        "               MOVE 12 TO APPL-RESULT                                           ",
+        "           END-IF                                                               ",
+        "           IF  APPL-AOK                                                         ",
+        "               CONTINUE                                                         ",
+        "           ELSE                                                                 ",
+        "               DISPLAY 'ERROR OPENING XREFFILE'                                 ",
+        "               MOVE XREFFILE-STATUS TO IO-STATUS                                ",
+        "               PERFORM 9910-DISPLAY-IO-STATUS                                   ",
+        "               PERFORM 9999-ABEND-PROGRAM                                       ",
+        "           END-IF                                                               ",
+        "           EXIT.                                                                ",
+        "      *---------------------------------------------------------------*         ",
+        "       9000-XREFFILE-CLOSE.                                                     ",
+        "           ADD 8 TO ZERO GIVING APPL-RESULT.                                    ",
+        "           CLOSE XREFFILE-FILE                                                  ",
+        "           IF  XREFFILE-STATUS = '00'                                           ",
+        "               SUBTRACT APPL-RESULT FROM APPL-RESULT                            ",
+        "           ELSE                                                                 ",
+        "               ADD 12 TO ZERO GIVING APPL-RESULT                                ",
+        "           END-IF                                                               ",
+        "           IF  APPL-AOK                                                         ",
+        "               CONTINUE                                                         ",
+        "           ELSE                                                                 ",
+        "               DISPLAY 'ERROR CLOSING XREFFILE'                                 ",
+        "               MOVE XREFFILE-STATUS TO IO-STATUS                                ",
+        "               PERFORM 9910-DISPLAY-IO-STATUS                                   ",
+        "               PERFORM 9999-ABEND-PROGRAM                                       ",
+        "           END-IF                                                               ",
+        "           EXIT.                                                                ",
+        "                                                                                ",
+        "       9999-ABEND-PROGRAM.                                                      ",
+        "           DISPLAY 'ABENDING PROGRAM'                                           ",
+        "           MOVE 0 TO TIMING                                                     ",
+        "           MOVE 999 TO ABCODE                                                   ",
+        "           CALL 'CEE3ABD' USING ABCODE, TIMING.                                 ",
+        "                                                                                ",
+        "      *****************************************************************         ",
+        "       9910-DISPLAY-IO-STATUS.                                                  ",
+        "           IF  IO-STATUS NOT NUMERIC                                            ",
+        "           OR  IO-STAT1 = '9'                                                   ",
+        "               MOVE IO-STAT1 TO IO-STATUS-04(1:1)                               ",
+        "               MOVE 0        TO TWO-BYTES-BINARY                                ",
+        "               MOVE IO-STAT2 TO TWO-BYTES-RIGHT                                 ",
+        "               MOVE TWO-BYTES-BINARY TO IO-STATUS-0403                          ",
+        "               DISPLAY 'FILE STATUS IS: NNNN' IO-STATUS-04                      ",
+        "           ELSE                                                                 ",
+        "               MOVE '0000' TO IO-STATUS-04                                      ",
+        "               MOVE IO-STATUS TO IO-STATUS-04(3:2)                              ",
+        "               DISPLAY 'FILE STATUS IS: NNNN' IO-STATUS-04                      ",
+        "           END-IF                                                               ",
+        "           EXIT.                                                                ",
+        "                                                                                ",
+        "      *",
+        "      * Ver: CardDemo_v2.0-25-gdb72e6b-235 Date: 2025-04-29 11:01:27 CDT",
+        "      *",
+        ""
+      ],
+      "Variables": [
+        {
+          "Level": 1,
+          "Name": "FD-XREFFILE-REC",
+          "ComputedSize": 50,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cbl/CBACT03C.cbl:38:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "FD-XREF-CARD-NUM",
+              "Pic": "X(16)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                16
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 16,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://cbl/CBACT03C.cbl:39:11"
+            },
+            {
+              "Level": 5,
+              "Name": "FD-XREF-DATA",
+              "Pic": "X(34)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                34
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 34,
+              "Offset": [
+                16
+              ],
+              "Coordinates": "file://cbl/CBACT03C.cbl:40:11"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "CARD-XREF-RECORD",
+          "ComputedSize": 50,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cpy/CVACT03Y.cpy:4:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "XREF-CARD-NUM",
+              "Pic": "X(16)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                16
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 16,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://cpy/CVACT03Y.cpy:5:11"
+            },
+            {
+              "Level": 5,
+              "Name": "XREF-CUST-ID",
+              "Pic": "9(09)",
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                9
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 9,
+              "Offset": [
+                16
+              ],
+              "Coordinates": "file://cpy/CVACT03Y.cpy:6:11"
+            },
+            {
+              "Level": 5,
+              "Name": "XREF-ACCT-ID",
+              "Pic": "9(11)",
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                11
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 11,
+              "Offset": [
+                25
+              ],
+              "Coordinates": "file://cpy/CVACT03Y.cpy:7:11"
+            },
+            {
+              "Level": 5,
+              "Pic": "X(14)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                14
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 14,
+              "Offset": [
+                36
+              ],
+              "Coordinates": "file://cpy/CVACT03Y.cpy:8:11"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "XREFFILE-STATUS",
+          "ComputedSize": 2,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cbl/CBACT03C.cbl:46:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "XREFFILE-STAT1",
+              "Pic": "X",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://cbl/CBACT03C.cbl:47:11"
+            },
+            {
+              "Level": 5,
+              "Name": "XREFFILE-STAT2",
+              "Pic": "X",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                1
+              ],
+              "Coordinates": "file://cbl/CBACT03C.cbl:48:11"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "IO-STATUS",
+          "ComputedSize": 2,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cbl/CBACT03C.cbl:50:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "IO-STAT1",
+              "Pic": "X",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://cbl/CBACT03C.cbl:51:11"
+            },
+            {
+              "Level": 5,
+              "Name": "IO-STAT2",
+              "Pic": "X",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                1
+              ],
+              "Coordinates": "file://cbl/CBACT03C.cbl:52:11"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "TWO-BYTES-BINARY",
+          "Pic": "9(4)",
+          "Usage": "COMP",
+          "ParsedPic": [
+            "9"
+          ],
+          "ParsedPicCounts": [
+            4
+          ],
+          "InferredUsage": "COMP",
+          "InferredType": "comp-int",
+          "ComputedSize": 2,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cbl/CBACT03C.cbl:53:7"
+        },
+        {
+          "Level": 1,
+          "Name": "TWO-BYTES-ALPHA",
+          "Redefines": "TWO-BYTES-BINARY",
+          "ComputedSize": 2,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cbl/CBACT03C.cbl:54:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "TWO-BYTES-LEFT",
+              "Pic": "X",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://cbl/CBACT03C.cbl:55:11"
+            },
+            {
+              "Level": 5,
+              "Name": "TWO-BYTES-RIGHT",
+              "Pic": "X",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                1
+              ],
+              "Coordinates": "file://cbl/CBACT03C.cbl:56:11"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "IO-STATUS-04",
+          "ComputedSize": 4,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cbl/CBACT03C.cbl:57:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "IO-STATUS-0401",
+              "Pic": "9",
+              "Values": [
+                {
+                  "Literal": "0",
+                  "RawLiteral": [
+                    48
+                  ]
+                }
+              ],
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 1,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://cbl/CBACT03C.cbl:58:11"
+            },
+            {
+              "Level": 5,
+              "Name": "IO-STATUS-0403",
+              "Pic": "999",
+              "Values": [
+                {
+                  "Literal": "0",
+                  "RawLiteral": [
+                    48
+                  ]
+                }
+              ],
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                3
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 3,
+              "Offset": [
+                1
+              ],
+              "Coordinates": "file://cbl/CBACT03C.cbl:59:11"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "APPL-RESULT",
+          "Pic": "S9(9)",
+          "Usage": "COMP",
+          "ParsedPic": [
+            "S",
+            "9"
+          ],
+          "ParsedPicCounts": [
+            1,
+            9
+          ],
+          "InferredUsage": "COMP",
+          "InferredType": "comp-int",
+          "ComputedSize": 4,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cbl/CBACT03C.cbl:61:7",
+          "Children": [
+            {
+              "Level": 88,
+              "Name": "APPL-AOK",
+              "Values": [
+                {
+                  "Literal": "0",
+                  "RawLiteral": [
+                    48
+                  ]
+                }
+              ],
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://cbl/CBACT03C.cbl:62:11"
+            },
+            {
+              "Level": 88,
+              "Name": "APPL-EOF",
+              "Values": [
+                {
+                  "Literal": "16",
+                  "RawLiteral": [
+                    49,
+                    54
+                  ]
+                }
+              ],
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://cbl/CBACT03C.cbl:63:11"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "END-OF-FILE",
+          "Pic": "X(01)",
+          "Values": [
+            {
+              "Literal": "N",
+              "RawLiteral": [
+                78
+              ]
+            }
+          ],
+          "ParsedPic": [
+            "X"
+          ],
+          "ParsedPicCounts": [
+            1
+          ],
+          "InferredUsage": "DISPLAY",
+          "InferredType": "string",
+          "ComputedSize": 1,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cbl/CBACT03C.cbl:65:7"
+        },
+        {
+          "Level": 1,
+          "Name": "ABCODE",
+          "Pic": "S9(9)",
+          "Usage": "COMP",
+          "ParsedPic": [
+            "S",
+            "9"
+          ],
+          "ParsedPicCounts": [
+            1,
+            9
+          ],
+          "InferredUsage": "COMP",
+          "InferredType": "comp-int",
+          "ComputedSize": 4,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cbl/CBACT03C.cbl:66:7"
+        },
+        {
+          "Level": 1,
+          "Name": "TIMING",
+          "Pic": "S9(9)",
+          "Usage": "COMP",
+          "ParsedPic": [
+            "S",
+            "9"
+          ],
+          "ParsedPicCounts": [
+            1,
+            9
+          ],
+          "InferredUsage": "COMP",
+          "InferredType": "comp-int",
+          "ComputedSize": 4,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cbl/CBACT03C.cbl:67:7"
+        }
+      ],
+      "Chunks": {
+        "ChunkType": "PROCEDURE_DIVISION",
+        "Range": [82,192],
+        "Sentences": [83,104],
+        "ReferencedProcedures": [
+          {
+            "Name": "0000-XREFFILE-OPEN"
+          },
+          {
+            "Name": "1000-XREFFILE-GET-NEXT"
+          },
+          {
+            "Name": "9000-XREFFILE-CLOSE"
+          }
+        ],
+        "ReferencedVariables": [
+          {
+            "References": [
+              {
+                "Name": "END-OF-FILE"
+              }
+            ],
+            "Range": [77,78]
+          },
+          {
+            "References": [
+              {
+                "Name": "CARD-XREF-RECORD"
+              }
+            ],
+            "Range": [49,54]
+          }
+        ],
+        "Children": [
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "1000-XREFFILE-GET-NEXT",
+            "Range": [104,130],
+            "Sentences": [105,130],
+            "ReferencedProcedures": [
+              {
+                "Name": "9910-DISPLAY-IO-STATUS"
+              },
+              {
+                "Name": "9999-ABEND-PROGRAM"
+              }
+            ],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "CARD-XREF-RECORD"
+                  }
+                ],
+                "Range": [49,54]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "XREFFILE-STATUS"
+                  }
+                ],
+                "Range": [58,61]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "APPL-RESULT"
+                  },
+                  {
+                    "Name": "APPL-AOK"
+                  },
+                  {
+                    "Name": "APPL-EOF"
+                  }
+                ],
+                "Range": [73,76]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "END-OF-FILE"
+                  }
+                ],
+                "Range": [77,78]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "IO-STATUS"
+                  }
+                ],
+                "Range": [62,65]
+              }
+            ],
+            "ReferencedFiles": [
+              {
+                "Name": "XREFFILE-FILE",
+                "Range": [37,41]
+              }
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "0000-XREFFILE-OPEN",
+            "Range": [130,148],
+            "Sentences": [131,148],
+            "ReferencedProcedures": [
+              {
+                "Name": "9910-DISPLAY-IO-STATUS"
+              },
+              {
+                "Name": "9999-ABEND-PROGRAM"
+              }
+            ],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "APPL-RESULT"
+                  },
+                  {
+                    "Name": "APPL-AOK"
+                  }
+                ],
+                "Range": [73,76]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "XREFFILE-STATUS"
+                  }
+                ],
+                "Range": [58,61]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "IO-STATUS"
+                  }
+                ],
+                "Range": [62,65]
+              }
+            ],
+            "ReferencedFiles": [
+              {
+                "Name": "XREFFILE-FILE",
+                "Range": [37,41]
+              }
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "9000-XREFFILE-CLOSE",
+            "Range": [148,166],
+            "Sentences": [149,166],
+            "ReferencedProcedures": [
+              {
+                "Name": "9910-DISPLAY-IO-STATUS"
+              },
+              {
+                "Name": "9999-ABEND-PROGRAM"
+              }
+            ],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "APPL-RESULT"
+                  },
+                  {
+                    "Name": "APPL-AOK"
+                  }
+                ],
+                "Range": [73,76]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "XREFFILE-STATUS"
+                  }
+                ],
+                "Range": [58,61]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "IO-STATUS"
+                  }
+                ],
+                "Range": [62,65]
+              }
+            ],
+            "ReferencedFiles": [
+              {
+                "Name": "XREFFILE-FILE",
+                "Range": [37,41]
+              }
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "9999-ABEND-PROGRAM",
+            "Range": [166,173],
+            "Sentences": [167,173],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "TIMING"
+                  }
+                ],
+                "Range": [79,80]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "ABCODE"
+                  }
+                ],
+                "Range": [78,79]
+              }
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "9910-DISPLAY-IO-STATUS",
+            "Range": [173,192],
+            "Sentences": [174,192],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "IO-STATUS"
+                  },
+                  {
+                    "Name": "IO-STAT1"
+                  },
+                  {
+                    "Name": "IO-STAT2"
+                  }
+                ],
+                "Range": [62,65]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "IO-STATUS-04"
+                  },
+                  {
+                    "Name": "IO-STATUS-0403"
+                  }
+                ],
+                "Range": [69,72]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "TWO-BYTES-BINARY"
+                  }
+                ],
+                "Range": [65,66]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "TWO-BYTES-RIGHT"
+                  }
+                ],
+                "Range": [66,69]
+              }
+            ]
+          }
+        ]
+      },
+      "MoveStatements": [
+        {
+          "Value": {
+            "Literal": "0",
+            "RawLiteral": [
+              48
+            ]
+          },
+          "Targets": [
+            "APPL-RESULT"
+          ],
+          "Coordinates": "file://cbl/CBACT03C.cbl:95:15"
+        },
+        {
+          "Value": {
+            "Literal": "16",
+            "RawLiteral": [
+              49,
+              54
+            ]
+          },
+          "Targets": [
+            "APPL-RESULT"
+          ],
+          "Coordinates": "file://cbl/CBACT03C.cbl:99:19"
+        },
+        {
+          "Value": {
+            "Literal": "12",
+            "RawLiteral": [
+              49,
+              50
+            ]
+          },
+          "Targets": [
+            "APPL-RESULT"
+          ],
+          "Coordinates": "file://cbl/CBACT03C.cbl:101:19"
+        },
+        {
+          "Value": {
+            "Literal": "Y",
+            "RawLiteral": [
+              89
+            ]
+          },
+          "Targets": [
+            "END-OF-FILE"
+          ],
+          "Coordinates": "file://cbl/CBACT03C.cbl:108:19"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "IO-STATUS"
+          ],
+          "Coordinates": "file://cbl/CBACT03C.cbl:111:19"
+        },
+        {
+          "Value": {
+            "Literal": "8",
+            "RawLiteral": [
+              56
+            ]
+          },
+          "Targets": [
+            "APPL-RESULT"
+          ],
+          "Coordinates": "file://cbl/CBACT03C.cbl:119:11"
+        },
+        {
+          "Value": {
+            "Literal": "0",
+            "RawLiteral": [
+              48
+            ]
+          },
+          "Targets": [
+            "APPL-RESULT"
+          ],
+          "Coordinates": "file://cbl/CBACT03C.cbl:122:15"
+        },
+        {
+          "Value": {
+            "Literal": "12",
+            "RawLiteral": [
+              49,
+              50
+            ]
+          },
+          "Targets": [
+            "APPL-RESULT"
+          ],
+          "Coordinates": "file://cbl/CBACT03C.cbl:124:15"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "IO-STATUS"
+          ],
+          "Coordinates": "file://cbl/CBACT03C.cbl:130:15"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "IO-STATUS"
+          ],
+          "Coordinates": "file://cbl/CBACT03C.cbl:148:15"
+        },
+        {
+          "Value": {
+            "Literal": "0",
+            "RawLiteral": [
+              48
+            ]
+          },
+          "Targets": [
+            "TIMING"
+          ],
+          "Coordinates": "file://cbl/CBACT03C.cbl:156:11"
+        },
+        {
+          "Value": {
+            "Literal": "999",
+            "RawLiteral": [
+              57,
+              57,
+              57
+            ]
+          },
+          "Targets": [
+            "ABCODE"
+          ],
+          "Coordinates": "file://cbl/CBACT03C.cbl:157:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "IO-STATUS-04",
+            "(",
+            "1:1",
+            ")"
+          ],
+          "Coordinates": "file://cbl/CBACT03C.cbl:164:15"
+        },
+        {
+          "Value": {
+            "Literal": "0",
+            "RawLiteral": [
+              48
+            ]
+          },
+          "Targets": [
+            "TWO-BYTES-BINARY"
+          ],
+          "Coordinates": "file://cbl/CBACT03C.cbl:165:15"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "TWO-BYTES-RIGHT"
+          ],
+          "Coordinates": "file://cbl/CBACT03C.cbl:166:15"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "IO-STATUS-0403"
+          ],
+          "Coordinates": "file://cbl/CBACT03C.cbl:167:15"
+        },
+        {
+          "Value": {
+            "Literal": "0000",
+            "RawLiteral": [
+              48,
+              48,
+              48,
+              48
+            ]
+          },
+          "Targets": [
+            "IO-STATUS-04"
+          ],
+          "Coordinates": "file://cbl/CBACT03C.cbl:170:15"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "IO-STATUS-04",
+            "(",
+            "3:2",
+            ")"
+          ],
+          "Coordinates": "file://cbl/CBACT03C.cbl:171:15"
+        }
+      ],
+      "FileIO": [
+        {
+          "FileVariable": "XREFFILE-FILE",
+          "Optional": false,
+          "IsSortFile": false,
+          "DDNames": [
+            "XREFFILE"
+          ],
+          "RecordVariables": [
+            {
+              "Name": "FD-XREFFILE-REC",
+              "Range": "file://cbl/CBACT03C.cbl:38:0-40:0"
+            },
+            {
+              "Name": "CARD-XREF-RECORD",
+              "Range": "file://cpy/CVACT03Y.cpy:4:0-8:0"
+            }
+          ],
+          "Mode": "INPUT",
+          "Coordinates": "file://cbl/CBACT03C.cbl:29:11"
+        }
+      ],
+      "Copybooks": [
+        {
+          "Name": "CVACT03Y",
+          "Division": "DATA DIVISION",
+          "Section": "WORKING-STORAGE SECTION",
+          "Coordinates": "file://cbl/CBACT03C.cbl:45:7"
+        }
+      ]
+    }
+  ]
+}

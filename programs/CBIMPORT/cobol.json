@@ -1,0 +1,5703 @@
+{
+  "ShabakehVersion": "0.90.0",
+  "ShabakehConfig": {
+    "ClientProject": "aws-carddemo",
+    "ClientProjectSHA": "",
+    "Targets": [
+      "CBIMPORT.cbl"
+    ]
+  },
+  "Entries": [
+    {
+      "Key": "file://cbl/CBIMPORT.cbl",
+      "ProgramID": "CBIMPORT",
+      "CompilerOptions": {
+        "LP": 32,
+        "TRUNC": "STD",
+        "NSYMBOL": "NATIONAL"
+      },
+      "IsCICS": false,
+      "Complexity": {
+        "NumLines": 514,
+        "NumLinesWithComment": 689,
+        "NumLinesNoCopybook": 380,
+        "NumLinesNoCopybookWithComment": 488,
+        "CyclomaticComplexity": 26
+      },
+      "Lines": [
+        "       IDENTIFICATION DIVISION.",
+        "       PROGRAM-ID.    CBIMPORT.",
+        "       AUTHOR.        CARDDEMO TEAM.",
+        "      ******************************************************************",
+        "      * Program     : CBIMPORT.CBL",
+        "      * Application : CardDemo",
+        "      * Type        : BATCH COBOL Program",
+        "      * Function    : Import Customer Data from Branch Migration Export",
+        "      *               Reads multi-record export file and splits it into",
+        "      *               separate normalized target files (CUSTOMER, ACCOUNT,",
+        "      *               CARD-XREF, TRANSACTION) with validation",
+        "      ******************************************************************",
+        "      * Copyright Amazon.com, Inc. or its affiliates.",
+        "      * All Rights Reserved.",
+        "      *",
+        "      * Licensed under the Apache License, Version 2.0 (the \"License\").",
+        "      * You may not use this file except in compliance with the License.",
+        "      * You may obtain a copy of the License at",
+        "      *",
+        "      *    http://www.apache.org/licenses/LICENSE-2.0",
+        "      *",
+        "      * Unless required by applicable law or agreed to in writing,",
+        "      * software distributed under the License is distributed on an",
+        "      * \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,",
+        "      * either express or implied. See the License for the specific",
+        "      * language governing permissions and limitations under the License",
+        "      ******************************************************************",
+        "      * Business Use Case: Branch Migration Import",
+        "      * - Import complete customer profiles from export file",
+        "      * - Split multi-record layout into normalized target files",
+        "      * - Validate data integrity using checksums",
+        "      * - Generate import statistics and error reports",
+        "      ******************************************************************",
+        "       ENVIRONMENT DIVISION.",
+        "       INPUT-OUTPUT SECTION.",
+        "       FILE-CONTROL.",
+        "           SELECT EXPORT-INPUT ASSIGN TO EXPFILE",
+        "               ORGANIZATION IS INDEXED",
+        "               ACCESS MODE IS SEQUENTIAL",
+        "               RECORD KEY IS EXPORT-SEQUENCE-NUM",
+        "               FILE STATUS IS WS-EXPORT-STATUS.",
+        "               ",
+        "           SELECT CUSTOMER-OUTPUT ASSIGN TO CUSTOUT",
+        "               ORGANIZATION IS SEQUENTIAL",
+        "               ACCESS MODE IS SEQUENTIAL",
+        "               FILE STATUS IS WS-CUSTOMER-STATUS.",
+        "               ",
+        "           SELECT ACCOUNT-OUTPUT ASSIGN TO ACCTOUT",
+        "               ORGANIZATION IS SEQUENTIAL",
+        "               ACCESS MODE IS SEQUENTIAL",
+        "               FILE STATUS IS WS-ACCOUNT-STATUS.",
+        "               ",
+        "           SELECT XREF-OUTPUT ASSIGN TO XREFOUT",
+        "               ORGANIZATION IS SEQUENTIAL",
+        "               ACCESS MODE IS SEQUENTIAL",
+        "               FILE STATUS IS WS-XREF-STATUS.",
+        "               ",
+        "           SELECT TRANSACTION-OUTPUT ASSIGN TO TRNXOUT",
+        "               ORGANIZATION IS SEQUENTIAL",
+        "               ACCESS MODE IS SEQUENTIAL",
+        "               FILE STATUS IS WS-TRANSACTION-STATUS.",
+        "               ",
+        "           SELECT CARD-OUTPUT ASSIGN TO CARDOUT",
+        "               ORGANIZATION IS SEQUENTIAL",
+        "               ACCESS MODE IS SEQUENTIAL",
+        "               FILE STATUS IS WS-CARD-STATUS.",
+        "               ",
+        "           SELECT ERROR-OUTPUT ASSIGN TO ERROUT",
+        "               ORGANIZATION IS SEQUENTIAL",
+        "               ACCESS MODE IS SEQUENTIAL",
+        "               FILE STATUS IS WS-ERROR-STATUS.",
+        "",
+        "       DATA DIVISION.",
+        "       FILE SECTION.",
+        "       ",
+        "       FD  EXPORT-INPUT",
+        "           RECORDING MODE IS F",
+        "           RECORD CONTAINS 500 CHARACTERS.",
+        "       01  EXPORT-INPUT-RECORD                        PIC X(500).",
+        "",
+        "       FD  CUSTOMER-OUTPUT",
+        "           RECORDING MODE IS F",
+        "           RECORD CONTAINS 500 CHARACTERS.",
+        "******* MO-PARSE: INLINED COBOL_COPYBOOK CVCUS01Y",
+        "      *****************************************************************",
+        "      *    Data-structure for Customer entity (RECLN 500)",
+        "      *****************************************************************",
+        "       01  CUSTOMER-RECORD.",
+        "           05  CUST-ID                                 PIC 9(09).",
+        "           05  CUST-FIRST-NAME                         PIC X(25).",
+        "           05  CUST-MIDDLE-NAME                        PIC X(25).",
+        "           05  CUST-LAST-NAME                          PIC X(25).",
+        "           05  CUST-ADDR-LINE-1                        PIC X(50).",
+        "           05  CUST-ADDR-LINE-2                        PIC X(50).",
+        "           05  CUST-ADDR-LINE-3                        PIC X(50).         ",
+        "           05  CUST-ADDR-STATE-CD                      PIC X(02).",
+        "           05  CUST-ADDR-COUNTRY-CD                    PIC X(03).",
+        "           05  CUST-ADDR-ZIP                           PIC X(10).",
+        "           05  CUST-PHONE-NUM-1                        PIC X(15).",
+        "           05  CUST-PHONE-NUM-2                        PIC X(15).",
+        "           05  CUST-SSN                                PIC 9(09).",
+        "           05  CUST-GOVT-ISSUED-ID                     PIC X(20).",
+        "           05  CUST-DOB-YYYY-MM-DD                     PIC X(10).",
+        "           05  CUST-EFT-ACCOUNT-ID                     PIC X(10).",
+        "           05  CUST-PRI-CARD-HOLDER-IND                PIC X(01).",
+        "           05  CUST-FICO-CREDIT-SCORE                  PIC 9(03).",
+        "           05  FILLER                                  PIC X(168).      ",
+        "      *",
+        "      * Ver: CardDemo_v1.0-15-g27d6c6f-68 Date: 2022-07-19 23:16:00 CDT",
+        "      *",
+        "",
+        "",
+        "       FD  ACCOUNT-OUTPUT",
+        "           RECORDING MODE IS F",
+        "           RECORD CONTAINS 300 CHARACTERS.",
+        "******* MO-PARSE: INLINED COBOL_COPYBOOK CVACT01Y",
+        "      *****************************************************************",
+        "      *    Data-structure for  account entity (RECLN 300)",
+        "      *****************************************************************",
+        "       01  ACCOUNT-RECORD.",
+        "           05  ACCT-ID                           PIC 9(11).",
+        "           05  ACCT-ACTIVE-STATUS                PIC X(01).",
+        "           05  ACCT-CURR-BAL                     PIC S9(10)V99.",
+        "           05  ACCT-CREDIT-LIMIT                 PIC S9(10)V99.",
+        "           05  ACCT-CASH-CREDIT-LIMIT            PIC S9(10)V99.",
+        "           05  ACCT-OPEN-DATE                    PIC X(10).",
+        "           05  ACCT-EXPIRAION-DATE               PIC X(10). ",
+        "           05  ACCT-REISSUE-DATE                 PIC X(10).",
+        "           05  ACCT-CURR-CYC-CREDIT              PIC S9(10)V99.",
+        "           05  ACCT-CURR-CYC-DEBIT               PIC S9(10)V99.",
+        "           05  ACCT-ADDR-ZIP                     PIC X(10).",
+        "           05  ACCT-GROUP-ID                     PIC X(10).",
+        "           05  FILLER                            PIC X(178).      ",
+        "      *",
+        "      * Ver: CardDemo_v1.0-15-g27d6c6f-68 Date: 2022-07-19 23:15:59 CDT",
+        "      *",
+        "",
+        "",
+        "       FD  XREF-OUTPUT",
+        "           RECORDING MODE IS F",
+        "           RECORD CONTAINS 50 CHARACTERS.",
+        "******* MO-PARSE: INLINED COBOL_COPYBOOK CVACT03Y",
+        "      *****************************************************************         ",
+        "      *    Data-structure for card xref (RECLN 50)                              ",
+        "      *****************************************************************         ",
+        "       01 CARD-XREF-RECORD.                                                     ",
+        "           05  XREF-CARD-NUM                     PIC X(16).                     ",
+        "           05  XREF-CUST-ID                      PIC 9(09).                     ",
+        "           05  XREF-ACCT-ID                      PIC 9(11).                     ",
+        "           05  FILLER                            PIC X(14).                     ",
+        "      *",
+        "      * Ver: CardDemo_v1.0-15-g27d6c6f-68 Date: 2022-07-19 23:16:00 CDT",
+        "      *",
+        "",
+        "",
+        "       FD  TRANSACTION-OUTPUT",
+        "           RECORDING MODE IS F",
+        "           RECORD CONTAINS 350 CHARACTERS.",
+        "******* MO-PARSE: INLINED COBOL_COPYBOOK CVTRA05Y",
+        "      *****************************************************************         ",
+        "      *    Data-structure for TRANsaction record (RECLN = 350)                  ",
+        "      *****************************************************************         ",
+        "       01  TRAN-RECORD.                                                         ",
+        "           05  TRAN-ID                                 PIC X(16).               ",
+        "           05  TRAN-TYPE-CD                            PIC X(02).               ",
+        "           05  TRAN-CAT-CD                             PIC 9(04).               ",
+        "           05  TRAN-SOURCE                             PIC X(10).               ",
+        "           05  TRAN-DESC                               PIC X(100).              ",
+        "           05  TRAN-AMT                                PIC S9(09)V99.           ",
+        "           05  TRAN-MERCHANT-ID                        PIC 9(09).               ",
+        "           05  TRAN-MERCHANT-NAME                      PIC X(50).               ",
+        "           05  TRAN-MERCHANT-CITY                      PIC X(50).               ",
+        "           05  TRAN-MERCHANT-ZIP                       PIC X(10).               ",
+        "           05  TRAN-CARD-NUM                           PIC X(16).               ",
+        "           05  TRAN-ORIG-TS                            PIC X(26).               ",
+        "           05  TRAN-PROC-TS                            PIC X(26).               ",
+        "           05  FILLER                                  PIC X(20).               ",
+        "      *",
+        "      * Ver: CardDemo_v1.0-15-g27d6c6f-68 Date: 2022-07-19 23:16:01 CDT",
+        "      *",
+        "",
+        "",
+        "       FD  CARD-OUTPUT",
+        "           RECORDING MODE IS F",
+        "           RECORD CONTAINS 150 CHARACTERS.",
+        "******* MO-PARSE: INLINED COBOL_COPYBOOK CVACT02Y",
+        "      *****************************************************************",
+        "      *    Data-structure for card entity (RECLN 150)",
+        "      *****************************************************************",
+        "       01  CARD-RECORD.",
+        "           05  CARD-NUM                          PIC X(16).",
+        "           05  CARD-ACCT-ID                      PIC 9(11).",
+        "           05  CARD-CVV-CD                       PIC 9(03).",
+        "           05  CARD-EMBOSSED-NAME                PIC X(50).",
+        "           05  CARD-EXPIRAION-DATE               PIC X(10).",
+        "           05  CARD-ACTIVE-STATUS                PIC X(01).",
+        "           05  FILLER                            PIC X(59).",
+        "      *",
+        "      * Ver: CardDemo_v1.0-15-g27d6c6f-68 Date: 2022-07-19 23:16:00 CDT",
+        "      *",
+        "",
+        "",
+        "       FD  ERROR-OUTPUT",
+        "           RECORDING MODE IS F",
+        "           RECORD CONTAINS 132 CHARACTERS.",
+        "       01  ERROR-OUTPUT-RECORD                        PIC X(132).",
+        "",
+        "       WORKING-STORAGE SECTION.",
+        "",
+        "******* MO-PARSE: INLINED COBOL_COPYBOOK CVEXPORT",
+        "      ******************************************************************",
+        "      * CVEXPORT.cpy - CardDemo Multi-Record Export Layout",
+        "      * This copybook defines the structure for export records",
+        "      * stored in the sequential export file for branch migration",
+        "      * Total Record Length: 500 bytes",
+        "      * Storage Optimization: COMP/COMP-3 fields for numeric data",
+        "      * Enhancement: Multiple record types with REDEFINES structure",
+        "      ******************************************************************",
+        "       01  EXPORT-RECORD.",
+        "           05  EXPORT-REC-TYPE                         PIC X(1).",
+        "           05  EXPORT-TIMESTAMP                        PIC X(26).",
+        "           05  EXPORT-TIMESTAMP-R REDEFINES EXPORT-TIMESTAMP.",
+        "               10  EXPORT-DATE                         PIC X(10).",
+        "               10  EXPORT-DATE-TIME-SEP                PIC X(1).",
+        "               10  EXPORT-TIME                         PIC X(15).",
+        "           05  EXPORT-SEQUENCE-NUM                     PIC 9(9) COMP.",
+        "           05  EXPORT-BRANCH-ID                        PIC X(4).",
+        "           05  EXPORT-REGION-CODE                      PIC X(5).",
+        "           05  EXPORT-RECORD-DATA                      PIC X(460).",
+        "",
+        "      ******************************************************************",
+        "      * Customer Record Structure - From CVCUS01Y.cpy",
+        "      ******************************************************************",
+        "           05  EXPORT-CUSTOMER-DATA REDEFINES EXPORT-RECORD-DATA.",
+        "               10  EXP-CUST-ID                     PIC 9(09) COMP.",
+        "               10  EXP-CUST-FIRST-NAME             PIC X(25).",
+        "               10  EXP-CUST-MIDDLE-NAME            PIC X(25).",
+        "               10  EXP-CUST-LAST-NAME              PIC X(25).",
+        "               10  EXP-CUST-ADDR-LINES OCCURS 3 TIMES.",
+        "                   15  EXP-CUST-ADDR-LINE          PIC X(50).",
+        "               10  EXP-CUST-ADDR-STATE-CD          PIC X(02).",
+        "               10  EXP-CUST-ADDR-COUNTRY-CD        PIC X(03).",
+        "               10  EXP-CUST-ADDR-ZIP               PIC X(10).",
+        "               10  EXP-CUST-PHONE-NUMS OCCURS 2 TIMES.",
+        "                   15  EXP-CUST-PHONE-NUM          PIC X(15).",
+        "               10  EXP-CUST-SSN                    PIC 9(09).",
+        "               10  EXP-CUST-GOVT-ISSUED-ID         PIC X(20).",
+        "               10  EXP-CUST-DOB-YYYY-MM-DD         PIC X(10).",
+        "               10  EXP-CUST-EFT-ACCOUNT-ID         PIC X(10).",
+        "               10  EXP-CUST-PRI-CARD-HOLDER-IND    PIC X(01).",
+        "               10  EXP-CUST-FICO-CREDIT-SCORE      PIC 9(03) COMP-3.",
+        "               10  FILLER                          PIC X(134).",
+        "",
+        "      ******************************************************************",
+        "      * Account Record Structure - From CVACT01Y.cpy",
+        "      ******************************************************************",
+        "           05  EXPORT-ACCOUNT-DATA REDEFINES EXPORT-RECORD-DATA.",
+        "               10  EXP-ACCT-ID                     PIC 9(11).",
+        "               10  EXP-ACCT-ACTIVE-STATUS          PIC X(01).",
+        "               10  EXP-ACCT-CURR-BAL               PIC S9(10)V99 COMP-3.",
+        "               10  EXP-ACCT-CREDIT-LIMIT           PIC S9(10)V99.",
+        "               10  EXP-ACCT-CASH-CREDIT-LIMIT      PIC S9(10)V99 COMP-3.",
+        "               10  EXP-ACCT-OPEN-DATE              PIC X(10).",
+        "               10  EXP-ACCT-EXPIRAION-DATE         PIC X(10).",
+        "               10  EXP-ACCT-REISSUE-DATE           PIC X(10).",
+        "               10  EXP-ACCT-CURR-CYC-CREDIT        PIC S9(10)V99.",
+        "               10  EXP-ACCT-CURR-CYC-DEBIT         PIC S9(10)V99 COMP.",
+        "               10  EXP-ACCT-ADDR-ZIP               PIC X(10).",
+        "               10  EXP-ACCT-GROUP-ID               PIC X(10).",
+        "               10  FILLER                          PIC X(352).",
+        "",
+        "      ******************************************************************",
+        "      * Transaction Record Structure - From CVTRA05Y.cpy",
+        "      ******************************************************************",
+        "           05  EXPORT-TRANSACTION-DATA REDEFINES EXPORT-RECORD-DATA.",
+        "               10  EXP-TRAN-ID                     PIC X(16).",
+        "               10  EXP-TRAN-TYPE-CD                PIC X(02).",
+        "               10  EXP-TRAN-CAT-CD                 PIC 9(04).",
+        "               10  EXP-TRAN-SOURCE                 PIC X(10).",
+        "               10  EXP-TRAN-DESC                   PIC X(100).",
+        "               10  EXP-TRAN-AMT                    PIC S9(09)V99 COMP-3.",
+        "               10  EXP-TRAN-MERCHANT-ID            PIC 9(09) COMP.",
+        "               10  EXP-TRAN-MERCHANT-NAME          PIC X(50).",
+        "               10  EXP-TRAN-MERCHANT-CITY          PIC X(50).",
+        "               10  EXP-TRAN-MERCHANT-ZIP           PIC X(10).",
+        "               10  EXP-TRAN-CARD-NUM               PIC X(16).",
+        "               10  EXP-TRAN-ORIG-TS                PIC X(26).",
+        "               10  EXP-TRAN-PROC-TS                PIC X(26).",
+        "               10  FILLER                          PIC X(140).",
+        "",
+        "      ******************************************************************",
+        "      * Card Cross-Reference Structure - From CVACT03Y.cpy",
+        "      ******************************************************************",
+        "           05  EXPORT-CARD-XREF-DATA REDEFINES EXPORT-RECORD-DATA.",
+        "               10  EXP-XREF-CARD-NUM               PIC X(16).",
+        "               10  EXP-XREF-CUST-ID                PIC 9(09).",
+        "               10  EXP-XREF-ACCT-ID                PIC 9(11) COMP.",
+        "               10  FILLER                          PIC X(427).",
+        "",
+        "      ******************************************************************",
+        "      * Card Record Structure - From CVACT02Y.cpy",
+        "      ******************************************************************",
+        "           05  EXPORT-CARD-DATA REDEFINES EXPORT-RECORD-DATA.",
+        "               10  EXP-CARD-NUM                    PIC X(16).",
+        "               10  EXP-CARD-ACCT-ID                PIC 9(11) COMP.",
+        "               10  EXP-CARD-CVV-CD                 PIC 9(03) COMP.",
+        "               10  EXP-CARD-EMBOSSED-NAME          PIC X(50).",
+        "               10  EXP-CARD-EXPIRAION-DATE         PIC X(10).",
+        "               10  EXP-CARD-ACTIVE-STATUS          PIC X(01).",
+        "               10  FILLER                          PIC X(373).      ",
+        "      *",
+        "      * Ver: CardDemo_v2.0-44-gb6e9c27-254 Date: 2025-10-16 14:07:18 CDT",
+        "      *",
+        "",
+        "",
+        "      * File Status Variables",
+        "       01  WS-FILE-STATUS-AREA.",
+        "           05  WS-EXPORT-STATUS                        PIC X(02).",
+        "               88  WS-EXPORT-EOF                       VALUE '10'.",
+        "               88  WS-EXPORT-OK                        VALUE '00'.",
+        "           05  WS-CUSTOMER-STATUS                      PIC X(02).",
+        "               88  WS-CUSTOMER-OK                      VALUE '00'.",
+        "           05  WS-ACCOUNT-STATUS                       PIC X(02).",
+        "               88  WS-ACCOUNT-OK                       VALUE '00'.",
+        "           05  WS-XREF-STATUS                          PIC X(02).",
+        "               88  WS-XREF-OK                          VALUE '00'.",
+        "           05  WS-TRANSACTION-STATUS                   PIC X(02).",
+        "               88  WS-TRANSACTION-OK                   VALUE '00'.",
+        "           05  WS-CARD-STATUS                          PIC X(02).",
+        "               88  WS-CARD-OK                          VALUE '00'.",
+        "           05  WS-ERROR-STATUS                         PIC X(02).",
+        "               88  WS-ERROR-OK                         VALUE '00'.",
+        "",
+        "      * Import Control Variables",
+        "       01  WS-IMPORT-CONTROL.",
+        "           05  WS-IMPORT-DATE                          PIC X(10).",
+        "           05  WS-IMPORT-TIME                          PIC X(08).",
+        "",
+        "      * Statistics Counters",
+        "       01  WS-IMPORT-STATISTICS.",
+        "           05  WS-TOTAL-RECORDS-READ                  PIC 9(09) VALUE 0.",
+        "           05  WS-CUSTOMER-RECORDS-IMPORTED           PIC 9(09) VALUE 0.",
+        "           05  WS-ACCOUNT-RECORDS-IMPORTED            PIC 9(09) VALUE 0.",
+        "           05  WS-XREF-RECORDS-IMPORTED               PIC 9(09) VALUE 0.",
+        "           05  WS-TRAN-RECORDS-IMPORTED           PIC 9(09) VALUE 0.",
+        "           05  WS-CARD-RECORDS-IMPORTED               PIC 9(09) VALUE 0.",
+        "           05  WS-ERROR-RECORDS-WRITTEN               PIC 9(09) VALUE 0.",
+        "           05  WS-UNKNOWN-RECORD-TYPE-COUNT           PIC 9(09) VALUE 0.",
+        "",
+        "",
+        "",
+        "      * Error Record Layout",
+        "       01  WS-ERROR-RECORD.",
+        "           05  ERR-TIMESTAMP                           PIC X(26).",
+        "           05  FILLER                              PIC X(01) VALUE '|'. ",
+        "           05  ERR-RECORD-TYPE                         PIC X(01).",
+        "           05  FILLER                              PIC X(01) VALUE '|'. ",
+        "           05  ERR-SEQUENCE                            PIC 9(07).",
+        "           05  FILLER                              PIC X(01) VALUE '|'. ",
+        "           05  ERR-MESSAGE                             PIC X(50).",
+        "           05  FILLER                          PIC X(43) VALUE SPACES.",
+        "",
+        "       PROCEDURE DIVISION.",
+        "",
+        "      *****************************************************************",
+        "       0000-MAIN-PROCESSING.",
+        "      *****************************************************************",
+        "           PERFORM 1000-INITIALIZE",
+        "           PERFORM 2000-PROCESS-EXPORT-FILE",
+        "           PERFORM 3000-VALIDATE-IMPORT",
+        "           PERFORM 4000-FINALIZE",
+        "           GOBACK.",
+        "",
+        "      *****************************************************************",
+        "       1000-INITIALIZE.",
+        "      *****************************************************************",
+        "           DISPLAY 'CBIMPORT: Starting Customer Data Import'",
+        "           ",
+        "           MOVE FUNCTION CURRENT-DATE(1:4) TO WS-IMPORT-DATE(1:4)",
+        "           MOVE '-' TO WS-IMPORT-DATE(5:1)",
+        "           MOVE FUNCTION CURRENT-DATE(5:2) TO WS-IMPORT-DATE(6:2)",
+        "           MOVE '-' TO WS-IMPORT-DATE(8:1)",
+        "           MOVE FUNCTION CURRENT-DATE(7:2) TO WS-IMPORT-DATE(9:2)",
+        "           ",
+        "           MOVE FUNCTION CURRENT-DATE(9:2) TO WS-IMPORT-TIME(1:2)",
+        "           MOVE ':' TO WS-IMPORT-TIME(3:1)",
+        "           MOVE FUNCTION CURRENT-DATE(11:2) TO WS-IMPORT-TIME(4:2)",
+        "           MOVE ':' TO WS-IMPORT-TIME(6:1)",
+        "           MOVE FUNCTION CURRENT-DATE(13:2) TO WS-IMPORT-TIME(7:2)",
+        "           ",
+        "           PERFORM 1100-OPEN-FILES",
+        "           ",
+        "           DISPLAY 'CBIMPORT: Import Date: ' WS-IMPORT-DATE",
+        "           DISPLAY 'CBIMPORT: Import Time: ' WS-IMPORT-TIME.",
+        "",
+        "      *****************************************************************",
+        "       1100-OPEN-FILES.",
+        "      *****************************************************************",
+        "           OPEN INPUT EXPORT-INPUT",
+        "           IF NOT WS-EXPORT-OK",
+        "               DISPLAY 'ERROR: Cannot open EXPORT-INPUT, Status: '",
+        "                       WS-EXPORT-STATUS",
+        "               PERFORM 9999-ABEND-PROGRAM",
+        "           END-IF",
+        "           ",
+        "           OPEN OUTPUT CUSTOMER-OUTPUT",
+        "           IF NOT WS-CUSTOMER-OK",
+        "               DISPLAY 'ERROR: Cannot open CUSTOMER-OUTPUT, Status: '",
+        "                       WS-CUSTOMER-STATUS",
+        "               PERFORM 9999-ABEND-PROGRAM",
+        "           END-IF",
+        "           ",
+        "           OPEN OUTPUT ACCOUNT-OUTPUT",
+        "           IF NOT WS-ACCOUNT-OK",
+        "               DISPLAY 'ERROR: Cannot open ACCOUNT-OUTPUT, Status: '",
+        "                       WS-ACCOUNT-STATUS",
+        "               PERFORM 9999-ABEND-PROGRAM",
+        "           END-IF",
+        "           ",
+        "           OPEN OUTPUT XREF-OUTPUT",
+        "           IF NOT WS-XREF-OK",
+        "               DISPLAY 'ERROR: Cannot open XREF-OUTPUT, Status: '",
+        "                       WS-XREF-STATUS",
+        "               PERFORM 9999-ABEND-PROGRAM",
+        "           END-IF",
+        "           ",
+        "           OPEN OUTPUT TRANSACTION-OUTPUT",
+        "           IF NOT WS-TRANSACTION-OK",
+        "               DISPLAY 'ERROR: Cannot open TRANSACTION-OUTPUT, Status: '",
+        "                       WS-TRANSACTION-STATUS",
+        "               PERFORM 9999-ABEND-PROGRAM",
+        "           END-IF",
+        "           ",
+        "           OPEN OUTPUT CARD-OUTPUT",
+        "           IF NOT WS-CARD-OK",
+        "               DISPLAY 'ERROR: Cannot open CARD-OUTPUT, Status: '",
+        "                       WS-CARD-STATUS",
+        "               PERFORM 9999-ABEND-PROGRAM",
+        "           END-IF",
+        "           ",
+        "           OPEN OUTPUT ERROR-OUTPUT",
+        "           IF NOT WS-ERROR-OK",
+        "               DISPLAY 'ERROR: Cannot open ERROR-OUTPUT, Status: '",
+        "                       WS-ERROR-STATUS",
+        "               PERFORM 9999-ABEND-PROGRAM",
+        "           END-IF.",
+        "",
+        "      *****************************************************************",
+        "       2000-PROCESS-EXPORT-FILE.",
+        "      *****************************************************************",
+        "           PERFORM 2100-READ-EXPORT-RECORD",
+        "           ",
+        "           PERFORM UNTIL WS-EXPORT-EOF",
+        "               ADD 1 TO WS-TOTAL-RECORDS-READ",
+        "               PERFORM 2200-PROCESS-RECORD-BY-TYPE",
+        "               PERFORM 2100-READ-EXPORT-RECORD",
+        "           END-PERFORM.",
+        "",
+        "      *****************************************************************",
+        "       2100-READ-EXPORT-RECORD.",
+        "      *****************************************************************",
+        "           READ EXPORT-INPUT INTO EXPORT-RECORD",
+        "           ",
+        "           IF NOT WS-EXPORT-OK AND NOT WS-EXPORT-EOF",
+        "               DISPLAY 'ERROR: Reading EXPORT-INPUT, Status: '",
+        "                       WS-EXPORT-STATUS",
+        "               PERFORM 9999-ABEND-PROGRAM",
+        "           END-IF.",
+        "",
+        "      *****************************************************************",
+        "       2200-PROCESS-RECORD-BY-TYPE.",
+        "      *****************************************************************",
+        "           EVALUATE EXPORT-REC-TYPE",
+        "               WHEN 'C'",
+        "                   PERFORM 2300-PROCESS-CUSTOMER-RECORD",
+        "               WHEN 'A'",
+        "                   PERFORM 2400-PROCESS-ACCOUNT-RECORD",
+        "               WHEN 'X'",
+        "                   PERFORM 2500-PROCESS-XREF-RECORD",
+        "               WHEN 'T'",
+        "                   PERFORM 2600-PROCESS-TRAN-RECORD",
+        "               WHEN 'D'",
+        "                   PERFORM 2650-PROCESS-CARD-RECORD",
+        "               WHEN OTHER",
+        "                   PERFORM 2700-PROCESS-UNKNOWN-RECORD",
+        "           END-EVALUATE.",
+        "",
+        "      *****************************************************************",
+        "       2300-PROCESS-CUSTOMER-RECORD.",
+        "      *****************************************************************",
+        "           INITIALIZE CUSTOMER-RECORD",
+        "           ",
+        "      *    Map export fields to customer record",
+        "           MOVE EXP-CUST-ID TO CUST-ID",
+        "           MOVE EXP-CUST-FIRST-NAME TO CUST-FIRST-NAME",
+        "           MOVE EXP-CUST-MIDDLE-NAME TO CUST-MIDDLE-NAME",
+        "           MOVE EXP-CUST-LAST-NAME TO CUST-LAST-NAME",
+        "           MOVE EXP-CUST-ADDR-LINE(1) TO CUST-ADDR-LINE-1",
+        "           MOVE EXP-CUST-ADDR-LINE(2) TO CUST-ADDR-LINE-2",
+        "           MOVE EXP-CUST-ADDR-LINE(3) TO CUST-ADDR-LINE-3",
+        "           MOVE EXP-CUST-ADDR-STATE-CD TO CUST-ADDR-STATE-CD",
+        "           MOVE EXP-CUST-ADDR-COUNTRY-CD TO CUST-ADDR-COUNTRY-CD",
+        "           MOVE EXP-CUST-ADDR-ZIP TO CUST-ADDR-ZIP",
+        "           MOVE EXP-CUST-PHONE-NUM(1) TO CUST-PHONE-NUM-1",
+        "           MOVE EXP-CUST-PHONE-NUM(2) TO CUST-PHONE-NUM-2",
+        "           MOVE EXP-CUST-SSN TO CUST-SSN",
+        "           MOVE EXP-CUST-GOVT-ISSUED-ID TO CUST-GOVT-ISSUED-ID",
+        "           MOVE EXP-CUST-DOB-YYYY-MM-DD TO CUST-DOB-YYYY-MM-DD",
+        "           MOVE EXP-CUST-EFT-ACCOUNT-ID TO CUST-EFT-ACCOUNT-ID",
+        "           MOVE EXP-CUST-PRI-CARD-HOLDER-IND TO CUST-PRI-CARD-HOLDER-IND",
+        "           MOVE EXP-CUST-FICO-CREDIT-SCORE TO CUST-FICO-CREDIT-SCORE",
+        "           ",
+        "           WRITE CUSTOMER-RECORD",
+        "           ",
+        "           IF NOT WS-CUSTOMER-OK",
+        "               DISPLAY 'ERROR: Writing customer record, Status: '",
+        "                       WS-CUSTOMER-STATUS",
+        "               PERFORM 9999-ABEND-PROGRAM",
+        "           END-IF",
+        "           ",
+        "           ADD 1 TO WS-CUSTOMER-RECORDS-IMPORTED.",
+        "",
+        "      *****************************************************************",
+        "       2400-PROCESS-ACCOUNT-RECORD.",
+        "      *****************************************************************",
+        "           INITIALIZE ACCOUNT-RECORD",
+        "           ",
+        "      *    Map export fields to account record",
+        "           MOVE EXP-ACCT-ID TO ACCT-ID",
+        "           MOVE EXP-ACCT-ACTIVE-STATUS TO ACCT-ACTIVE-STATUS",
+        "           MOVE EXP-ACCT-CURR-BAL TO ACCT-CURR-BAL",
+        "           MOVE EXP-ACCT-CREDIT-LIMIT TO ACCT-CREDIT-LIMIT",
+        "           MOVE EXP-ACCT-CASH-CREDIT-LIMIT TO ACCT-CASH-CREDIT-LIMIT",
+        "           MOVE EXP-ACCT-OPEN-DATE TO ACCT-OPEN-DATE",
+        "           MOVE EXP-ACCT-EXPIRAION-DATE TO ACCT-EXPIRAION-DATE",
+        "           MOVE EXP-ACCT-REISSUE-DATE TO ACCT-REISSUE-DATE",
+        "           MOVE EXP-ACCT-CURR-CYC-CREDIT TO ACCT-CURR-CYC-CREDIT",
+        "           MOVE EXP-ACCT-CURR-CYC-DEBIT TO ACCT-CURR-CYC-DEBIT",
+        "           MOVE EXP-ACCT-ADDR-ZIP TO ACCT-ADDR-ZIP",
+        "           MOVE EXP-ACCT-GROUP-ID TO ACCT-GROUP-ID",
+        "           ",
+        "           WRITE ACCOUNT-RECORD",
+        "           ",
+        "           IF NOT WS-ACCOUNT-OK",
+        "               DISPLAY 'ERROR: Writing account record, Status: '",
+        "                       WS-ACCOUNT-STATUS",
+        "               PERFORM 9999-ABEND-PROGRAM",
+        "           END-IF",
+        "           ",
+        "           ADD 1 TO WS-ACCOUNT-RECORDS-IMPORTED.",
+        "",
+        "      *****************************************************************",
+        "       2500-PROCESS-XREF-RECORD.",
+        "      *****************************************************************",
+        "           INITIALIZE CARD-XREF-RECORD",
+        "           ",
+        "      *    Map export fields to xref record",
+        "           MOVE EXP-XREF-CARD-NUM TO XREF-CARD-NUM",
+        "           MOVE EXP-XREF-CUST-ID TO XREF-CUST-ID",
+        "           MOVE EXP-XREF-ACCT-ID TO XREF-ACCT-ID",
+        "           ",
+        "           WRITE CARD-XREF-RECORD",
+        "           ",
+        "           IF NOT WS-XREF-OK",
+        "               DISPLAY 'ERROR: Writing xref record, Status: '",
+        "                       WS-XREF-STATUS",
+        "               PERFORM 9999-ABEND-PROGRAM",
+        "           END-IF",
+        "           ",
+        "           ADD 1 TO WS-XREF-RECORDS-IMPORTED.",
+        "",
+        "      *****************************************************************",
+        "       2600-PROCESS-TRAN-RECORD.",
+        "      *****************************************************************",
+        "           INITIALIZE TRAN-RECORD",
+        "           ",
+        "      *    Map export fields to transaction record",
+        "           MOVE EXP-TRAN-ID TO TRAN-ID",
+        "           MOVE EXP-TRAN-TYPE-CD TO TRAN-TYPE-CD",
+        "           MOVE EXP-TRAN-CAT-CD TO TRAN-CAT-CD",
+        "           MOVE EXP-TRAN-SOURCE TO TRAN-SOURCE",
+        "           MOVE EXP-TRAN-DESC TO TRAN-DESC",
+        "           MOVE EXP-TRAN-AMT TO TRAN-AMT",
+        "           MOVE EXP-TRAN-MERCHANT-ID TO TRAN-MERCHANT-ID",
+        "           MOVE EXP-TRAN-MERCHANT-NAME TO TRAN-MERCHANT-NAME",
+        "           MOVE EXP-TRAN-MERCHANT-CITY TO TRAN-MERCHANT-CITY",
+        "           MOVE EXP-TRAN-MERCHANT-ZIP TO TRAN-MERCHANT-ZIP",
+        "           MOVE EXP-TRAN-CARD-NUM TO TRAN-CARD-NUM",
+        "           MOVE EXP-TRAN-ORIG-TS TO TRAN-ORIG-TS",
+        "           MOVE EXP-TRAN-PROC-TS TO TRAN-PROC-TS",
+        "           ",
+        "           WRITE TRAN-RECORD",
+        "           ",
+        "           IF NOT WS-TRANSACTION-OK",
+        "               DISPLAY 'ERROR: Writing transaction record, Status: '",
+        "                       WS-TRANSACTION-STATUS",
+        "               PERFORM 9999-ABEND-PROGRAM",
+        "           END-IF",
+        "           ",
+        "           ADD 1 TO WS-TRAN-RECORDS-IMPORTED.",
+        "",
+        "      *****************************************************************",
+        "       2650-PROCESS-CARD-RECORD.",
+        "      *****************************************************************",
+        "           INITIALIZE CARD-RECORD",
+        "           ",
+        "      *    Map export fields to card record",
+        "           MOVE EXP-CARD-NUM TO CARD-NUM",
+        "           MOVE EXP-CARD-ACCT-ID TO CARD-ACCT-ID",
+        "           MOVE EXP-CARD-CVV-CD TO CARD-CVV-CD",
+        "           MOVE EXP-CARD-EMBOSSED-NAME TO CARD-EMBOSSED-NAME",
+        "           MOVE EXP-CARD-EXPIRAION-DATE TO CARD-EXPIRAION-DATE",
+        "           MOVE EXP-CARD-ACTIVE-STATUS TO CARD-ACTIVE-STATUS",
+        "           ",
+        "           WRITE CARD-RECORD",
+        "           ",
+        "           IF NOT WS-CARD-OK",
+        "               DISPLAY 'ERROR: Writing card record, Status: '",
+        "                       WS-CARD-STATUS",
+        "               PERFORM 9999-ABEND-PROGRAM",
+        "           END-IF",
+        "           ",
+        "           ADD 1 TO WS-CARD-RECORDS-IMPORTED.",
+        "",
+        "      *****************************************************************",
+        "       2700-PROCESS-UNKNOWN-RECORD.",
+        "      *****************************************************************",
+        "           ADD 1 TO WS-UNKNOWN-RECORD-TYPE-COUNT",
+        "           ",
+        "           MOVE FUNCTION CURRENT-DATE TO ERR-TIMESTAMP",
+        "           MOVE EXPORT-REC-TYPE TO ERR-RECORD-TYPE",
+        "           MOVE EXPORT-SEQUENCE-NUM TO ERR-SEQUENCE",
+        "           MOVE 'Unknown record type encountered' TO ERR-MESSAGE",
+        "           ",
+        "           PERFORM 2750-WRITE-ERROR.",
+        "",
+        "      *****************************************************************",
+        "       2750-WRITE-ERROR.",
+        "      *****************************************************************",
+        "           WRITE ERROR-OUTPUT-RECORD FROM WS-ERROR-RECORD",
+        "           ",
+        "           IF NOT WS-ERROR-OK",
+        "               DISPLAY 'ERROR: Writing error record, Status: '",
+        "                       WS-ERROR-STATUS",
+        "           END-IF",
+        "           ",
+        "           ADD 1 TO WS-ERROR-RECORDS-WRITTEN.",
+        "",
+        "      *****************************************************************",
+        "       3000-VALIDATE-IMPORT.",
+        "      *****************************************************************",
+        "           DISPLAY 'CBIMPORT: Import validation completed'",
+        "           DISPLAY 'CBIMPORT: No validation errors detected'.",
+        "",
+        "      *****************************************************************",
+        "       4000-FINALIZE.",
+        "      *****************************************************************",
+        "           CLOSE EXPORT-INPUT",
+        "           CLOSE CUSTOMER-OUTPUT",
+        "           CLOSE ACCOUNT-OUTPUT",
+        "           CLOSE XREF-OUTPUT",
+        "           CLOSE TRANSACTION-OUTPUT",
+        "           CLOSE CARD-OUTPUT",
+        "           CLOSE ERROR-OUTPUT",
+        "           ",
+        "           DISPLAY 'CBIMPORT: Import completed'",
+        "           DISPLAY 'CBIMPORT: Total Records Read: '",
+        "           WS-TOTAL-RECORDS-READ",
+        "           DISPLAY 'CBIMPORT: Customers Imported: ' ",
+        "                   WS-CUSTOMER-RECORDS-IMPORTED",
+        "           DISPLAY 'CBIMPORT: Accounts Imported: ' ",
+        "                   WS-ACCOUNT-RECORDS-IMPORTED",
+        "           DISPLAY 'CBIMPORT: XRefs Imported: ' WS-XREF-RECORDS-IMPORTED",
+        "           DISPLAY 'CBIMPORT: Transactions Imported: ' ",
+        "                   WS-TRAN-RECORDS-IMPORTED",
+        "           DISPLAY 'CBIMPORT: Cards Imported: ' WS-CARD-RECORDS-IMPORTED",
+        "           DISPLAY 'CBIMPORT: Errors Written: ' WS-ERROR-RECORDS-WRITTEN",
+        "           DISPLAY 'CBIMPORT: Unknown Record Types: ' ",
+        "                   WS-UNKNOWN-RECORD-TYPE-COUNT.",
+        "",
+        "      *****************************************************************",
+        "       9999-ABEND-PROGRAM.",
+        "      *****************************************************************",
+        "           DISPLAY 'CBIMPORT: ABENDING PROGRAM'",
+        "           CALL 'CEE3ABD'.      ",
+        "      *",
+        "      * Ver: CardDemo_v2.0-44-gb6e9c27-254 Date: 2025-10-16 14:07:18 CDT",
+        "      *",
+        ""
+      ],
+      "Variables": [
+        {
+          "Level": 1,
+          "Name": "EXPORT-INPUT-RECORD",
+          "Pic": "X(500)",
+          "ParsedPic": [
+            "X"
+          ],
+          "ParsedPicCounts": [
+            500
+          ],
+          "InferredUsage": "DISPLAY",
+          "InferredType": "string",
+          "ComputedSize": 500,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:79:7"
+        },
+        {
+          "Level": 1,
+          "Name": "CUSTOMER-RECORD",
+          "ComputedSize": 500,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cpy/CVCUS01Y.cpy:4:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "CUST-ID",
+              "Pic": "9(09)",
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                9
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 9,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://cpy/CVCUS01Y.cpy:5:11"
+            },
+            {
+              "Level": 5,
+              "Name": "CUST-FIRST-NAME",
+              "Pic": "X(25)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                25
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 25,
+              "Offset": [
+                9
+              ],
+              "Coordinates": "file://cpy/CVCUS01Y.cpy:6:11"
+            },
+            {
+              "Level": 5,
+              "Name": "CUST-MIDDLE-NAME",
+              "Pic": "X(25)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                25
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 25,
+              "Offset": [
+                34
+              ],
+              "Coordinates": "file://cpy/CVCUS01Y.cpy:7:11"
+            },
+            {
+              "Level": 5,
+              "Name": "CUST-LAST-NAME",
+              "Pic": "X(25)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                25
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 25,
+              "Offset": [
+                59
+              ],
+              "Coordinates": "file://cpy/CVCUS01Y.cpy:8:11"
+            },
+            {
+              "Level": 5,
+              "Name": "CUST-ADDR-LINE-1",
+              "Pic": "X(50)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                50
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 50,
+              "Offset": [
+                84
+              ],
+              "Coordinates": "file://cpy/CVCUS01Y.cpy:9:11"
+            },
+            {
+              "Level": 5,
+              "Name": "CUST-ADDR-LINE-2",
+              "Pic": "X(50)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                50
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 50,
+              "Offset": [
+                134
+              ],
+              "Coordinates": "file://cpy/CVCUS01Y.cpy:10:11"
+            },
+            {
+              "Level": 5,
+              "Name": "CUST-ADDR-LINE-3",
+              "Pic": "X(50)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                50
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 50,
+              "Offset": [
+                184
+              ],
+              "Coordinates": "file://cpy/CVCUS01Y.cpy:11:11"
+            },
+            {
+              "Level": 5,
+              "Name": "CUST-ADDR-STATE-CD",
+              "Pic": "X(02)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                2
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 2,
+              "Offset": [
+                234
+              ],
+              "Coordinates": "file://cpy/CVCUS01Y.cpy:12:11"
+            },
+            {
+              "Level": 5,
+              "Name": "CUST-ADDR-COUNTRY-CD",
+              "Pic": "X(03)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                3
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 3,
+              "Offset": [
+                236
+              ],
+              "Coordinates": "file://cpy/CVCUS01Y.cpy:13:11"
+            },
+            {
+              "Level": 5,
+              "Name": "CUST-ADDR-ZIP",
+              "Pic": "X(10)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                10
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 10,
+              "Offset": [
+                239
+              ],
+              "Coordinates": "file://cpy/CVCUS01Y.cpy:14:11"
+            },
+            {
+              "Level": 5,
+              "Name": "CUST-PHONE-NUM-1",
+              "Pic": "X(15)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                15
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 15,
+              "Offset": [
+                249
+              ],
+              "Coordinates": "file://cpy/CVCUS01Y.cpy:15:11"
+            },
+            {
+              "Level": 5,
+              "Name": "CUST-PHONE-NUM-2",
+              "Pic": "X(15)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                15
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 15,
+              "Offset": [
+                264
+              ],
+              "Coordinates": "file://cpy/CVCUS01Y.cpy:16:11"
+            },
+            {
+              "Level": 5,
+              "Name": "CUST-SSN",
+              "Pic": "9(09)",
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                9
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 9,
+              "Offset": [
+                279
+              ],
+              "Coordinates": "file://cpy/CVCUS01Y.cpy:17:11"
+            },
+            {
+              "Level": 5,
+              "Name": "CUST-GOVT-ISSUED-ID",
+              "Pic": "X(20)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                20
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 20,
+              "Offset": [
+                288
+              ],
+              "Coordinates": "file://cpy/CVCUS01Y.cpy:18:11"
+            },
+            {
+              "Level": 5,
+              "Name": "CUST-DOB-YYYY-MM-DD",
+              "Pic": "X(10)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                10
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 10,
+              "Offset": [
+                308
+              ],
+              "Coordinates": "file://cpy/CVCUS01Y.cpy:19:11"
+            },
+            {
+              "Level": 5,
+              "Name": "CUST-EFT-ACCOUNT-ID",
+              "Pic": "X(10)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                10
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 10,
+              "Offset": [
+                318
+              ],
+              "Coordinates": "file://cpy/CVCUS01Y.cpy:20:11"
+            },
+            {
+              "Level": 5,
+              "Name": "CUST-PRI-CARD-HOLDER-IND",
+              "Pic": "X(01)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                328
+              ],
+              "Coordinates": "file://cpy/CVCUS01Y.cpy:21:11"
+            },
+            {
+              "Level": 5,
+              "Name": "CUST-FICO-CREDIT-SCORE",
+              "Pic": "9(03)",
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                3
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 3,
+              "Offset": [
+                329
+              ],
+              "Coordinates": "file://cpy/CVCUS01Y.cpy:22:11"
+            },
+            {
+              "Level": 5,
+              "Pic": "X(168)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                168
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 168,
+              "Offset": [
+                332
+              ],
+              "Coordinates": "file://cpy/CVCUS01Y.cpy:23:11"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "ACCOUNT-RECORD",
+          "ComputedSize": 300,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cpy/CVACT01Y.cpy:4:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "ACCT-ID",
+              "Pic": "9(11)",
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                11
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 11,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://cpy/CVACT01Y.cpy:5:11"
+            },
+            {
+              "Level": 5,
+              "Name": "ACCT-ACTIVE-STATUS",
+              "Pic": "X(01)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                11
+              ],
+              "Coordinates": "file://cpy/CVACT01Y.cpy:6:11"
+            },
+            {
+              "Level": 5,
+              "Name": "ACCT-CURR-BAL",
+              "Pic": "S9(10)V99",
+              "ParsedPic": [
+                "S",
+                "9",
+                "V",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1,
+                10,
+                1,
+                2
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-float",
+              "ComputedSize": 12,
+              "Offset": [
+                12
+              ],
+              "Coordinates": "file://cpy/CVACT01Y.cpy:7:11"
+            },
+            {
+              "Level": 5,
+              "Name": "ACCT-CREDIT-LIMIT",
+              "Pic": "S9(10)V99",
+              "ParsedPic": [
+                "S",
+                "9",
+                "V",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1,
+                10,
+                1,
+                2
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-float",
+              "ComputedSize": 12,
+              "Offset": [
+                24
+              ],
+              "Coordinates": "file://cpy/CVACT01Y.cpy:8:11"
+            },
+            {
+              "Level": 5,
+              "Name": "ACCT-CASH-CREDIT-LIMIT",
+              "Pic": "S9(10)V99",
+              "ParsedPic": [
+                "S",
+                "9",
+                "V",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1,
+                10,
+                1,
+                2
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-float",
+              "ComputedSize": 12,
+              "Offset": [
+                36
+              ],
+              "Coordinates": "file://cpy/CVACT01Y.cpy:9:11"
+            },
+            {
+              "Level": 5,
+              "Name": "ACCT-OPEN-DATE",
+              "Pic": "X(10)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                10
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 10,
+              "Offset": [
+                48
+              ],
+              "Coordinates": "file://cpy/CVACT01Y.cpy:10:11"
+            },
+            {
+              "Level": 5,
+              "Name": "ACCT-EXPIRAION-DATE",
+              "Pic": "X(10)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                10
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 10,
+              "Offset": [
+                58
+              ],
+              "Coordinates": "file://cpy/CVACT01Y.cpy:11:11"
+            },
+            {
+              "Level": 5,
+              "Name": "ACCT-REISSUE-DATE",
+              "Pic": "X(10)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                10
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 10,
+              "Offset": [
+                68
+              ],
+              "Coordinates": "file://cpy/CVACT01Y.cpy:12:11"
+            },
+            {
+              "Level": 5,
+              "Name": "ACCT-CURR-CYC-CREDIT",
+              "Pic": "S9(10)V99",
+              "ParsedPic": [
+                "S",
+                "9",
+                "V",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1,
+                10,
+                1,
+                2
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-float",
+              "ComputedSize": 12,
+              "Offset": [
+                78
+              ],
+              "Coordinates": "file://cpy/CVACT01Y.cpy:13:11"
+            },
+            {
+              "Level": 5,
+              "Name": "ACCT-CURR-CYC-DEBIT",
+              "Pic": "S9(10)V99",
+              "ParsedPic": [
+                "S",
+                "9",
+                "V",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1,
+                10,
+                1,
+                2
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-float",
+              "ComputedSize": 12,
+              "Offset": [
+                90
+              ],
+              "Coordinates": "file://cpy/CVACT01Y.cpy:14:11"
+            },
+            {
+              "Level": 5,
+              "Name": "ACCT-ADDR-ZIP",
+              "Pic": "X(10)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                10
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 10,
+              "Offset": [
+                102
+              ],
+              "Coordinates": "file://cpy/CVACT01Y.cpy:15:11"
+            },
+            {
+              "Level": 5,
+              "Name": "ACCT-GROUP-ID",
+              "Pic": "X(10)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                10
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 10,
+              "Offset": [
+                112
+              ],
+              "Coordinates": "file://cpy/CVACT01Y.cpy:16:11"
+            },
+            {
+              "Level": 5,
+              "Pic": "X(178)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                178
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 178,
+              "Offset": [
+                122
+              ],
+              "Coordinates": "file://cpy/CVACT01Y.cpy:17:11"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "CARD-XREF-RECORD",
+          "ComputedSize": 50,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cpy/CVACT03Y.cpy:4:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "XREF-CARD-NUM",
+              "Pic": "X(16)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                16
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 16,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://cpy/CVACT03Y.cpy:5:11"
+            },
+            {
+              "Level": 5,
+              "Name": "XREF-CUST-ID",
+              "Pic": "9(09)",
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                9
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 9,
+              "Offset": [
+                16
+              ],
+              "Coordinates": "file://cpy/CVACT03Y.cpy:6:11"
+            },
+            {
+              "Level": 5,
+              "Name": "XREF-ACCT-ID",
+              "Pic": "9(11)",
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                11
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 11,
+              "Offset": [
+                25
+              ],
+              "Coordinates": "file://cpy/CVACT03Y.cpy:7:11"
+            },
+            {
+              "Level": 5,
+              "Pic": "X(14)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                14
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 14,
+              "Offset": [
+                36
+              ],
+              "Coordinates": "file://cpy/CVACT03Y.cpy:8:11"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "TRAN-RECORD",
+          "ComputedSize": 350,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cpy/CVTRA05Y.cpy:4:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "TRAN-ID",
+              "Pic": "X(16)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                16
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 16,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://cpy/CVTRA05Y.cpy:5:11"
+            },
+            {
+              "Level": 5,
+              "Name": "TRAN-TYPE-CD",
+              "Pic": "X(02)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                2
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 2,
+              "Offset": [
+                16
+              ],
+              "Coordinates": "file://cpy/CVTRA05Y.cpy:6:11"
+            },
+            {
+              "Level": 5,
+              "Name": "TRAN-CAT-CD",
+              "Pic": "9(04)",
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                4
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 4,
+              "Offset": [
+                18
+              ],
+              "Coordinates": "file://cpy/CVTRA05Y.cpy:7:11"
+            },
+            {
+              "Level": 5,
+              "Name": "TRAN-SOURCE",
+              "Pic": "X(10)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                10
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 10,
+              "Offset": [
+                22
+              ],
+              "Coordinates": "file://cpy/CVTRA05Y.cpy:8:11"
+            },
+            {
+              "Level": 5,
+              "Name": "TRAN-DESC",
+              "Pic": "X(100)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                100
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 100,
+              "Offset": [
+                32
+              ],
+              "Coordinates": "file://cpy/CVTRA05Y.cpy:9:11"
+            },
+            {
+              "Level": 5,
+              "Name": "TRAN-AMT",
+              "Pic": "S9(09)V99",
+              "ParsedPic": [
+                "S",
+                "9",
+                "V",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1,
+                9,
+                1,
+                2
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-float",
+              "ComputedSize": 11,
+              "Offset": [
+                132
+              ],
+              "Coordinates": "file://cpy/CVTRA05Y.cpy:10:11"
+            },
+            {
+              "Level": 5,
+              "Name": "TRAN-MERCHANT-ID",
+              "Pic": "9(09)",
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                9
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 9,
+              "Offset": [
+                143
+              ],
+              "Coordinates": "file://cpy/CVTRA05Y.cpy:11:11"
+            },
+            {
+              "Level": 5,
+              "Name": "TRAN-MERCHANT-NAME",
+              "Pic": "X(50)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                50
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 50,
+              "Offset": [
+                152
+              ],
+              "Coordinates": "file://cpy/CVTRA05Y.cpy:12:11"
+            },
+            {
+              "Level": 5,
+              "Name": "TRAN-MERCHANT-CITY",
+              "Pic": "X(50)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                50
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 50,
+              "Offset": [
+                202
+              ],
+              "Coordinates": "file://cpy/CVTRA05Y.cpy:13:11"
+            },
+            {
+              "Level": 5,
+              "Name": "TRAN-MERCHANT-ZIP",
+              "Pic": "X(10)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                10
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 10,
+              "Offset": [
+                252
+              ],
+              "Coordinates": "file://cpy/CVTRA05Y.cpy:14:11"
+            },
+            {
+              "Level": 5,
+              "Name": "TRAN-CARD-NUM",
+              "Pic": "X(16)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                16
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 16,
+              "Offset": [
+                262
+              ],
+              "Coordinates": "file://cpy/CVTRA05Y.cpy:15:11"
+            },
+            {
+              "Level": 5,
+              "Name": "TRAN-ORIG-TS",
+              "Pic": "X(26)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                26
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 26,
+              "Offset": [
+                278
+              ],
+              "Coordinates": "file://cpy/CVTRA05Y.cpy:16:11"
+            },
+            {
+              "Level": 5,
+              "Name": "TRAN-PROC-TS",
+              "Pic": "X(26)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                26
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 26,
+              "Offset": [
+                304
+              ],
+              "Coordinates": "file://cpy/CVTRA05Y.cpy:17:11"
+            },
+            {
+              "Level": 5,
+              "Pic": "X(20)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                20
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 20,
+              "Offset": [
+                330
+              ],
+              "Coordinates": "file://cpy/CVTRA05Y.cpy:18:11"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "CARD-RECORD",
+          "ComputedSize": 150,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cpy/CVACT02Y.cpy:4:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "CARD-NUM",
+              "Pic": "X(16)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                16
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 16,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://cpy/CVACT02Y.cpy:5:11"
+            },
+            {
+              "Level": 5,
+              "Name": "CARD-ACCT-ID",
+              "Pic": "9(11)",
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                11
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 11,
+              "Offset": [
+                16
+              ],
+              "Coordinates": "file://cpy/CVACT02Y.cpy:6:11"
+            },
+            {
+              "Level": 5,
+              "Name": "CARD-CVV-CD",
+              "Pic": "9(03)",
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                3
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 3,
+              "Offset": [
+                27
+              ],
+              "Coordinates": "file://cpy/CVACT02Y.cpy:7:11"
+            },
+            {
+              "Level": 5,
+              "Name": "CARD-EMBOSSED-NAME",
+              "Pic": "X(50)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                50
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 50,
+              "Offset": [
+                30
+              ],
+              "Coordinates": "file://cpy/CVACT02Y.cpy:8:11"
+            },
+            {
+              "Level": 5,
+              "Name": "CARD-EXPIRAION-DATE",
+              "Pic": "X(10)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                10
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 10,
+              "Offset": [
+                80
+              ],
+              "Coordinates": "file://cpy/CVACT02Y.cpy:9:11"
+            },
+            {
+              "Level": 5,
+              "Name": "CARD-ACTIVE-STATUS",
+              "Pic": "X(01)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                90
+              ],
+              "Coordinates": "file://cpy/CVACT02Y.cpy:10:11"
+            },
+            {
+              "Level": 5,
+              "Pic": "X(59)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                59
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 59,
+              "Offset": [
+                91
+              ],
+              "Coordinates": "file://cpy/CVACT02Y.cpy:11:11"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "ERROR-OUTPUT-RECORD",
+          "Pic": "X(132)",
+          "ParsedPic": [
+            "X"
+          ],
+          "ParsedPicCounts": [
+            132
+          ],
+          "InferredUsage": "DISPLAY",
+          "InferredType": "string",
+          "ComputedSize": 132,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:109:7"
+        },
+        {
+          "Level": 1,
+          "Name": "EXPORT-RECORD",
+          "ComputedSize": 500,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cpy/CVEXPORT.cpy:9:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "EXPORT-REC-TYPE",
+              "Pic": "X(1)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://cpy/CVEXPORT.cpy:10:11"
+            },
+            {
+              "Level": 5,
+              "Name": "EXPORT-TIMESTAMP",
+              "Pic": "X(26)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                26
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 26,
+              "Offset": [
+                1
+              ],
+              "Coordinates": "file://cpy/CVEXPORT.cpy:11:11"
+            },
+            {
+              "Level": 5,
+              "Name": "EXPORT-TIMESTAMP-R",
+              "Redefines": "EXPORT-TIMESTAMP",
+              "ComputedSize": 26,
+              "Offset": [
+                1
+              ],
+              "Coordinates": "file://cpy/CVEXPORT.cpy:12:11",
+              "Children": [
+                {
+                  "Level": 10,
+                  "Name": "EXPORT-DATE",
+                  "Pic": "X(10)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    10
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 10,
+                  "Offset": [
+                    1
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:13:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXPORT-DATE-TIME-SEP",
+                  "Pic": "X(1)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    1
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 1,
+                  "Offset": [
+                    11
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:14:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXPORT-TIME",
+                  "Pic": "X(15)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    15
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 15,
+                  "Offset": [
+                    12
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:15:15"
+                }
+              ]
+            },
+            {
+              "Level": 5,
+              "Name": "EXPORT-SEQUENCE-NUM",
+              "Pic": "9(9)",
+              "Usage": "COMP",
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                9
+              ],
+              "InferredUsage": "COMP",
+              "InferredType": "comp-int",
+              "ComputedSize": 4,
+              "Offset": [
+                27
+              ],
+              "Coordinates": "file://cpy/CVEXPORT.cpy:16:11"
+            },
+            {
+              "Level": 5,
+              "Name": "EXPORT-BRANCH-ID",
+              "Pic": "X(4)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                4
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 4,
+              "Offset": [
+                31
+              ],
+              "Coordinates": "file://cpy/CVEXPORT.cpy:17:11"
+            },
+            {
+              "Level": 5,
+              "Name": "EXPORT-REGION-CODE",
+              "Pic": "X(5)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                5
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 5,
+              "Offset": [
+                35
+              ],
+              "Coordinates": "file://cpy/CVEXPORT.cpy:18:11"
+            },
+            {
+              "Level": 5,
+              "Name": "EXPORT-RECORD-DATA",
+              "Pic": "X(460)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                460
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 460,
+              "Offset": [
+                40
+              ],
+              "Coordinates": "file://cpy/CVEXPORT.cpy:19:11"
+            },
+            {
+              "Level": 5,
+              "Name": "EXPORT-CUSTOMER-DATA",
+              "Redefines": "EXPORT-RECORD-DATA",
+              "ComputedSize": 460,
+              "Offset": [
+                40
+              ],
+              "Coordinates": "file://cpy/CVEXPORT.cpy:24:11",
+              "Children": [
+                {
+                  "Level": 10,
+                  "Name": "EXP-CUST-ID",
+                  "Pic": "9(09)",
+                  "Usage": "COMP",
+                  "ParsedPic": [
+                    "9"
+                  ],
+                  "ParsedPicCounts": [
+                    9
+                  ],
+                  "InferredUsage": "COMP",
+                  "InferredType": "comp-int",
+                  "ComputedSize": 4,
+                  "Offset": [
+                    40
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:25:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-CUST-FIRST-NAME",
+                  "Pic": "X(25)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    25
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 25,
+                  "Offset": [
+                    44
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:26:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-CUST-MIDDLE-NAME",
+                  "Pic": "X(25)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    25
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 25,
+                  "Offset": [
+                    69
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:27:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-CUST-LAST-NAME",
+                  "Pic": "X(25)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    25
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 25,
+                  "Offset": [
+                    94
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:28:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-CUST-ADDR-LINES",
+                  "Occurs": {
+                    "Type": "Fixed",
+                    "Fixed": 3
+                  },
+                  "ComputedSize": 150,
+                  "ElementSize": 50,
+                  "Offset": [
+                    119,
+                    50,
+                    0
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:29:15",
+                  "Children": [
+                    {
+                      "Level": 15,
+                      "Name": "EXP-CUST-ADDR-LINE",
+                      "Pic": "X(50)",
+                      "ParsedPic": [
+                        "X"
+                      ],
+                      "ParsedPicCounts": [
+                        50
+                      ],
+                      "InferredUsage": "DISPLAY",
+                      "InferredType": "string",
+                      "ComputedSize": 50,
+                      "Offset": [
+                        119,
+                        50,
+                        0
+                      ],
+                      "Coordinates": "file://cpy/CVEXPORT.cpy:30:19"
+                    }
+                  ]
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-CUST-ADDR-STATE-CD",
+                  "Pic": "X(02)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    2
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 2,
+                  "Offset": [
+                    269
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:31:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-CUST-ADDR-COUNTRY-CD",
+                  "Pic": "X(03)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    3
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 3,
+                  "Offset": [
+                    271
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:32:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-CUST-ADDR-ZIP",
+                  "Pic": "X(10)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    10
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 10,
+                  "Offset": [
+                    274
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:33:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-CUST-PHONE-NUMS",
+                  "Occurs": {
+                    "Type": "Fixed",
+                    "Fixed": 2
+                  },
+                  "ComputedSize": 30,
+                  "ElementSize": 15,
+                  "Offset": [
+                    284,
+                    15,
+                    0
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:34:15",
+                  "Children": [
+                    {
+                      "Level": 15,
+                      "Name": "EXP-CUST-PHONE-NUM",
+                      "Pic": "X(15)",
+                      "ParsedPic": [
+                        "X"
+                      ],
+                      "ParsedPicCounts": [
+                        15
+                      ],
+                      "InferredUsage": "DISPLAY",
+                      "InferredType": "string",
+                      "ComputedSize": 15,
+                      "Offset": [
+                        284,
+                        15,
+                        0
+                      ],
+                      "Coordinates": "file://cpy/CVEXPORT.cpy:35:19"
+                    }
+                  ]
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-CUST-SSN",
+                  "Pic": "9(09)",
+                  "ParsedPic": [
+                    "9"
+                  ],
+                  "ParsedPicCounts": [
+                    9
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "disp-int",
+                  "ComputedSize": 9,
+                  "Offset": [
+                    314
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:36:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-CUST-GOVT-ISSUED-ID",
+                  "Pic": "X(20)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    20
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 20,
+                  "Offset": [
+                    323
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:37:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-CUST-DOB-YYYY-MM-DD",
+                  "Pic": "X(10)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    10
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 10,
+                  "Offset": [
+                    343
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:38:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-CUST-EFT-ACCOUNT-ID",
+                  "Pic": "X(10)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    10
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 10,
+                  "Offset": [
+                    353
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:39:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-CUST-PRI-CARD-HOLDER-IND",
+                  "Pic": "X(01)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    1
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 1,
+                  "Offset": [
+                    363
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:40:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-CUST-FICO-CREDIT-SCORE",
+                  "Pic": "9(03)",
+                  "Usage": "COMP-3",
+                  "ParsedPic": [
+                    "9"
+                  ],
+                  "ParsedPicCounts": [
+                    3
+                  ],
+                  "InferredUsage": "COMP-3",
+                  "InferredType": "comp-int",
+                  "ComputedSize": 2,
+                  "Offset": [
+                    364
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:41:15"
+                },
+                {
+                  "Level": 10,
+                  "Pic": "X(134)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    134
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 134,
+                  "Offset": [
+                    366
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:42:15"
+                }
+              ]
+            },
+            {
+              "Level": 5,
+              "Name": "EXPORT-ACCOUNT-DATA",
+              "Redefines": "EXPORT-RECORD-DATA",
+              "ComputedSize": 460,
+              "Offset": [
+                40
+              ],
+              "Coordinates": "file://cpy/CVEXPORT.cpy:47:11",
+              "Children": [
+                {
+                  "Level": 10,
+                  "Name": "EXP-ACCT-ID",
+                  "Pic": "9(11)",
+                  "ParsedPic": [
+                    "9"
+                  ],
+                  "ParsedPicCounts": [
+                    11
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "disp-int",
+                  "ComputedSize": 11,
+                  "Offset": [
+                    40
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:48:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-ACCT-ACTIVE-STATUS",
+                  "Pic": "X(01)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    1
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 1,
+                  "Offset": [
+                    51
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:49:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-ACCT-CURR-BAL",
+                  "Pic": "S9(10)V99",
+                  "Usage": "COMP-3",
+                  "ParsedPic": [
+                    "S",
+                    "9",
+                    "V",
+                    "9"
+                  ],
+                  "ParsedPicCounts": [
+                    1,
+                    10,
+                    1,
+                    2
+                  ],
+                  "InferredUsage": "COMP-3",
+                  "InferredType": "comp-float",
+                  "ComputedSize": 7,
+                  "Offset": [
+                    52
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:50:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-ACCT-CREDIT-LIMIT",
+                  "Pic": "S9(10)V99",
+                  "ParsedPic": [
+                    "S",
+                    "9",
+                    "V",
+                    "9"
+                  ],
+                  "ParsedPicCounts": [
+                    1,
+                    10,
+                    1,
+                    2
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "disp-float",
+                  "ComputedSize": 12,
+                  "Offset": [
+                    59
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:51:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-ACCT-CASH-CREDIT-LIMIT",
+                  "Pic": "S9(10)V99",
+                  "Usage": "COMP-3",
+                  "ParsedPic": [
+                    "S",
+                    "9",
+                    "V",
+                    "9"
+                  ],
+                  "ParsedPicCounts": [
+                    1,
+                    10,
+                    1,
+                    2
+                  ],
+                  "InferredUsage": "COMP-3",
+                  "InferredType": "comp-float",
+                  "ComputedSize": 7,
+                  "Offset": [
+                    71
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:52:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-ACCT-OPEN-DATE",
+                  "Pic": "X(10)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    10
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 10,
+                  "Offset": [
+                    78
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:53:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-ACCT-EXPIRAION-DATE",
+                  "Pic": "X(10)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    10
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 10,
+                  "Offset": [
+                    88
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:54:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-ACCT-REISSUE-DATE",
+                  "Pic": "X(10)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    10
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 10,
+                  "Offset": [
+                    98
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:55:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-ACCT-CURR-CYC-CREDIT",
+                  "Pic": "S9(10)V99",
+                  "ParsedPic": [
+                    "S",
+                    "9",
+                    "V",
+                    "9"
+                  ],
+                  "ParsedPicCounts": [
+                    1,
+                    10,
+                    1,
+                    2
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "disp-float",
+                  "ComputedSize": 12,
+                  "Offset": [
+                    108
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:56:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-ACCT-CURR-CYC-DEBIT",
+                  "Pic": "S9(10)V99",
+                  "Usage": "COMP",
+                  "ParsedPic": [
+                    "S",
+                    "9",
+                    "V",
+                    "9"
+                  ],
+                  "ParsedPicCounts": [
+                    1,
+                    10,
+                    1,
+                    2
+                  ],
+                  "InferredUsage": "COMP",
+                  "InferredType": "comp-float",
+                  "ComputedSize": 8,
+                  "Offset": [
+                    120
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:57:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-ACCT-ADDR-ZIP",
+                  "Pic": "X(10)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    10
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 10,
+                  "Offset": [
+                    128
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:58:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-ACCT-GROUP-ID",
+                  "Pic": "X(10)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    10
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 10,
+                  "Offset": [
+                    138
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:59:15"
+                },
+                {
+                  "Level": 10,
+                  "Pic": "X(352)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    352
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 352,
+                  "Offset": [
+                    148
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:60:15"
+                }
+              ]
+            },
+            {
+              "Level": 5,
+              "Name": "EXPORT-TRANSACTION-DATA",
+              "Redefines": "EXPORT-RECORD-DATA",
+              "ComputedSize": 460,
+              "Offset": [
+                40
+              ],
+              "Coordinates": "file://cpy/CVEXPORT.cpy:65:11",
+              "Children": [
+                {
+                  "Level": 10,
+                  "Name": "EXP-TRAN-ID",
+                  "Pic": "X(16)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    16
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 16,
+                  "Offset": [
+                    40
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:66:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-TRAN-TYPE-CD",
+                  "Pic": "X(02)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    2
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 2,
+                  "Offset": [
+                    56
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:67:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-TRAN-CAT-CD",
+                  "Pic": "9(04)",
+                  "ParsedPic": [
+                    "9"
+                  ],
+                  "ParsedPicCounts": [
+                    4
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "disp-int",
+                  "ComputedSize": 4,
+                  "Offset": [
+                    58
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:68:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-TRAN-SOURCE",
+                  "Pic": "X(10)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    10
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 10,
+                  "Offset": [
+                    62
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:69:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-TRAN-DESC",
+                  "Pic": "X(100)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    100
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 100,
+                  "Offset": [
+                    72
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:70:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-TRAN-AMT",
+                  "Pic": "S9(09)V99",
+                  "Usage": "COMP-3",
+                  "ParsedPic": [
+                    "S",
+                    "9",
+                    "V",
+                    "9"
+                  ],
+                  "ParsedPicCounts": [
+                    1,
+                    9,
+                    1,
+                    2
+                  ],
+                  "InferredUsage": "COMP-3",
+                  "InferredType": "comp-float",
+                  "ComputedSize": 6,
+                  "Offset": [
+                    172
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:71:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-TRAN-MERCHANT-ID",
+                  "Pic": "9(09)",
+                  "Usage": "COMP",
+                  "ParsedPic": [
+                    "9"
+                  ],
+                  "ParsedPicCounts": [
+                    9
+                  ],
+                  "InferredUsage": "COMP",
+                  "InferredType": "comp-int",
+                  "ComputedSize": 4,
+                  "Offset": [
+                    178
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:72:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-TRAN-MERCHANT-NAME",
+                  "Pic": "X(50)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    50
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 50,
+                  "Offset": [
+                    182
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:73:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-TRAN-MERCHANT-CITY",
+                  "Pic": "X(50)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    50
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 50,
+                  "Offset": [
+                    232
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:74:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-TRAN-MERCHANT-ZIP",
+                  "Pic": "X(10)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    10
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 10,
+                  "Offset": [
+                    282
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:75:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-TRAN-CARD-NUM",
+                  "Pic": "X(16)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    16
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 16,
+                  "Offset": [
+                    292
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:76:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-TRAN-ORIG-TS",
+                  "Pic": "X(26)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    26
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 26,
+                  "Offset": [
+                    308
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:77:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-TRAN-PROC-TS",
+                  "Pic": "X(26)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    26
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 26,
+                  "Offset": [
+                    334
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:78:15"
+                },
+                {
+                  "Level": 10,
+                  "Pic": "X(140)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    140
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 140,
+                  "Offset": [
+                    360
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:79:15"
+                }
+              ]
+            },
+            {
+              "Level": 5,
+              "Name": "EXPORT-CARD-XREF-DATA",
+              "Redefines": "EXPORT-RECORD-DATA",
+              "ComputedSize": 460,
+              "Offset": [
+                40
+              ],
+              "Coordinates": "file://cpy/CVEXPORT.cpy:84:11",
+              "Children": [
+                {
+                  "Level": 10,
+                  "Name": "EXP-XREF-CARD-NUM",
+                  "Pic": "X(16)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    16
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 16,
+                  "Offset": [
+                    40
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:85:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-XREF-CUST-ID",
+                  "Pic": "9(09)",
+                  "ParsedPic": [
+                    "9"
+                  ],
+                  "ParsedPicCounts": [
+                    9
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "disp-int",
+                  "ComputedSize": 9,
+                  "Offset": [
+                    56
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:86:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-XREF-ACCT-ID",
+                  "Pic": "9(11)",
+                  "Usage": "COMP",
+                  "ParsedPic": [
+                    "9"
+                  ],
+                  "ParsedPicCounts": [
+                    11
+                  ],
+                  "InferredUsage": "COMP",
+                  "InferredType": "comp-int",
+                  "ComputedSize": 8,
+                  "Offset": [
+                    65
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:87:15"
+                },
+                {
+                  "Level": 10,
+                  "Pic": "X(427)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    427
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 427,
+                  "Offset": [
+                    73
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:88:15"
+                }
+              ]
+            },
+            {
+              "Level": 5,
+              "Name": "EXPORT-CARD-DATA",
+              "Redefines": "EXPORT-RECORD-DATA",
+              "ComputedSize": 460,
+              "Offset": [
+                40
+              ],
+              "Coordinates": "file://cpy/CVEXPORT.cpy:93:11",
+              "Children": [
+                {
+                  "Level": 10,
+                  "Name": "EXP-CARD-NUM",
+                  "Pic": "X(16)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    16
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 16,
+                  "Offset": [
+                    40
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:94:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-CARD-ACCT-ID",
+                  "Pic": "9(11)",
+                  "Usage": "COMP",
+                  "ParsedPic": [
+                    "9"
+                  ],
+                  "ParsedPicCounts": [
+                    11
+                  ],
+                  "InferredUsage": "COMP",
+                  "InferredType": "comp-int",
+                  "ComputedSize": 8,
+                  "Offset": [
+                    56
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:95:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-CARD-CVV-CD",
+                  "Pic": "9(03)",
+                  "Usage": "COMP",
+                  "ParsedPic": [
+                    "9"
+                  ],
+                  "ParsedPicCounts": [
+                    3
+                  ],
+                  "InferredUsage": "COMP",
+                  "InferredType": "comp-int",
+                  "ComputedSize": 2,
+                  "Offset": [
+                    64
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:96:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-CARD-EMBOSSED-NAME",
+                  "Pic": "X(50)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    50
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 50,
+                  "Offset": [
+                    66
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:97:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-CARD-EXPIRAION-DATE",
+                  "Pic": "X(10)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    10
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 10,
+                  "Offset": [
+                    116
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:98:15"
+                },
+                {
+                  "Level": 10,
+                  "Name": "EXP-CARD-ACTIVE-STATUS",
+                  "Pic": "X(01)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    1
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 1,
+                  "Offset": [
+                    126
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:99:15"
+                },
+                {
+                  "Level": 10,
+                  "Pic": "X(373)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    373
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 373,
+                  "Offset": [
+                    127
+                  ],
+                  "Coordinates": "file://cpy/CVEXPORT.cpy:100:15"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "WS-FILE-STATUS-AREA",
+          "ComputedSize": 14,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:116:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "WS-EXPORT-STATUS",
+              "Pic": "X(02)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                2
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 2,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://cbl/CBIMPORT.cbl:117:11",
+              "Children": [
+                {
+                  "Level": 88,
+                  "Name": "WS-EXPORT-EOF",
+                  "Values": [
+                    {
+                      "Literal": "10",
+                      "RawLiteral": [
+                        49,
+                        48
+                      ]
+                    }
+                  ],
+                  "Offset": [
+                    0
+                  ],
+                  "Coordinates": "file://cbl/CBIMPORT.cbl:118:15"
+                },
+                {
+                  "Level": 88,
+                  "Name": "WS-EXPORT-OK",
+                  "Values": [
+                    {
+                      "Literal": "00",
+                      "RawLiteral": [
+                        48,
+                        48
+                      ]
+                    }
+                  ],
+                  "Offset": [
+                    0
+                  ],
+                  "Coordinates": "file://cbl/CBIMPORT.cbl:119:15"
+                }
+              ]
+            },
+            {
+              "Level": 5,
+              "Name": "WS-CUSTOMER-STATUS",
+              "Pic": "X(02)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                2
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 2,
+              "Offset": [
+                2
+              ],
+              "Coordinates": "file://cbl/CBIMPORT.cbl:120:11",
+              "Children": [
+                {
+                  "Level": 88,
+                  "Name": "WS-CUSTOMER-OK",
+                  "Values": [
+                    {
+                      "Literal": "00",
+                      "RawLiteral": [
+                        48,
+                        48
+                      ]
+                    }
+                  ],
+                  "Offset": [
+                    0
+                  ],
+                  "Coordinates": "file://cbl/CBIMPORT.cbl:121:15"
+                }
+              ]
+            },
+            {
+              "Level": 5,
+              "Name": "WS-ACCOUNT-STATUS",
+              "Pic": "X(02)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                2
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 2,
+              "Offset": [
+                4
+              ],
+              "Coordinates": "file://cbl/CBIMPORT.cbl:122:11",
+              "Children": [
+                {
+                  "Level": 88,
+                  "Name": "WS-ACCOUNT-OK",
+                  "Values": [
+                    {
+                      "Literal": "00",
+                      "RawLiteral": [
+                        48,
+                        48
+                      ]
+                    }
+                  ],
+                  "Offset": [
+                    0
+                  ],
+                  "Coordinates": "file://cbl/CBIMPORT.cbl:123:15"
+                }
+              ]
+            },
+            {
+              "Level": 5,
+              "Name": "WS-XREF-STATUS",
+              "Pic": "X(02)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                2
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 2,
+              "Offset": [
+                6
+              ],
+              "Coordinates": "file://cbl/CBIMPORT.cbl:124:11",
+              "Children": [
+                {
+                  "Level": 88,
+                  "Name": "WS-XREF-OK",
+                  "Values": [
+                    {
+                      "Literal": "00",
+                      "RawLiteral": [
+                        48,
+                        48
+                      ]
+                    }
+                  ],
+                  "Offset": [
+                    0
+                  ],
+                  "Coordinates": "file://cbl/CBIMPORT.cbl:125:15"
+                }
+              ]
+            },
+            {
+              "Level": 5,
+              "Name": "WS-TRANSACTION-STATUS",
+              "Pic": "X(02)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                2
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 2,
+              "Offset": [
+                8
+              ],
+              "Coordinates": "file://cbl/CBIMPORT.cbl:126:11",
+              "Children": [
+                {
+                  "Level": 88,
+                  "Name": "WS-TRANSACTION-OK",
+                  "Values": [
+                    {
+                      "Literal": "00",
+                      "RawLiteral": [
+                        48,
+                        48
+                      ]
+                    }
+                  ],
+                  "Offset": [
+                    0
+                  ],
+                  "Coordinates": "file://cbl/CBIMPORT.cbl:127:15"
+                }
+              ]
+            },
+            {
+              "Level": 5,
+              "Name": "WS-CARD-STATUS",
+              "Pic": "X(02)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                2
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 2,
+              "Offset": [
+                10
+              ],
+              "Coordinates": "file://cbl/CBIMPORT.cbl:128:11",
+              "Children": [
+                {
+                  "Level": 88,
+                  "Name": "WS-CARD-OK",
+                  "Values": [
+                    {
+                      "Literal": "00",
+                      "RawLiteral": [
+                        48,
+                        48
+                      ]
+                    }
+                  ],
+                  "Offset": [
+                    0
+                  ],
+                  "Coordinates": "file://cbl/CBIMPORT.cbl:129:15"
+                }
+              ]
+            },
+            {
+              "Level": 5,
+              "Name": "WS-ERROR-STATUS",
+              "Pic": "X(02)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                2
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 2,
+              "Offset": [
+                12
+              ],
+              "Coordinates": "file://cbl/CBIMPORT.cbl:130:11",
+              "Children": [
+                {
+                  "Level": 88,
+                  "Name": "WS-ERROR-OK",
+                  "Values": [
+                    {
+                      "Literal": "00",
+                      "RawLiteral": [
+                        48,
+                        48
+                      ]
+                    }
+                  ],
+                  "Offset": [
+                    0
+                  ],
+                  "Coordinates": "file://cbl/CBIMPORT.cbl:131:15"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "WS-IMPORT-CONTROL",
+          "ComputedSize": 18,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:134:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "WS-IMPORT-DATE",
+              "Pic": "X(10)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                10
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 10,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://cbl/CBIMPORT.cbl:135:11"
+            },
+            {
+              "Level": 5,
+              "Name": "WS-IMPORT-TIME",
+              "Pic": "X(08)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                8
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 8,
+              "Offset": [
+                10
+              ],
+              "Coordinates": "file://cbl/CBIMPORT.cbl:136:11"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "WS-IMPORT-STATISTICS",
+          "ComputedSize": 72,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:139:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "WS-TOTAL-RECORDS-READ",
+              "Pic": "9(09)",
+              "Values": [
+                {
+                  "Literal": "0",
+                  "RawLiteral": [
+                    48
+                  ]
+                }
+              ],
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                9
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 9,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://cbl/CBIMPORT.cbl:140:11"
+            },
+            {
+              "Level": 5,
+              "Name": "WS-CUSTOMER-RECORDS-IMPORTED",
+              "Pic": "9(09)",
+              "Values": [
+                {
+                  "Literal": "0",
+                  "RawLiteral": [
+                    48
+                  ]
+                }
+              ],
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                9
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 9,
+              "Offset": [
+                9
+              ],
+              "Coordinates": "file://cbl/CBIMPORT.cbl:141:11"
+            },
+            {
+              "Level": 5,
+              "Name": "WS-ACCOUNT-RECORDS-IMPORTED",
+              "Pic": "9(09)",
+              "Values": [
+                {
+                  "Literal": "0",
+                  "RawLiteral": [
+                    48
+                  ]
+                }
+              ],
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                9
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 9,
+              "Offset": [
+                18
+              ],
+              "Coordinates": "file://cbl/CBIMPORT.cbl:142:11"
+            },
+            {
+              "Level": 5,
+              "Name": "WS-XREF-RECORDS-IMPORTED",
+              "Pic": "9(09)",
+              "Values": [
+                {
+                  "Literal": "0",
+                  "RawLiteral": [
+                    48
+                  ]
+                }
+              ],
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                9
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 9,
+              "Offset": [
+                27
+              ],
+              "Coordinates": "file://cbl/CBIMPORT.cbl:143:11"
+            },
+            {
+              "Level": 5,
+              "Name": "WS-TRAN-RECORDS-IMPORTED",
+              "Pic": "9(09)",
+              "Values": [
+                {
+                  "Literal": "0",
+                  "RawLiteral": [
+                    48
+                  ]
+                }
+              ],
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                9
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 9,
+              "Offset": [
+                36
+              ],
+              "Coordinates": "file://cbl/CBIMPORT.cbl:144:11"
+            },
+            {
+              "Level": 5,
+              "Name": "WS-CARD-RECORDS-IMPORTED",
+              "Pic": "9(09)",
+              "Values": [
+                {
+                  "Literal": "0",
+                  "RawLiteral": [
+                    48
+                  ]
+                }
+              ],
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                9
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 9,
+              "Offset": [
+                45
+              ],
+              "Coordinates": "file://cbl/CBIMPORT.cbl:145:11"
+            },
+            {
+              "Level": 5,
+              "Name": "WS-ERROR-RECORDS-WRITTEN",
+              "Pic": "9(09)",
+              "Values": [
+                {
+                  "Literal": "0",
+                  "RawLiteral": [
+                    48
+                  ]
+                }
+              ],
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                9
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 9,
+              "Offset": [
+                54
+              ],
+              "Coordinates": "file://cbl/CBIMPORT.cbl:146:11"
+            },
+            {
+              "Level": 5,
+              "Name": "WS-UNKNOWN-RECORD-TYPE-COUNT",
+              "Pic": "9(09)",
+              "Values": [
+                {
+                  "Literal": "0",
+                  "RawLiteral": [
+                    48
+                  ]
+                }
+              ],
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                9
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 9,
+              "Offset": [
+                63
+              ],
+              "Coordinates": "file://cbl/CBIMPORT.cbl:147:11"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "WS-ERROR-RECORD",
+          "ComputedSize": 130,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:152:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "ERR-TIMESTAMP",
+              "Pic": "X(26)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                26
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 26,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://cbl/CBIMPORT.cbl:153:11"
+            },
+            {
+              "Level": 5,
+              "Pic": "X(01)",
+              "Values": [
+                {
+                  "Literal": "|",
+                  "RawLiteral": [
+                    124
+                  ]
+                }
+              ],
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                26
+              ],
+              "Coordinates": "file://cbl/CBIMPORT.cbl:154:11"
+            },
+            {
+              "Level": 5,
+              "Name": "ERR-RECORD-TYPE",
+              "Pic": "X(01)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                27
+              ],
+              "Coordinates": "file://cbl/CBIMPORT.cbl:155:11"
+            },
+            {
+              "Level": 5,
+              "Pic": "X(01)",
+              "Values": [
+                {
+                  "Literal": "|",
+                  "RawLiteral": [
+                    124
+                  ]
+                }
+              ],
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                28
+              ],
+              "Coordinates": "file://cbl/CBIMPORT.cbl:156:11"
+            },
+            {
+              "Level": 5,
+              "Name": "ERR-SEQUENCE",
+              "Pic": "9(07)",
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                7
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 7,
+              "Offset": [
+                29
+              ],
+              "Coordinates": "file://cbl/CBIMPORT.cbl:157:11"
+            },
+            {
+              "Level": 5,
+              "Pic": "X(01)",
+              "Values": [
+                {
+                  "Literal": "|",
+                  "RawLiteral": [
+                    124
+                  ]
+                }
+              ],
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                36
+              ],
+              "Coordinates": "file://cbl/CBIMPORT.cbl:158:11"
+            },
+            {
+              "Level": 5,
+              "Name": "ERR-MESSAGE",
+              "Pic": "X(50)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                50
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 50,
+              "Offset": [
+                37
+              ],
+              "Coordinates": "file://cbl/CBIMPORT.cbl:159:11"
+            },
+            {
+              "Level": 5,
+              "Pic": "X(43)",
+              "Values": [
+                {
+                  "Figurative": "SPACE"
+                }
+              ],
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                43
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 43,
+              "Offset": [
+                87
+              ],
+              "Coordinates": "file://cbl/CBIMPORT.cbl:160:11"
+            }
+          ]
+        }
+      ],
+      "Chunks": {
+        "ChunkType": "PROCEDURE_DIVISION",
+        "Range": [363,690],
+        "Sentences": [364,366],
+        "Children": [
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "0000-MAIN-PROCESSING",
+            "Range": [366,375],
+            "Sentences": [367,375],
+            "ReferencedProcedures": [
+              {
+                "Name": "1000-INITIALIZE"
+              },
+              {
+                "Name": "2000-PROCESS-EXPORT-FILE"
+              },
+              {
+                "Name": "3000-VALIDATE-IMPORT"
+              },
+              {
+                "Name": "4000-FINALIZE"
+              }
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "1000-INITIALIZE",
+            "Range": [375,397],
+            "Sentences": [376,397],
+            "ReferencedProcedures": [
+              {
+                "Name": "1100-OPEN-FILES"
+              }
+            ],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "WS-IMPORT-DATE"
+                  },
+                  {
+                    "Name": "WS-IMPORT-TIME"
+                  }
+                ],
+                "Range": [335,338]
+              }
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "1100-OPEN-FILES",
+            "Range": [397,449],
+            "Sentences": [398,449],
+            "ReferencedProcedures": [
+              {
+                "Name": "9999-ABEND-PROGRAM"
+              },
+              {
+                "Name": "9999-ABEND-PROGRAM"
+              },
+              {
+                "Name": "9999-ABEND-PROGRAM"
+              },
+              {
+                "Name": "9999-ABEND-PROGRAM"
+              },
+              {
+                "Name": "9999-ABEND-PROGRAM"
+              },
+              {
+                "Name": "9999-ABEND-PROGRAM"
+              },
+              {
+                "Name": "9999-ABEND-PROGRAM"
+              }
+            ],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "WS-EXPORT-OK"
+                  },
+                  {
+                    "Name": "WS-EXPORT-STATUS"
+                  },
+                  {
+                    "Name": "WS-CUSTOMER-OK"
+                  },
+                  {
+                    "Name": "WS-CUSTOMER-STATUS"
+                  },
+                  {
+                    "Name": "WS-ACCOUNT-OK"
+                  },
+                  {
+                    "Name": "WS-ACCOUNT-STATUS"
+                  },
+                  {
+                    "Name": "WS-XREF-OK"
+                  },
+                  {
+                    "Name": "WS-XREF-STATUS"
+                  },
+                  {
+                    "Name": "WS-TRANSACTION-OK"
+                  },
+                  {
+                    "Name": "WS-TRANSACTION-STATUS"
+                  },
+                  {
+                    "Name": "WS-CARD-OK"
+                  },
+                  {
+                    "Name": "WS-CARD-STATUS"
+                  },
+                  {
+                    "Name": "WS-ERROR-OK"
+                  },
+                  {
+                    "Name": "WS-ERROR-STATUS"
+                  }
+                ],
+                "Range": [317,333]
+              }
+            ],
+            "ReferencedFiles": [
+              {
+                "Name": "EXPORT-INPUT",
+                "Range": [76,80]
+              },
+              {
+                "Name": "CUSTOMER-OUTPUT",
+                "Range": [81,108]
+              },
+              {
+                "Name": "ACCOUNT-OUTPUT",
+                "Range": [113,134]
+              },
+              {
+                "Name": "XREF-OUTPUT",
+                "Range": [139,151]
+              },
+              {
+                "Name": "TRANSACTION-OUTPUT",
+                "Range": [156,178]
+              },
+              {
+                "Name": "CARD-OUTPUT",
+                "Range": [183,198]
+              },
+              {
+                "Name": "ERROR-OUTPUT",
+                "Range": [203,207]
+              }
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "2000-PROCESS-EXPORT-FILE",
+            "Range": [449,460],
+            "Sentences": [450,460],
+            "ReferencedProcedures": [
+              {
+                "Name": "2100-READ-EXPORT-RECORD"
+              },
+              {
+                "Name": "2200-PROCESS-RECORD-BY-TYPE"
+              },
+              {
+                "Name": "2100-READ-EXPORT-RECORD"
+              }
+            ],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "WS-EXPORT-EOF"
+                  }
+                ],
+                "Range": [317,333]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "WS-TOTAL-RECORDS-READ"
+                  }
+                ],
+                "Range": [340,349]
+              }
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "2100-READ-EXPORT-RECORD",
+            "Range": [460,471],
+            "Sentences": [461,471],
+            "ReferencedProcedures": [
+              {
+                "Name": "9999-ABEND-PROGRAM"
+              }
+            ],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "EXPORT-RECORD"
+                  }
+                ],
+                "Range": [219,311]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "WS-EXPORT-OK"
+                  },
+                  {
+                    "Name": "WS-EXPORT-EOF"
+                  },
+                  {
+                    "Name": "WS-EXPORT-STATUS"
+                  }
+                ],
+                "Range": [317,333]
+              }
+            ],
+            "ReferencedFiles": [
+              {
+                "Name": "EXPORT-INPUT",
+                "Range": [76,80]
+              }
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "2200-PROCESS-RECORD-BY-TYPE",
+            "Range": [471,489],
+            "Sentences": [472,489],
+            "ReferencedProcedures": [
+              {
+                "Name": "2300-PROCESS-CUSTOMER-RECORD"
+              },
+              {
+                "Name": "2400-PROCESS-ACCOUNT-RECORD"
+              },
+              {
+                "Name": "2500-PROCESS-XREF-RECORD"
+              },
+              {
+                "Name": "2600-PROCESS-TRAN-RECORD"
+              },
+              {
+                "Name": "2650-PROCESS-CARD-RECORD"
+              },
+              {
+                "Name": "2700-PROCESS-UNKNOWN-RECORD"
+              }
+            ],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "EXPORT-REC-TYPE"
+                  }
+                ],
+                "Range": [219,311]
+              }
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "2300-PROCESS-CUSTOMER-RECORD",
+            "Range": [489,524],
+            "Sentences": [490,524],
+            "ReferencedProcedures": [
+              {
+                "Name": "9999-ABEND-PROGRAM"
+              }
+            ],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "CUSTOMER-RECORD"
+                  },
+                  {
+                    "Name": "CUST-ID"
+                  },
+                  {
+                    "Name": "CUST-FIRST-NAME"
+                  },
+                  {
+                    "Name": "CUST-MIDDLE-NAME"
+                  },
+                  {
+                    "Name": "CUST-LAST-NAME"
+                  },
+                  {
+                    "Name": "CUST-ADDR-LINE-1"
+                  },
+                  {
+                    "Name": "CUST-ADDR-LINE-2"
+                  },
+                  {
+                    "Name": "CUST-ADDR-LINE-3"
+                  },
+                  {
+                    "Name": "CUST-ADDR-STATE-CD"
+                  },
+                  {
+                    "Name": "CUST-ADDR-COUNTRY-CD"
+                  },
+                  {
+                    "Name": "CUST-ADDR-ZIP"
+                  },
+                  {
+                    "Name": "CUST-PHONE-NUM-1"
+                  },
+                  {
+                    "Name": "CUST-PHONE-NUM-2"
+                  },
+                  {
+                    "Name": "CUST-SSN"
+                  },
+                  {
+                    "Name": "CUST-GOVT-ISSUED-ID"
+                  },
+                  {
+                    "Name": "CUST-DOB-YYYY-MM-DD"
+                  },
+                  {
+                    "Name": "CUST-EFT-ACCOUNT-ID"
+                  },
+                  {
+                    "Name": "CUST-PRI-CARD-HOLDER-IND"
+                  },
+                  {
+                    "Name": "CUST-FICO-CREDIT-SCORE"
+                  }
+                ],
+                "Range": [88,108]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "EXP-CUST-ID"
+                  },
+                  {
+                    "Name": "EXP-CUST-FIRST-NAME"
+                  },
+                  {
+                    "Name": "EXP-CUST-MIDDLE-NAME"
+                  },
+                  {
+                    "Name": "EXP-CUST-LAST-NAME"
+                  },
+                  {
+                    "Name": "EXP-CUST-ADDR-LINE"
+                  },
+                  {
+                    "Name": "EXP-CUST-ADDR-STATE-CD"
+                  },
+                  {
+                    "Name": "EXP-CUST-ADDR-COUNTRY-CD"
+                  },
+                  {
+                    "Name": "EXP-CUST-ADDR-ZIP"
+                  },
+                  {
+                    "Name": "EXP-CUST-PHONE-NUM"
+                  },
+                  {
+                    "Name": "EXP-CUST-SSN"
+                  },
+                  {
+                    "Name": "EXP-CUST-GOVT-ISSUED-ID"
+                  },
+                  {
+                    "Name": "EXP-CUST-DOB-YYYY-MM-DD"
+                  },
+                  {
+                    "Name": "EXP-CUST-EFT-ACCOUNT-ID"
+                  },
+                  {
+                    "Name": "EXP-CUST-PRI-CARD-HOLDER-IND"
+                  },
+                  {
+                    "Name": "EXP-CUST-FICO-CREDIT-SCORE"
+                  }
+                ],
+                "Range": [219,311]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "WS-CUSTOMER-OK"
+                  },
+                  {
+                    "Name": "WS-CUSTOMER-STATUS"
+                  }
+                ],
+                "Range": [317,333]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "WS-CUSTOMER-RECORDS-IMPORTED"
+                  }
+                ],
+                "Range": [340,349]
+              }
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "2400-PROCESS-ACCOUNT-RECORD",
+            "Range": [524,553],
+            "Sentences": [525,553],
+            "ReferencedProcedures": [
+              {
+                "Name": "9999-ABEND-PROGRAM"
+              }
+            ],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "ACCOUNT-RECORD"
+                  },
+                  {
+                    "Name": "ACCT-ID"
+                  },
+                  {
+                    "Name": "ACCT-ACTIVE-STATUS"
+                  },
+                  {
+                    "Name": "ACCT-CURR-BAL"
+                  },
+                  {
+                    "Name": "ACCT-CREDIT-LIMIT"
+                  },
+                  {
+                    "Name": "ACCT-CASH-CREDIT-LIMIT"
+                  },
+                  {
+                    "Name": "ACCT-OPEN-DATE"
+                  },
+                  {
+                    "Name": "ACCT-EXPIRAION-DATE"
+                  },
+                  {
+                    "Name": "ACCT-REISSUE-DATE"
+                  },
+                  {
+                    "Name": "ACCT-CURR-CYC-CREDIT"
+                  },
+                  {
+                    "Name": "ACCT-CURR-CYC-DEBIT"
+                  },
+                  {
+                    "Name": "ACCT-ADDR-ZIP"
+                  },
+                  {
+                    "Name": "ACCT-GROUP-ID"
+                  }
+                ],
+                "Range": [120,134]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "EXP-ACCT-ID"
+                  },
+                  {
+                    "Name": "EXP-ACCT-ACTIVE-STATUS"
+                  },
+                  {
+                    "Name": "EXP-ACCT-CURR-BAL"
+                  },
+                  {
+                    "Name": "EXP-ACCT-CREDIT-LIMIT"
+                  },
+                  {
+                    "Name": "EXP-ACCT-CASH-CREDIT-LIMIT"
+                  },
+                  {
+                    "Name": "EXP-ACCT-OPEN-DATE"
+                  },
+                  {
+                    "Name": "EXP-ACCT-EXPIRAION-DATE"
+                  },
+                  {
+                    "Name": "EXP-ACCT-REISSUE-DATE"
+                  },
+                  {
+                    "Name": "EXP-ACCT-CURR-CYC-CREDIT"
+                  },
+                  {
+                    "Name": "EXP-ACCT-CURR-CYC-DEBIT"
+                  },
+                  {
+                    "Name": "EXP-ACCT-ADDR-ZIP"
+                  },
+                  {
+                    "Name": "EXP-ACCT-GROUP-ID"
+                  }
+                ],
+                "Range": [219,311]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "WS-ACCOUNT-OK"
+                  },
+                  {
+                    "Name": "WS-ACCOUNT-STATUS"
+                  }
+                ],
+                "Range": [317,333]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "WS-ACCOUNT-RECORDS-IMPORTED"
+                  }
+                ],
+                "Range": [340,349]
+              }
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "2500-PROCESS-XREF-RECORD",
+            "Range": [553,573],
+            "Sentences": [554,573],
+            "ReferencedProcedures": [
+              {
+                "Name": "9999-ABEND-PROGRAM"
+              }
+            ],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "CARD-XREF-RECORD"
+                  },
+                  {
+                    "Name": "XREF-CARD-NUM"
+                  },
+                  {
+                    "Name": "XREF-CUST-ID"
+                  },
+                  {
+                    "Name": "XREF-ACCT-ID"
+                  }
+                ],
+                "Range": [146,151]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "EXP-XREF-CARD-NUM"
+                  },
+                  {
+                    "Name": "EXP-XREF-CUST-ID"
+                  },
+                  {
+                    "Name": "EXP-XREF-ACCT-ID"
+                  }
+                ],
+                "Range": [219,311]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "WS-XREF-OK"
+                  },
+                  {
+                    "Name": "WS-XREF-STATUS"
+                  }
+                ],
+                "Range": [317,333]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "WS-XREF-RECORDS-IMPORTED"
+                  }
+                ],
+                "Range": [340,349]
+              }
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "2600-PROCESS-TRAN-RECORD",
+            "Range": [573,603],
+            "Sentences": [574,603],
+            "ReferencedProcedures": [
+              {
+                "Name": "9999-ABEND-PROGRAM"
+              }
+            ],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "TRAN-RECORD"
+                  },
+                  {
+                    "Name": "TRAN-ID"
+                  },
+                  {
+                    "Name": "TRAN-TYPE-CD"
+                  },
+                  {
+                    "Name": "TRAN-CAT-CD"
+                  },
+                  {
+                    "Name": "TRAN-SOURCE"
+                  },
+                  {
+                    "Name": "TRAN-DESC"
+                  },
+                  {
+                    "Name": "TRAN-AMT"
+                  },
+                  {
+                    "Name": "TRAN-MERCHANT-ID"
+                  },
+                  {
+                    "Name": "TRAN-MERCHANT-NAME"
+                  },
+                  {
+                    "Name": "TRAN-MERCHANT-CITY"
+                  },
+                  {
+                    "Name": "TRAN-MERCHANT-ZIP"
+                  },
+                  {
+                    "Name": "TRAN-CARD-NUM"
+                  },
+                  {
+                    "Name": "TRAN-ORIG-TS"
+                  },
+                  {
+                    "Name": "TRAN-PROC-TS"
+                  }
+                ],
+                "Range": [163,178]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "EXP-TRAN-ID"
+                  },
+                  {
+                    "Name": "EXP-TRAN-TYPE-CD"
+                  },
+                  {
+                    "Name": "EXP-TRAN-CAT-CD"
+                  },
+                  {
+                    "Name": "EXP-TRAN-SOURCE"
+                  },
+                  {
+                    "Name": "EXP-TRAN-DESC"
+                  },
+                  {
+                    "Name": "EXP-TRAN-AMT"
+                  },
+                  {
+                    "Name": "EXP-TRAN-MERCHANT-ID"
+                  },
+                  {
+                    "Name": "EXP-TRAN-MERCHANT-NAME"
+                  },
+                  {
+                    "Name": "EXP-TRAN-MERCHANT-CITY"
+                  },
+                  {
+                    "Name": "EXP-TRAN-MERCHANT-ZIP"
+                  },
+                  {
+                    "Name": "EXP-TRAN-CARD-NUM"
+                  },
+                  {
+                    "Name": "EXP-TRAN-ORIG-TS"
+                  },
+                  {
+                    "Name": "EXP-TRAN-PROC-TS"
+                  }
+                ],
+                "Range": [219,311]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "WS-TRANSACTION-OK"
+                  },
+                  {
+                    "Name": "WS-TRANSACTION-STATUS"
+                  }
+                ],
+                "Range": [317,333]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "WS-TRAN-RECORDS-IMPORTED"
+                  }
+                ],
+                "Range": [340,349]
+              }
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "2650-PROCESS-CARD-RECORD",
+            "Range": [603,626],
+            "Sentences": [604,626],
+            "ReferencedProcedures": [
+              {
+                "Name": "9999-ABEND-PROGRAM"
+              }
+            ],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "CARD-RECORD"
+                  },
+                  {
+                    "Name": "CARD-NUM"
+                  },
+                  {
+                    "Name": "CARD-ACCT-ID"
+                  },
+                  {
+                    "Name": "CARD-CVV-CD"
+                  },
+                  {
+                    "Name": "CARD-EMBOSSED-NAME"
+                  },
+                  {
+                    "Name": "CARD-EXPIRAION-DATE"
+                  },
+                  {
+                    "Name": "CARD-ACTIVE-STATUS"
+                  }
+                ],
+                "Range": [190,198]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "EXP-CARD-NUM"
+                  },
+                  {
+                    "Name": "EXP-CARD-ACCT-ID"
+                  },
+                  {
+                    "Name": "EXP-CARD-CVV-CD"
+                  },
+                  {
+                    "Name": "EXP-CARD-EMBOSSED-NAME"
+                  },
+                  {
+                    "Name": "EXP-CARD-EXPIRAION-DATE"
+                  },
+                  {
+                    "Name": "EXP-CARD-ACTIVE-STATUS"
+                  }
+                ],
+                "Range": [219,311]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "WS-CARD-OK"
+                  },
+                  {
+                    "Name": "WS-CARD-STATUS"
+                  }
+                ],
+                "Range": [317,333]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "WS-CARD-RECORDS-IMPORTED"
+                  }
+                ],
+                "Range": [340,349]
+              }
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "2700-PROCESS-UNKNOWN-RECORD",
+            "Range": [626,638],
+            "Sentences": [627,638],
+            "ReferencedProcedures": [
+              {
+                "Name": "2750-WRITE-ERROR"
+              }
+            ],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "WS-UNKNOWN-RECORD-TYPE-COUNT"
+                  }
+                ],
+                "Range": [340,349]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "ERR-TIMESTAMP"
+                  },
+                  {
+                    "Name": "ERR-RECORD-TYPE"
+                  },
+                  {
+                    "Name": "ERR-SEQUENCE"
+                  },
+                  {
+                    "Name": "ERR-MESSAGE"
+                  }
+                ],
+                "Range": [353,362]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "EXPORT-REC-TYPE"
+                  },
+                  {
+                    "Name": "EXPORT-SEQUENCE-NUM"
+                  }
+                ],
+                "Range": [219,311]
+              }
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "2750-WRITE-ERROR",
+            "Range": [638,650],
+            "Sentences": [639,650],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "ERROR-OUTPUT-RECORD"
+                  }
+                ],
+                "Range": [206,207]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "WS-ERROR-RECORD"
+                  }
+                ],
+                "Range": [353,362]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "WS-ERROR-OK"
+                  },
+                  {
+                    "Name": "WS-ERROR-STATUS"
+                  }
+                ],
+                "Range": [317,333]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "WS-ERROR-RECORDS-WRITTEN"
+                  }
+                ],
+                "Range": [340,349]
+              }
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "3000-VALIDATE-IMPORT",
+            "Range": [650,656],
+            "Sentences": [651,656]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "4000-FINALIZE",
+            "Range": [656,682],
+            "Sentences": [657,682],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "WS-TOTAL-RECORDS-READ"
+                  },
+                  {
+                    "Name": "WS-CUSTOMER-RECORDS-IMPORTED"
+                  },
+                  {
+                    "Name": "WS-ACCOUNT-RECORDS-IMPORTED"
+                  },
+                  {
+                    "Name": "WS-XREF-RECORDS-IMPORTED"
+                  },
+                  {
+                    "Name": "WS-TRAN-RECORDS-IMPORTED"
+                  },
+                  {
+                    "Name": "WS-CARD-RECORDS-IMPORTED"
+                  },
+                  {
+                    "Name": "WS-ERROR-RECORDS-WRITTEN"
+                  },
+                  {
+                    "Name": "WS-UNKNOWN-RECORD-TYPE-COUNT"
+                  }
+                ],
+                "Range": [340,349]
+              }
+            ],
+            "ReferencedFiles": [
+              {
+                "Name": "EXPORT-INPUT",
+                "Range": [76,80]
+              },
+              {
+                "Name": "CUSTOMER-OUTPUT",
+                "Range": [81,108]
+              },
+              {
+                "Name": "ACCOUNT-OUTPUT",
+                "Range": [113,134]
+              },
+              {
+                "Name": "XREF-OUTPUT",
+                "Range": [139,151]
+              },
+              {
+                "Name": "TRANSACTION-OUTPUT",
+                "Range": [156,178]
+              },
+              {
+                "Name": "CARD-OUTPUT",
+                "Range": [183,198]
+              },
+              {
+                "Name": "ERROR-OUTPUT",
+                "Range": [203,207]
+              }
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "9999-ABEND-PROGRAM",
+            "Range": [682,690],
+            "Sentences": [683,690]
+          }
+        ]
+      },
+      "MoveStatements": [
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "WS-IMPORT-DATE",
+            "(",
+            "1:4",
+            ")"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:178:11"
+        },
+        {
+          "Value": {
+            "Literal": "-",
+            "RawLiteral": [
+              45
+            ]
+          },
+          "Targets": [
+            "WS-IMPORT-DATE",
+            "(",
+            "5:1",
+            ")"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:179:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "WS-IMPORT-DATE",
+            "(",
+            "6:2",
+            ")"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:180:11"
+        },
+        {
+          "Value": {
+            "Literal": "-",
+            "RawLiteral": [
+              45
+            ]
+          },
+          "Targets": [
+            "WS-IMPORT-DATE",
+            "(",
+            "8:1",
+            ")"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:181:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "WS-IMPORT-DATE",
+            "(",
+            "9:2",
+            ")"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:182:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "WS-IMPORT-TIME",
+            "(",
+            "1:2",
+            ")"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:184:11"
+        },
+        {
+          "Value": {
+            "Literal": ":",
+            "RawLiteral": [
+              58
+            ]
+          },
+          "Targets": [
+            "WS-IMPORT-TIME",
+            "(",
+            "3:1",
+            ")"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:185:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "WS-IMPORT-TIME",
+            "(",
+            "4:2",
+            ")"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:186:11"
+        },
+        {
+          "Value": {
+            "Literal": ":",
+            "RawLiteral": [
+              58
+            ]
+          },
+          "Targets": [
+            "WS-IMPORT-TIME",
+            "(",
+            "6:1",
+            ")"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:187:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "WS-IMPORT-TIME",
+            "(",
+            "7:2",
+            ")"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:188:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "CUST-ID"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:293:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "CUST-FIRST-NAME"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:294:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "CUST-MIDDLE-NAME"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:295:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "CUST-LAST-NAME"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:296:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "CUST-ADDR-LINE-1"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:297:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "CUST-ADDR-LINE-2"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:298:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "CUST-ADDR-LINE-3"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:299:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "CUST-ADDR-STATE-CD"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:300:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "CUST-ADDR-COUNTRY-CD"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:301:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "CUST-ADDR-ZIP"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:302:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "CUST-PHONE-NUM-1"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:303:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "CUST-PHONE-NUM-2"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:304:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "CUST-SSN"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:305:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "CUST-GOVT-ISSUED-ID"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:306:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "CUST-DOB-YYYY-MM-DD"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:307:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "CUST-EFT-ACCOUNT-ID"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:308:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "CUST-PRI-CARD-HOLDER-IND"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:309:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "CUST-FICO-CREDIT-SCORE"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:310:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "ACCT-ID"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:328:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "ACCT-ACTIVE-STATUS"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:329:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "ACCT-CURR-BAL"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:330:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "ACCT-CREDIT-LIMIT"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:331:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "ACCT-CASH-CREDIT-LIMIT"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:332:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "ACCT-OPEN-DATE"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:333:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "ACCT-EXPIRAION-DATE"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:334:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "ACCT-REISSUE-DATE"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:335:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "ACCT-CURR-CYC-CREDIT"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:336:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "ACCT-CURR-CYC-DEBIT"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:337:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "ACCT-ADDR-ZIP"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:338:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "ACCT-GROUP-ID"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:339:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "XREF-CARD-NUM"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:357:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "XREF-CUST-ID"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:358:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "XREF-ACCT-ID"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:359:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "TRAN-ID"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:377:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "TRAN-TYPE-CD"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:378:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "TRAN-CAT-CD"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:379:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "TRAN-SOURCE"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:380:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "TRAN-DESC"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:381:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "TRAN-AMT"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:382:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "TRAN-MERCHANT-ID"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:383:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "TRAN-MERCHANT-NAME"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:384:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "TRAN-MERCHANT-CITY"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:385:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "TRAN-MERCHANT-ZIP"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:386:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "TRAN-CARD-NUM"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:387:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "TRAN-ORIG-TS"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:388:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "TRAN-PROC-TS"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:389:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "CARD-NUM"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:407:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "CARD-ACCT-ID"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:408:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "CARD-CVV-CD"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:409:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "CARD-EMBOSSED-NAME"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:410:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "CARD-EXPIRAION-DATE"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:411:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "CARD-ACTIVE-STATUS"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:412:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "ERR-TIMESTAMP"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:429:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "ERR-RECORD-TYPE"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:430:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "ERR-SEQUENCE"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:431:11"
+        },
+        {
+          "Value": {
+            "Literal": "Unknown record type encountered",
+            "RawLiteral": [
+              85,
+              110,
+              107,
+              110,
+              111,
+              119,
+              110,
+              32,
+              114,
+              101,
+              99,
+              111,
+              114,
+              100,
+              32,
+              116,
+              121,
+              112,
+              101,
+              32,
+              101,
+              110,
+              99,
+              111,
+              117,
+              110,
+              116,
+              101,
+              114,
+              101,
+              100
+            ]
+          },
+          "Targets": [
+            "ERR-MESSAGE"
+          ],
+          "Coordinates": "file://cbl/CBIMPORT.cbl:432:11"
+        }
+      ],
+      "FileIO": [
+        {
+          "FileVariable": "EXPORT-INPUT",
+          "Optional": false,
+          "IsSortFile": false,
+          "DDNames": [
+            "EXPFILE"
+          ],
+          "RecordVariables": [
+            {
+              "Name": "EXPORT-INPUT-RECORD",
+              "Range": "file://cbl/CBIMPORT.cbl:79:0-79:0"
+            },
+            {
+              "Name": "EXPORT-RECORD",
+              "Range": "file://cpy/CVEXPORT.cpy:9:0-100:0"
+            }
+          ],
+          "Mode": "INPUT",
+          "Coordinates": "file://cbl/CBIMPORT.cbl:37:11"
+        },
+        {
+          "FileVariable": "CUSTOMER-OUTPUT",
+          "Optional": false,
+          "IsSortFile": false,
+          "DDNames": [
+            "CUSTOUT"
+          ],
+          "RecordVariables": [
+            {
+              "Name": "CUSTOMER-RECORD",
+              "Range": "file://cpy/CVCUS01Y.cpy:4:0-23:0"
+            }
+          ],
+          "Mode": "OUTPUT",
+          "Coordinates": "file://cbl/CBIMPORT.cbl:43:11"
+        },
+        {
+          "FileVariable": "ACCOUNT-OUTPUT",
+          "Optional": false,
+          "IsSortFile": false,
+          "DDNames": [
+            "ACCTOUT"
+          ],
+          "RecordVariables": [
+            {
+              "Name": "ACCOUNT-RECORD",
+              "Range": "file://cpy/CVACT01Y.cpy:4:0-17:0"
+            }
+          ],
+          "Mode": "OUTPUT",
+          "Coordinates": "file://cbl/CBIMPORT.cbl:48:11"
+        },
+        {
+          "FileVariable": "XREF-OUTPUT",
+          "Optional": false,
+          "IsSortFile": false,
+          "DDNames": [
+            "XREFOUT"
+          ],
+          "RecordVariables": [
+            {
+              "Name": "CARD-XREF-RECORD",
+              "Range": "file://cpy/CVACT03Y.cpy:4:0-8:0"
+            }
+          ],
+          "Mode": "OUTPUT",
+          "Coordinates": "file://cbl/CBIMPORT.cbl:53:11"
+        },
+        {
+          "FileVariable": "TRANSACTION-OUTPUT",
+          "Optional": false,
+          "IsSortFile": false,
+          "DDNames": [
+            "TRNXOUT"
+          ],
+          "RecordVariables": [
+            {
+              "Name": "TRAN-RECORD",
+              "Range": "file://cpy/CVTRA05Y.cpy:4:0-18:0"
+            }
+          ],
+          "Mode": "OUTPUT",
+          "Coordinates": "file://cbl/CBIMPORT.cbl:58:11"
+        },
+        {
+          "FileVariable": "CARD-OUTPUT",
+          "Optional": false,
+          "IsSortFile": false,
+          "DDNames": [
+            "CARDOUT"
+          ],
+          "RecordVariables": [
+            {
+              "Name": "CARD-RECORD",
+              "Range": "file://cpy/CVACT02Y.cpy:4:0-11:0"
+            }
+          ],
+          "Mode": "OUTPUT",
+          "Coordinates": "file://cbl/CBIMPORT.cbl:63:11"
+        },
+        {
+          "FileVariable": "ERROR-OUTPUT",
+          "Optional": false,
+          "IsSortFile": false,
+          "DDNames": [
+            "ERROUT"
+          ],
+          "RecordVariables": [
+            {
+              "Name": "ERROR-OUTPUT-RECORD",
+              "Range": "file://cbl/CBIMPORT.cbl:109:0-109:0"
+            },
+            {
+              "Name": "WS-ERROR-RECORD",
+              "Range": "file://cbl/CBIMPORT.cbl:152:0-160:0"
+            }
+          ],
+          "Mode": "OUTPUT",
+          "Coordinates": "file://cbl/CBIMPORT.cbl:68:11"
+        }
+      ],
+      "Copybooks": [
+        {
+          "Name": "CVCUS01Y",
+          "Division": "DATA DIVISION",
+          "Section": "FILE SECTION",
+          "Coordinates": "file://cbl/CBIMPORT.cbl:84:7"
+        },
+        {
+          "Name": "CVACT01Y",
+          "Division": "DATA DIVISION",
+          "Section": "FILE SECTION",
+          "Coordinates": "file://cbl/CBIMPORT.cbl:89:7"
+        },
+        {
+          "Name": "CVACT03Y",
+          "Division": "DATA DIVISION",
+          "Section": "FILE SECTION",
+          "Coordinates": "file://cbl/CBIMPORT.cbl:94:7"
+        },
+        {
+          "Name": "CVTRA05Y",
+          "Division": "DATA DIVISION",
+          "Section": "FILE SECTION",
+          "Coordinates": "file://cbl/CBIMPORT.cbl:99:7"
+        },
+        {
+          "Name": "CVACT02Y",
+          "Division": "DATA DIVISION",
+          "Section": "FILE SECTION",
+          "Coordinates": "file://cbl/CBIMPORT.cbl:104:7"
+        },
+        {
+          "Name": "CVEXPORT",
+          "Division": "DATA DIVISION",
+          "Section": "WORKING-STORAGE SECTION",
+          "Coordinates": "file://cbl/CBIMPORT.cbl:113:7"
+        }
+      ]
+    }
+  ]
+}
