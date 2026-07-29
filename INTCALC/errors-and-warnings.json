@@ -1,0 +1,29 @@
+{
+  "ShabakehVersion": "0.90.0",
+  "ShabakehConfig": {
+    "ClientProject": "aws-carddemo",
+    "ClientProjectSHA": "7f3582f775ce5d42b43d6db5cf9113966b4546b7",
+    "Targets": [
+      "INTCALC.jcl"
+    ],
+    "Invocation": "extract -call-trees=INTCALC/call-trees.json -errors-and-warnings=INTCALC/errors-and-warnings.json --include-params INTCALC.jcl",
+    "IncludeParams": true
+  },
+  "ErrorsAndWarnings": {
+    "EntryPointCounts": {
+      "OK": 1,
+      "Warnings": 0,
+      "Errors": 0
+    },
+    "PrefixCounts": {
+      "INTCALC": {
+      "OK": 1,
+      "Warnings": 0,
+      "Errors": 0
+    }
+    }
+  },
+  "DebugInformation": {
+    
+  }
+}
