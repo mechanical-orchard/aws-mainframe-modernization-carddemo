@@ -1,0 +1,29 @@
+{
+  "ShabakehVersion": "0.90.0",
+  "ShabakehConfig": {
+    "ClientProject": "aws-carddemo",
+    "ClientProjectSHA": "6452653a309c432c2f2e0ea5c78b2b9f93a50e87",
+    "Targets": [
+      "READXREF.jcl"
+    ],
+    "Invocation": "extract -call-trees=READXREF/call-trees.json -errors-and-warnings=READXREF/errors-and-warnings.json --include-params READXREF.jcl",
+    "IncludeParams": true
+  },
+  "ErrorsAndWarnings": {
+    "EntryPointCounts": {
+      "OK": 1,
+      "Warnings": 0,
+      "Errors": 0
+    },
+    "PrefixCounts": {
+      "READXREF": {
+      "OK": 1,
+      "Warnings": 0,
+      "Errors": 0
+    }
+    }
+  },
+  "DebugInformation": {
+    
+  }
+}
