@@ -1,0 +1,696 @@
+{
+  "ShabakehVersion": "0.90.0",
+  "ShabakehConfig": {
+    "ClientProject": "aws-carddemo",
+    "ClientProjectSHA": "d2fd98676eeb7ea7d238e534e7071e238eda345e",
+    "Targets": [
+      "CBEXPORT.jcl"
+    ],
+    "Invocation": "extract -call-trees=CBEXPORT/call-trees.json -errors-and-warnings=CBEXPORT/errors-and-warnings.json --include-params CBEXPORT.jcl",
+    "IncludeParams": true
+  },
+  "CallTrees": [
+    {
+      "Key": "file://jcl/CBEXPORT.jcl",
+      "Context": "JCL",
+      "CallSite": "file://jcl/CBEXPORT.jcl:0:0",
+      "OnDiskPath": "jcl/CBEXPORT.jcl",
+      "CallFrameType": "Entry",
+      "EntryPointDeterminant": "jcl",
+      "Complexity": {
+        "NumLines": 73,
+        "NumLinesWithComment": 73,
+        "JCLSteps": 2,
+        "ComplexityContribution": 136
+      },
+      "Children": [
+        {
+          "Key": "file://jcl/CBEXPORT.jcl",
+          "Context": "JCL",
+          "CallSite": "file://jcl/CBEXPORT.jcl:1:3",
+          "OnDiskPath": "jcl/CBEXPORT.jcl",
+          "CallFrameType": "JCLJob",
+          "JCLLabel": "CBEXPORT",
+          "Params": [
+            {
+              "Value": "Export Customer Data for Migration",
+              "Coordinates": "file://jcl/CBEXPORT.jcl:1:16"
+            },
+            {
+              "Name": "CLASS",
+              "Value": "A",
+              "Coordinates": "file://jcl/CBEXPORT.jcl:1:53"
+            },
+            {
+              "Name": "MSGCLASS",
+              "Value": "0",
+              "Coordinates": "file://jcl/CBEXPORT.jcl:1:61"
+            },
+            {
+              "Name": "NOTIFY",
+              "Value": "&SYSUID",
+              "Coordinates": "file://jcl/CBEXPORT.jcl:2:4"
+            }
+          ],
+          "Children": [
+            {
+              "Key": "file://jcl/CBEXPORT.jcl",
+              "Context": "JCL",
+              "CallSite": "file://jcl/CBEXPORT.jcl:24:3",
+              "OnDiskPath": "jcl/CBEXPORT.jcl",
+              "CallFrameType": "JCLExec",
+              "JCLLabel": "STEP01",
+              "JCLExecStepContentRange": "file://jcl/CBEXPORT.jcl:24:0-26:0",
+              "Params": [
+                {
+                  "Name": "PGM",
+                  "Value": "IDCAMS",
+                  "Coordinates": "file://jcl/CBEXPORT.jcl:24:17"
+                }
+              ],
+              "DDGroups": [
+                {
+                  "DDName": "SYSPRINT",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "SYSOUT",
+                          "Value": "*",
+                          "Coordinates": "file://jcl/CBEXPORT.jcl:25:15"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/CBEXPORT.jcl:25:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "SYSIN",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Value": "*",
+                          "Coordinates": "file://jcl/CBEXPORT.jcl:26:15"
+                        }
+                      ],
+                      "InlineData": "  DELETE AWS.M2.CARDDEMO.EXPORT.DATA CLUSTER PURGE\n  SET MAXCC = 0\n  \n  DEFINE CLUSTER (NAME(AWS.M2.CARDDEMO.EXPORT.DATA) -\n                  INDEXED -\n                  KEYS(4 28) -\n                  RECORDSIZE(500 500) -\n                  CYLINDERS(10 5) -\n                  FREESPACE(10 10) -\n                  SHAREOPTIONS(2 3)) -\n         DATA (NAME(AWS.M2.CARDDEMO.EXPORT.DATA.DATA)) -\n         INDEX (NAME(AWS.M2.CARDDEMO.EXPORT.DATA.INDEX))\n",
+                      "Coordinates": "file://jcl/CBEXPORT.jcl:26:3"
+                    }
+                  ]
+                }
+              ],
+              "Children": [
+                {
+                  "Key": "system://IDCAMS",
+                  "Context": "EXECUTABLE",
+                  "CallSite": "file://jcl/CBEXPORT.jcl:24:3",
+                  "CallFrameType": "Invocation",
+                  "DataFlows": [
+                    {
+                      "Type": "read",
+                      "ExecStep": "CBEXPORT.STEP01",
+                      "ExecStepCoordinates": "file://jcl/CBEXPORT.jcl:24:3",
+                      "Caller": "system://IDCAMS",
+                      "CallerContext": "EXECUTABLE",
+                      "IsReadForControlCard": true,
+                      "DataReferences": [
+                        {
+                          "Key": "dd://6e745f51:CBEXPORT.STEP01.SYSIN",
+                          "Coordinates": "file://jcl/CBEXPORT.jcl:26:3",
+                          "IsNoise": true
+                        }
+                      ]
+                    }
+                  ],
+                  "Children": [
+                    {
+                      "Key": "dd://6e745f51:CBEXPORT.STEP01.SYSIN",
+                      "Context": "IDCAMS",
+                      "CallSite": "file://jcl/CBEXPORT.jcl:24:3",
+                      "CallFrameType": "Invocation",
+                      "Complexity": {
+                        "NumLines": 13,
+                        "NumLinesWithComment": 13,
+                        "ComplexityContribution": 6
+                      },
+                      "DataFlows": [
+                        {
+                          "Type": "write",
+                          "ExecStep": "CBEXPORT.STEP01",
+                          "ExecStepCoordinates": "file://jcl/CBEXPORT.jcl:24:3",
+                          "Caller": "dd://6e745f51:CBEXPORT.STEP01.SYSIN",
+                          "CallerContext": "IDCAMS",
+                          "DataReferences": [
+                            {
+                              "Key": "sysout://(0)",
+                              "Coordinates": "file://jcl/CBEXPORT.jcl:25:3"
+                            }
+                          ]
+                        },
+                        {
+                          "Type": "delete",
+                          "ExecStep": "CBEXPORT.STEP01",
+                          "ExecStepCoordinates": "file://jcl/CBEXPORT.jcl:24:3",
+                          "Caller": "dd://6e745f51:CBEXPORT.STEP01.SYSIN",
+                          "CallerContext": "IDCAMS",
+                          "DataReferences": [
+                            {
+                              "Key": "dsn://AWS.M2.CARDDEMO.EXPORT.DATA",
+                              "Coordinates": "dd://6e745f51:CBEXPORT.STEP01.SYSIN:1:3"
+                            }
+                          ]
+                        },
+                        {
+                          "Type": "write",
+                          "ExecStep": "CBEXPORT.STEP01",
+                          "ExecStepCoordinates": "file://jcl/CBEXPORT.jcl:24:3",
+                          "Caller": "dd://6e745f51:CBEXPORT.STEP01.SYSIN",
+                          "CallerContext": "IDCAMS",
+                          "IsLowConfidence": true,
+                          "LowConfidenceReason": "This is from an IDCAMS DEFINE command and Imogen Parse's interpretation of the data flow type (read, write, etc.) may be wrong.",
+                          "DataReferences": [
+                            {
+                              "Key": "dsn://AWS.M2.CARDDEMO.EXPORT.DATA",
+                              "Coordinates": "dd://6e745f51:CBEXPORT.STEP01.SYSIN:4:24",
+                              "VSAM": "KSDS"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "Key": "file://jcl/CBEXPORT.jcl",
+              "Context": "JCL",
+              "CallSite": "file://jcl/CBEXPORT.jcl:43:3",
+              "OnDiskPath": "jcl/CBEXPORT.jcl",
+              "CallFrameType": "JCLExec",
+              "JCLLabel": "STEP02",
+              "JCLExecStepContentRange": "file://jcl/CBEXPORT.jcl:43:0-68:0",
+              "Params": [
+                {
+                  "Name": "PGM",
+                  "Value": "CBEXPORT",
+                  "Coordinates": "file://jcl/CBEXPORT.jcl:43:15"
+                }
+              ],
+              "DDGroups": [
+                {
+                  "DDName": "STEPLIB",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://jcl/CBEXPORT.jcl:44:15"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.LOADLIB",
+                          "Coordinates": "file://jcl/CBEXPORT.jcl:45:12"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/CBEXPORT.jcl:44:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "CUSTFILE",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://jcl/CBEXPORT.jcl:49:15"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.CUSTDATA.VSAM.KSDS",
+                          "Coordinates": "file://jcl/CBEXPORT.jcl:50:12"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/CBEXPORT.jcl:49:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "ACCTFILE",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://jcl/CBEXPORT.jcl:51:15"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS",
+                          "Coordinates": "file://jcl/CBEXPORT.jcl:52:12"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/CBEXPORT.jcl:51:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "XREFFILE",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://jcl/CBEXPORT.jcl:53:15"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS",
+                          "Coordinates": "file://jcl/CBEXPORT.jcl:54:12"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/CBEXPORT.jcl:53:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "TRANSACT",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://jcl/CBEXPORT.jcl:55:15"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS",
+                          "Coordinates": "file://jcl/CBEXPORT.jcl:56:12"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/CBEXPORT.jcl:55:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "CARDFILE",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://jcl/CBEXPORT.jcl:57:15"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.CARDDATA.VSAM.KSDS",
+                          "Coordinates": "file://jcl/CBEXPORT.jcl:58:12"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/CBEXPORT.jcl:57:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "EXPFILE",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://jcl/CBEXPORT.jcl:62:15"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.EXPORT.DATA",
+                          "Coordinates": "file://jcl/CBEXPORT.jcl:63:12"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/CBEXPORT.jcl:62:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "SYSOUT",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "SYSOUT",
+                          "Value": "*",
+                          "Coordinates": "file://jcl/CBEXPORT.jcl:67:15"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/CBEXPORT.jcl:67:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "SYSPRINT",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "SYSOUT",
+                          "Value": "*",
+                          "Coordinates": "file://jcl/CBEXPORT.jcl:68:15"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/CBEXPORT.jcl:68:3"
+                    }
+                  ]
+                }
+              ],
+              "Children": [
+                {
+                  "Key": "file://cbl/CBEXPORT.cbl",
+                  "Context": "COBOL",
+                  "CallSite": "file://jcl/CBEXPORT.jcl:43:3",
+                  "OnDiskPath": "cbl/CBEXPORT.cbl",
+                  "CallFrameType": "Invocation",
+                  "Complexity": {
+                    "NumLines": 591,
+                    "NumLinesWithComment": 784,
+                    "NumLinesNoCopybook": 457,
+                    "NumLinesNoCopybookWithComment": 583,
+                    "CyclomaticComplexity": 33,
+                    "ComplexityContribution": 393
+                  },
+                  "CobolBindings": {
+                    "DDAssignments": [
+                      {
+                        "Variable": "CUSTOMER-INPUT",
+                        "VSAMType": "KSDS",
+                        "DDNames": [
+                          "CUSTFILE"
+                        ],
+                        "References": [
+                          {
+                            "Key": "dsn://AWS.M2.CARDDEMO.CUSTDATA.VSAM.KSDS",
+                            "Coordinates": "file://jcl/CBEXPORT.jcl:49:3",
+                            "VSAM": "KSDS"
+                          }
+                        ],
+                        "RecordVariables": [
+                          {
+                            "Name": "CUSTOMER-RECORD",
+                            "Range": "file://cpy/CVCUS01Y.cpy:4:0-23:0"
+                          }
+                        ],
+                        "Mode": "INPUT",
+                        "Coordinates": "file://cbl/CBEXPORT.cbl:35:11"
+                      },
+                      {
+                        "Variable": "ACCOUNT-INPUT",
+                        "VSAMType": "KSDS",
+                        "DDNames": [
+                          "ACCTFILE"
+                        ],
+                        "References": [
+                          {
+                            "Key": "dsn://AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS",
+                            "Coordinates": "file://jcl/CBEXPORT.jcl:51:3",
+                            "VSAM": "KSDS"
+                          }
+                        ],
+                        "RecordVariables": [
+                          {
+                            "Name": "ACCOUNT-RECORD",
+                            "Range": "file://cpy/CVACT01Y.cpy:4:0-17:0"
+                          }
+                        ],
+                        "Mode": "INPUT",
+                        "Coordinates": "file://cbl/CBEXPORT.cbl:41:11"
+                      },
+                      {
+                        "Variable": "XREF-INPUT",
+                        "VSAMType": "KSDS",
+                        "DDNames": [
+                          "XREFFILE"
+                        ],
+                        "References": [
+                          {
+                            "Key": "dsn://AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS",
+                            "Coordinates": "file://jcl/CBEXPORT.jcl:53:3",
+                            "VSAM": "KSDS"
+                          }
+                        ],
+                        "RecordVariables": [
+                          {
+                            "Name": "CARD-XREF-RECORD",
+                            "Range": "file://cpy/CVACT03Y.cpy:4:0-8:0"
+                          }
+                        ],
+                        "Mode": "INPUT",
+                        "Coordinates": "file://cbl/CBEXPORT.cbl:47:11"
+                      },
+                      {
+                        "Variable": "TRANSACTION-INPUT",
+                        "VSAMType": "KSDS",
+                        "DDNames": [
+                          "TRANSACT"
+                        ],
+                        "References": [
+                          {
+                            "Key": "dsn://AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS",
+                            "Coordinates": "file://jcl/CBEXPORT.jcl:55:3",
+                            "VSAM": "KSDS"
+                          }
+                        ],
+                        "RecordVariables": [
+                          {
+                            "Name": "TRAN-RECORD",
+                            "Range": "file://cpy/CVTRA05Y.cpy:4:0-18:0"
+                          }
+                        ],
+                        "Mode": "INPUT",
+                        "Coordinates": "file://cbl/CBEXPORT.cbl:53:11"
+                      },
+                      {
+                        "Variable": "CARD-INPUT",
+                        "VSAMType": "KSDS",
+                        "DDNames": [
+                          "CARDFILE"
+                        ],
+                        "References": [
+                          {
+                            "Key": "dsn://AWS.M2.CARDDEMO.CARDDATA.VSAM.KSDS",
+                            "Coordinates": "file://jcl/CBEXPORT.jcl:57:3",
+                            "VSAM": "KSDS"
+                          }
+                        ],
+                        "RecordVariables": [
+                          {
+                            "Name": "CARD-RECORD",
+                            "Range": "file://cpy/CVACT02Y.cpy:4:0-11:0"
+                          }
+                        ],
+                        "Mode": "INPUT",
+                        "Coordinates": "file://cbl/CBEXPORT.cbl:59:11"
+                      },
+                      {
+                        "Variable": "EXPORT-OUTPUT",
+                        "VSAMType": "KSDS",
+                        "DDNames": [
+                          "EXPFILE"
+                        ],
+                        "References": [
+                          {
+                            "Key": "dsn://AWS.M2.CARDDEMO.EXPORT.DATA",
+                            "Coordinates": "file://jcl/CBEXPORT.jcl:62:3",
+                            "VSAM": "KSDS"
+                          }
+                        ],
+                        "RecordVariables": [
+                          {
+                            "Name": "EXPORT-OUTPUT-RECORD",
+                            "Range": "file://cbl/CBEXPORT.cbl:92:0-92:0"
+                          },
+                          {
+                            "Name": "EXPORT-RECORD",
+                            "Range": "file://cpy/CVEXPORT.cpy:9:0-100:0"
+                          }
+                        ],
+                        "Mode": "OUTPUT",
+                        "Coordinates": "file://cbl/CBEXPORT.cbl:65:11"
+                      }
+                    ],
+                    "Copybooks": [
+                      {
+                        "Key": "file://cpy/CVCUS01Y.cpy",
+                        "OnDiskPath": "cpy/CVCUS01Y.cpy",
+                        "Context": "COBOL_COPYBOOK",
+                        "Coordinates": "file://cbl/CBEXPORT.cbl:75:7",
+                        "Division": "DATA DIVISION",
+                        "Section": "FILE SECTION",
+                        "NumLines": 20,
+                        "NumLinesWithComment": 27
+                      },
+                      {
+                        "Key": "file://cpy/CVACT01Y.cpy",
+                        "OnDiskPath": "cpy/CVACT01Y.cpy",
+                        "Context": "COBOL_COPYBOOK",
+                        "Coordinates": "file://cbl/CBEXPORT.cbl:78:7",
+                        "Division": "DATA DIVISION",
+                        "Section": "FILE SECTION",
+                        "NumLines": 14,
+                        "NumLinesWithComment": 21
+                      },
+                      {
+                        "Key": "file://cpy/CVACT03Y.cpy",
+                        "OnDiskPath": "cpy/CVACT03Y.cpy",
+                        "Context": "COBOL_COPYBOOK",
+                        "Coordinates": "file://cbl/CBEXPORT.cbl:81:7",
+                        "Division": "DATA DIVISION",
+                        "Section": "FILE SECTION",
+                        "NumLines": 5,
+                        "NumLinesWithComment": 12
+                      },
+                      {
+                        "Key": "file://cpy/CVTRA05Y.cpy",
+                        "OnDiskPath": "cpy/CVTRA05Y.cpy",
+                        "Context": "COBOL_COPYBOOK",
+                        "Coordinates": "file://cbl/CBEXPORT.cbl:84:7",
+                        "Division": "DATA DIVISION",
+                        "Section": "FILE SECTION",
+                        "NumLines": 15,
+                        "NumLinesWithComment": 22
+                      },
+                      {
+                        "Key": "file://cpy/CVACT02Y.cpy",
+                        "OnDiskPath": "cpy/CVACT02Y.cpy",
+                        "Context": "COBOL_COPYBOOK",
+                        "Coordinates": "file://cbl/CBEXPORT.cbl:87:7",
+                        "Division": "DATA DIVISION",
+                        "Section": "FILE SECTION",
+                        "NumLines": 8,
+                        "NumLinesWithComment": 15
+                      },
+                      {
+                        "Key": "file://cpy/CVEXPORT.cpy",
+                        "OnDiskPath": "cpy/CVEXPORT.cpy",
+                        "Context": "COBOL_COPYBOOK",
+                        "Coordinates": "file://cbl/CBEXPORT.cbl:96:7",
+                        "Division": "DATA DIVISION",
+                        "Section": "WORKING-STORAGE SECTION",
+                        "NumLines": 72,
+                        "NumLinesWithComment": 104
+                      }
+                    ]
+                  },
+                  "DataFlows": [
+                    {
+                      "Type": "read",
+                      "ExecStep": "CBEXPORT.STEP02",
+                      "ExecStepCoordinates": "file://jcl/CBEXPORT.jcl:43:3",
+                      "Caller": "file://cbl/CBEXPORT.cbl",
+                      "CallerContext": "COBOL",
+                      "CallerCoordinates": "file://cbl/CBEXPORT.cbl:35:11",
+                      "DataReferences": [
+                        {
+                          "Key": "dsn://AWS.M2.CARDDEMO.CUSTDATA.VSAM.KSDS",
+                          "Coordinates": "file://jcl/CBEXPORT.jcl:49:3",
+                          "VSAM": "KSDS"
+                        }
+                      ]
+                    },
+                    {
+                      "Type": "read",
+                      "ExecStep": "CBEXPORT.STEP02",
+                      "ExecStepCoordinates": "file://jcl/CBEXPORT.jcl:43:3",
+                      "Caller": "file://cbl/CBEXPORT.cbl",
+                      "CallerContext": "COBOL",
+                      "CallerCoordinates": "file://cbl/CBEXPORT.cbl:41:11",
+                      "DataReferences": [
+                        {
+                          "Key": "dsn://AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS",
+                          "Coordinates": "file://jcl/CBEXPORT.jcl:51:3",
+                          "VSAM": "KSDS"
+                        }
+                      ]
+                    },
+                    {
+                      "Type": "read",
+                      "ExecStep": "CBEXPORT.STEP02",
+                      "ExecStepCoordinates": "file://jcl/CBEXPORT.jcl:43:3",
+                      "Caller": "file://cbl/CBEXPORT.cbl",
+                      "CallerContext": "COBOL",
+                      "CallerCoordinates": "file://cbl/CBEXPORT.cbl:47:11",
+                      "DataReferences": [
+                        {
+                          "Key": "dsn://AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS",
+                          "Coordinates": "file://jcl/CBEXPORT.jcl:53:3",
+                          "VSAM": "KSDS"
+                        }
+                      ]
+                    },
+                    {
+                      "Type": "read",
+                      "ExecStep": "CBEXPORT.STEP02",
+                      "ExecStepCoordinates": "file://jcl/CBEXPORT.jcl:43:3",
+                      "Caller": "file://cbl/CBEXPORT.cbl",
+                      "CallerContext": "COBOL",
+                      "CallerCoordinates": "file://cbl/CBEXPORT.cbl:53:11",
+                      "DataReferences": [
+                        {
+                          "Key": "dsn://AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS",
+                          "Coordinates": "file://jcl/CBEXPORT.jcl:55:3",
+                          "VSAM": "KSDS"
+                        }
+                      ]
+                    },
+                    {
+                      "Type": "read",
+                      "ExecStep": "CBEXPORT.STEP02",
+                      "ExecStepCoordinates": "file://jcl/CBEXPORT.jcl:43:3",
+                      "Caller": "file://cbl/CBEXPORT.cbl",
+                      "CallerContext": "COBOL",
+                      "CallerCoordinates": "file://cbl/CBEXPORT.cbl:59:11",
+                      "DataReferences": [
+                        {
+                          "Key": "dsn://AWS.M2.CARDDEMO.CARDDATA.VSAM.KSDS",
+                          "Coordinates": "file://jcl/CBEXPORT.jcl:57:3",
+                          "VSAM": "KSDS"
+                        }
+                      ]
+                    },
+                    {
+                      "Type": "write",
+                      "ExecStep": "CBEXPORT.STEP02",
+                      "ExecStepCoordinates": "file://jcl/CBEXPORT.jcl:43:3",
+                      "Caller": "file://cbl/CBEXPORT.cbl",
+                      "CallerContext": "COBOL",
+                      "CallerCoordinates": "file://cbl/CBEXPORT.cbl:65:11",
+                      "DataReferences": [
+                        {
+                          "Key": "dsn://AWS.M2.CARDDEMO.EXPORT.DATA",
+                          "Coordinates": "file://jcl/CBEXPORT.jcl:62:3",
+                          "VSAM": "KSDS"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "DynamicContent": {
+    "dd://6e745f51:CBEXPORT.STEP01.SYSIN": "  DELETE AWS.M2.CARDDEMO.EXPORT.DATA CLUSTER PURGE\n  SET MAXCC = 0\n  \n  DEFINE CLUSTER (NAME(AWS.M2.CARDDEMO.EXPORT.DATA) -\n                  INDEXED -\n                  KEYS(4 28) -\n                  RECORDSIZE(500 500) -\n                  CYLINDERS(10 5) -\n                  FREESPACE(10 10) -\n                  SHAREOPTIONS(2 3)) -\n         DATA (NAME(AWS.M2.CARDDEMO.EXPORT.DATA.DATA)) -\n         INDEX (NAME(AWS.M2.CARDDEMO.EXPORT.DATA.INDEX))\n"
+  },
+  "DebugInformation": {
+    
+  }
+}
