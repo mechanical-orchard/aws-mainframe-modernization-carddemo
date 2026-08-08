@@ -2,7 +2,7 @@
   "ShabakehVersion": "0.93.1",
   "ShabakehConfig": {
     "ClientProject": "aws-carddemo",
-    "ClientProjectSHA": "43c11283abe755229c299b2176b8235d12792e72",
+    "ClientProjectSHA": "8e69e1e3658e6533d138ef7275850e50229e7359",
     "Targets": [
       "READXREF"
     ],
