@@ -1,0 +1,58 @@
+{
+  "ShabakehVersion": "0.90.0",
+  "ShabakehConfig": {
+    "ClientProject": "aws-carddemo",
+    "ClientProjectSHA": "e53ab24c08610843e3af2ceafd5a9e32a17cc491",
+    "Targets": [
+      "READACCT"
+    ],
+    "Invocation": "extract -call-trees=parse_outputs/jobs/READACCT/call-trees.json -errors-and-warnings=parse_outputs/jobs/READACCT/errors-and-warnings.json --include-params READACCT",
+    "IncludeParams": true
+  },
+  "ErrorsAndWarnings": {
+    "UnresolvedEntities": {
+      "ASSEMBLY": {
+      "file://asm/COBDATFT.asm": 1
+    }
+    },
+    "EntryPointCounts": {
+      "OK": 0,
+      "Warnings": 1,
+      "Errors": 0
+    },
+    "PrefixCounts": {
+      "READACCT": {
+      "OK": 0,
+      "Warnings": 1,
+      "Errors": 0
+    }
+    },
+    "UniqueWarnings": {
+      "Unresolved ASSEMBLY": 1
+    },
+    "Warnings": [
+      {
+        "Message": "Unresolved ASSEMBLY",
+        "Coordinates": "file://jcl/READACCT.jcl:32:3",
+        "EntryPoint": "READACCT",
+        "EntryPointContext": "JCL",
+        "UnresolvedEntity": {
+          "Reason": "Unsupported",
+          "Entity": "file://asm/COBDATFT.asm",
+          "Context": "ASSEMBLY"
+        }
+      }
+    ],
+    "UnresolvedEntityDescriptions": {
+      "ASSEMBLY": {
+      "Description": "Assembly source code interpretation is not yet supported",
+      "Implications": [
+        "This should have minimal impact on mo-parse's analysis as we do not expect assembly code to contribute data flows or dependencies in most scenarios."
+      ]
+    }
+    }
+  },
+  "DebugInformation": {
+    
+  }
+}
