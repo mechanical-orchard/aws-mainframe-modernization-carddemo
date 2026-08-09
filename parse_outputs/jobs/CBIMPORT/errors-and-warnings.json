@@ -1,0 +1,47 @@
+{
+  "ShabakehVersion": "0.93.1",
+  "ShabakehConfig": {
+    "ClientProject": "aws-carddemo",
+    "ClientProjectSHA": "c4184e5cbc9c04f40522c175086bb736dab9ee85",
+    "Targets": [
+      "job://CBIMPORT"
+    ],
+    "Invocation": "extract -call-trees=parse_outputs/jobs/CBIMPORT/call-trees.json -errors-and-warnings=parse_outputs/jobs/CBIMPORT/errors-and-warnings.json --include-params job://CBIMPORT",
+    "IncludeParams": true
+  },
+  "ErrorsAndWarnings": {
+    "EntryPointCounts": {
+      "OK": 0,
+      "Warnings": 0,
+      "Errors": 1
+    },
+    "PrefixCounts": {
+      "CBIMPORT": {
+      "OK": 0,
+      "Warnings": 0,
+      "Errors": 1
+    }
+    },
+    "UniqueWarnings": {
+      "Failed to fetch DD references with DDName CARDOUT for variable CARD-OUTPUT for file://cbl/CBIMPORT.cbl": 1,
+      "failed to fetch: could not find DD group named CARDOUT": 1
+    },
+    "Warnings": [
+      {
+        "Message": "failed to fetch: could not find DD group named CARDOUT",
+        "Coordinates": "file://jcl/CBIMPORT.jcl:22:3",
+        "EntryPoint": "CBIMPORT",
+        "EntryPointContext": "JCL"
+      },
+      {
+        "Message": "Failed to fetch DD references with DDName CARDOUT for variable CARD-OUTPUT for file://cbl/CBIMPORT.cbl",
+        "Coordinates": "file://jcl/CBIMPORT.jcl:22:3",
+        "EntryPoint": "CBIMPORT",
+        "EntryPointContext": "JCL"
+      }
+    ]
+  },
+  "DebugInformation": {
+    
+  }
+}
