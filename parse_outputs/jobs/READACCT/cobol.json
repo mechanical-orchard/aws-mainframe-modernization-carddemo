@@ -1,5 +1,5 @@
 {
-  "ShabakehVersion": "0.90.0",
+  "ShabakehVersion": "0.93.1",
   "ShabakehConfig": {
     "ClientProject": "aws-carddemo",
     "ClientProjectSHA": "",
