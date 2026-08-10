@@ -2,11 +2,11 @@
   "ShabakehVersion": "0.93.1",
   "ShabakehConfig": {
     "ClientProject": "aws-carddemo",
-    "ClientProjectSHA": "bf20706cade98b36e0daef02acde0c3cdc4bae81",
+    "ClientProjectSHA": "b12c109af13c53aaee53d9a2ea3015da1a5f480f",
     "Targets": [
-      "READACCT"
+      "job://READACCT"
     ],
-    "Invocation": "extract -call-trees=parse_outputs/jobs/READACCT/call-trees.json -errors-and-warnings=parse_outputs/jobs/READACCT/errors-and-warnings.json --include-params READACCT",
+    "Invocation": "extract -call-trees=parse_outputs/jobs/READACCT/call-trees.json -errors-and-warnings=parse_outputs/jobs/READACCT/errors-and-warnings.json --include-params job://READACCT",
     "IncludeParams": true
   },
   "CallTrees": [
