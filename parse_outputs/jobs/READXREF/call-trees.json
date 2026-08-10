@@ -2,11 +2,11 @@
   "ShabakehVersion": "0.93.1",
   "ShabakehConfig": {
     "ClientProject": "aws-carddemo",
-    "ClientProjectSHA": "8e69e1e3658e6533d138ef7275850e50229e7359",
+    "ClientProjectSHA": "9239f39d8a97900bdb6d67261a4617b809ecc4fd",
     "Targets": [
-      "READXREF"
+      "job://READXREF"
     ],
-    "Invocation": "extract -call-trees=parse_outputs/jobs/READXREF/call-trees.json -errors-and-warnings=parse_outputs/jobs/READXREF/errors-and-warnings.json --include-params READXREF",
+    "Invocation": "extract -call-trees=parse_outputs/jobs/READXREF/call-trees.json -errors-and-warnings=parse_outputs/jobs/READXREF/errors-and-warnings.json --include-params job://READXREF",
     "IncludeParams": true
   },
   "CallTrees": [
