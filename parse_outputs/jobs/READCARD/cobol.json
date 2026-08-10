@@ -4,7 +4,7 @@
     "ClientProject": "aws-carddemo",
     "ClientProjectSHA": "",
     "Targets": [
-      "CBACT02C"
+      "cobol://CBACT02C"
     ]
   },
   "Entries": [
