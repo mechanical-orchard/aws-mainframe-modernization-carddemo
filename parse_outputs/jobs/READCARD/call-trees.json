@@ -1,0 +1,228 @@
+{
+  "ShabakehVersion": "0.93.1",
+  "ShabakehConfig": {
+    "ClientProject": "aws-carddemo",
+    "ClientProjectSHA": "bf4cf5d6545f3a2b1f4dc177317a0d32ea1ab0ac",
+    "Targets": [
+      "READCARD"
+    ],
+    "Invocation": "extract -call-trees=parse_outputs/jobs/READCARD/call-trees.json -errors-and-warnings=parse_outputs/jobs/READCARD/errors-and-warnings.json --include-params READCARD",
+    "IncludeParams": true
+  },
+  "CallTrees": [
+    {
+      "Key": "file://jcl/READCARD.jcl",
+      "Context": "JCL",
+      "CallSite": "file://jcl/READCARD.jcl:0:0",
+      "OnDiskPath": "jcl/READCARD.jcl",
+      "CallFrameType": "Entry",
+      "EntryPointDeterminant": "jcl",
+      "Complexity": {
+        "NumLines": 32,
+        "NumLinesWithComment": 32,
+        "JCLSteps": 1,
+        "ComplexityContribution": 66
+      },
+      "Children": [
+        {
+          "Key": "file://jcl/READCARD.jcl",
+          "Context": "JCL",
+          "CallSite": "file://jcl/READCARD.jcl:1:3",
+          "OnDiskPath": "jcl/READCARD.jcl",
+          "CallFrameType": "JCLJob",
+          "JCLLabel": "READCARD",
+          "Params": [
+            {
+              "Value": "READCARD",
+              "Coordinates": "file://jcl/READCARD.jcl:1:16"
+            },
+            {
+              "Name": "CLASS",
+              "Value": "A",
+              "Coordinates": "file://jcl/READCARD.jcl:1:27"
+            },
+            {
+              "Name": "MSGCLASS",
+              "Value": "0",
+              "Coordinates": "file://jcl/READCARD.jcl:1:35"
+            },
+            {
+              "Name": "NOTIFY",
+              "Value": "&SYSUID",
+              "Coordinates": "file://jcl/READCARD.jcl:2:4"
+            }
+          ],
+          "Children": [
+            {
+              "Key": "file://jcl/READCARD.jcl",
+              "Context": "JCL",
+              "CallSite": "file://jcl/READCARD.jcl:22:3",
+              "OnDiskPath": "jcl/READCARD.jcl",
+              "CallFrameType": "JCLExec",
+              "JCLLabel": "STEP05",
+              "JCLExecStepContentRange": "file://jcl/READCARD.jcl:22:0-28:0",
+              "Params": [
+                {
+                  "Name": "PGM",
+                  "Value": "CBACT02C",
+                  "Coordinates": "file://jcl/READCARD.jcl:22:15"
+                }
+              ],
+              "DDGroups": [
+                {
+                  "DDName": "STEPLIB",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://jcl/READCARD.jcl:23:15"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.LOADLIB",
+                          "Coordinates": "file://jcl/READCARD.jcl:24:12"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/READCARD.jcl:23:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "CARDFILE",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://jcl/READCARD.jcl:25:15"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.CARDDATA.VSAM.KSDS",
+                          "Coordinates": "file://jcl/READCARD.jcl:26:12"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/READCARD.jcl:25:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "SYSOUT",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "SYSOUT",
+                          "Value": "*",
+                          "Coordinates": "file://jcl/READCARD.jcl:27:15"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/READCARD.jcl:27:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "SYSPRINT",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "SYSOUT",
+                          "Value": "*",
+                          "Coordinates": "file://jcl/READCARD.jcl:28:15"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/READCARD.jcl:28:3"
+                    }
+                  ]
+                }
+              ],
+              "Children": [
+                {
+                  "Key": "file://cbl/CBACT02C.cbl",
+                  "Context": "COBOL",
+                  "CallSite": "file://jcl/READCARD.jcl:22:3",
+                  "OnDiskPath": "cbl/CBACT02C.cbl",
+                  "CallFrameType": "Invocation",
+                  "Complexity": {
+                    "NumLines": 152,
+                    "NumLinesWithComment": 194,
+                    "NumLinesNoCopybook": 144,
+                    "NumLinesNoCopybookWithComment": 179,
+                    "CyclomaticComplexity": 19,
+                    "ComplexityContribution": 167
+                  },
+                  "CobolBindings": {
+                    "DDAssignments": [
+                      {
+                        "Variable": "CARDFILE-FILE",
+                        "VSAMType": "KSDS",
+                        "DDNames": [
+                          "CARDFILE"
+                        ],
+                        "References": [
+                          {
+                            "Key": "dsn://AWS.M2.CARDDEMO.CARDDATA.VSAM.KSDS",
+                            "Coordinates": "file://jcl/READCARD.jcl:25:3",
+                            "VSAM": "KSDS"
+                          }
+                        ],
+                        "RecordVariables": [
+                          {
+                            "Name": "FD-CARDFILE-REC",
+                            "Range": "file://cbl/CBACT02C.cbl:38:0-40:0"
+                          },
+                          {
+                            "Name": "CARD-RECORD",
+                            "Range": "file://cpy/CVACT02Y.cpy:4:0-11:0"
+                          }
+                        ],
+                        "Mode": "INPUT",
+                        "Coordinates": "file://cbl/CBACT02C.cbl:29:11"
+                      }
+                    ],
+                    "Copybooks": [
+                      {
+                        "Key": "file://cpy/CVACT02Y.cpy",
+                        "OnDiskPath": "cpy/CVACT02Y.cpy",
+                        "Context": "COBOL_COPYBOOK",
+                        "Coordinates": "file://cbl/CBACT02C.cbl:45:7",
+                        "Division": "DATA DIVISION",
+                        "Section": "WORKING-STORAGE SECTION",
+                        "NumLines": 8,
+                        "NumLinesWithComment": 15
+                      }
+                    ]
+                  },
+                  "DataFlows": [
+                    {
+                      "Type": "read",
+                      "ExecStep": "READCARD.STEP05",
+                      "ExecStepCoordinates": "file://jcl/READCARD.jcl:22:3",
+                      "Caller": "file://cbl/CBACT02C.cbl",
+                      "CallerContext": "COBOL",
+                      "CallerCoordinates": "file://cbl/CBACT02C.cbl:29:11",
+                      "DataReferences": [
+                        {
+                          "Key": "dsn://AWS.M2.CARDDEMO.CARDDATA.VSAM.KSDS",
+                          "Coordinates": "file://jcl/READCARD.jcl:25:3",
+                          "VSAM": "KSDS"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "DebugInformation": {
+    
+  }
+}
