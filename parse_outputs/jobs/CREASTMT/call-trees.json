@@ -2,11 +2,11 @@
   "ShabakehVersion": "0.93.1",
   "ShabakehConfig": {
     "ClientProject": "aws-carddemo",
-    "ClientProjectSHA": "323ca18f010308bdda36bb9fdc6597fc5fa2ad87",
+    "ClientProjectSHA": "5480e798e972fd1ab02f075471ad75d774d36cc9",
     "Targets": [
-      "CREASTMT"
+      "job://CREASTMT"
     ],
-    "Invocation": "extract -call-trees=parse_outputs/jobs/CREASTMT/call-trees.json -errors-and-warnings=parse_outputs/jobs/CREASTMT/errors-and-warnings.json --include-params CREASTMT",
+    "Invocation": "extract -call-trees=parse_outputs/jobs/CREASTMT/call-trees.json -errors-and-warnings=parse_outputs/jobs/CREASTMT/errors-and-warnings.json --include-params job://CREASTMT",
     "IncludeParams": true
   },
   "CallTrees": [
