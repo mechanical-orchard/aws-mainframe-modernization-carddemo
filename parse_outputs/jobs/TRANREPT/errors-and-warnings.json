@@ -1,0 +1,40 @@
+{
+  "ShabakehVersion": "0.93.1",
+  "ShabakehConfig": {
+    "ClientProject": "aws-carddemo",
+    "ClientProjectSHA": "af9dcf8ee984a11445b2e9e4935588b5fe8ab4e6",
+    "Targets": [
+      "job://TRANREPT"
+    ],
+    "Invocation": "extract -call-trees=parse_outputs/jobs/TRANREPT/call-trees.json -errors-and-warnings=parse_outputs/jobs/TRANREPT/errors-and-warnings.json --include-params job://TRANREPT",
+    "IncludeParams": true
+  },
+  "ErrorsAndWarnings": {
+    "EntryPointCounts": {
+      "OK": 0,
+      "Warnings": 0,
+      "Errors": 1
+    },
+    "PrefixCounts": {
+      "TRANREPT": {
+      "OK": 0,
+      "Warnings": 0,
+      "Errors": 1
+    }
+    },
+    "UniqueWarnings": {
+      "JCL statement is not supported: JCLLIB": 1
+    },
+    "Warnings": [
+      {
+        "Message": "JCL statement is not supported: JCLLIB",
+        "Coordinates": "file://jcl/TRANREPT.jcl:19:3",
+        "EntryPoint": "TRANREPT",
+        "EntryPointContext": "JCL"
+      }
+    ]
+  },
+  "DebugInformation": {
+    
+  }
+}
