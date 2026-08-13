@@ -2,7 +2,7 @@
   "ShabakehVersion": "0.93.1",
   "ShabakehConfig": {
     "ClientProject": "aws-carddemo",
-    "ClientProjectSHA": "62436b416f490ea1006cb3fc4d492d918e706d9b",
+    "ClientProjectSHA": "4a57ec7439a4d507eb331485aa351780eb95344b",
     "Targets": [
       "job://TRANREPT"
     ],
