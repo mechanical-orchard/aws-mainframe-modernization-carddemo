@@ -1,0 +1,5 @@
+CREATE UNIQUE INDEX CARDDEMO.XDISPUTE
+    ON CARDDEMO.DISPUTE
+        (DISP_ID   ASC)
+                    ERASE NO
+                    CLOSE NO;
