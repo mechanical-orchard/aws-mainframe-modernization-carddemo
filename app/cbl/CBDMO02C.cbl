@@ -17,7 +17,7 @@
       *               function of the fixed input plus the starting     *
       *               state produced by CBDMO01C.                       *
       ******************************************************************
-      * Copyright Amazon.com, Inc. or its affiliates.                   *
+      * Copyright (c) 2026 Mechanical Orchard, Inc.                    *
       * All Rights Reserved.                                            *
       *                                                                 *
       * Licensed under the Apache License, Version 2.0 (the "License"). *

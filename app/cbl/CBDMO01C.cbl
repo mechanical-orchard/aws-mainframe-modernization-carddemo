@@ -9,7 +9,7 @@
       *               Deterministic and idempotent given fixed seed PS  *
       *               and a freshly IDCAMS-defined empty KSDS.          *
       ******************************************************************
-      * Copyright Amazon.com, Inc. or its affiliates.                   *
+      * Copyright (c) 2026 Mechanical Orchard, Inc.                    *
       * All Rights Reserved.                                            *
       *                                                                 *
       * Licensed under the Apache License, Version 2.0 (the "License"). *
