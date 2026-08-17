@@ -372,7 +372,14 @@
                    WHEN SQLCODE = ZERO
                        PERFORM 1800-WRITE-POSTED-OK
                    WHEN SQLCODE = +100
-                       PERFORM 1900-WRITE-POSTED-REJECT
+                       STRING
+                         'MOCDC mirror broken: VSAM rewritten, '
+                         'no MOCDC row. Action=' DIN-ACTION
+                         ' SQLCODE:' WS-VAR-SQLCODE
+                         DELIMITED BY SIZE
+                         INTO WS-RETURN-MSG
+                       END-STRING
+                       PERFORM 9999-ABEND-PROGRAM
                    WHEN SQLCODE < 0
                        STRING
                          'Error updating MODATA1.MOCDC (POST). '
@@ -447,7 +454,14 @@
                    WHEN SQLCODE = ZERO
                        PERFORM 1800-WRITE-POSTED-OK
                    WHEN SQLCODE = +100
-                       PERFORM 1900-WRITE-POSTED-REJECT
+                       STRING
+                         'MOCDC mirror broken: VSAM rewritten, '
+                         'no MOCDC row. Action=' DIN-ACTION
+                         ' SQLCODE:' WS-VAR-SQLCODE
+                         DELIMITED BY SIZE
+                         INTO WS-RETURN-MSG
+                       END-STRING
+                       PERFORM 9999-ABEND-PROGRAM
                    WHEN SQLCODE < 0
                        STRING
                          'Error updating MODATA1.MOCDC (CHARGE). '
@@ -588,7 +602,14 @@
                        ADD 1 TO WS-X-COUNT
                        PERFORM 1800-WRITE-POSTED-OK
                    WHEN SQLCODE = +100
-                       PERFORM 1900-WRITE-POSTED-REJECT
+                       STRING
+                         'MOCDC mirror broken: VSAM rewritten, '
+                         'no MOCDC row. Action=' DIN-ACTION
+                         ' SQLCODE:' WS-VAR-SQLCODE
+                         DELIMITED BY SIZE
+                         INTO WS-RETURN-MSG
+                       END-STRING
+                       PERFORM 9999-ABEND-PROGRAM
                    WHEN SQLCODE < 0
                        STRING
                          'Error updating MODATA1.MOCDC (CLOSE). '
