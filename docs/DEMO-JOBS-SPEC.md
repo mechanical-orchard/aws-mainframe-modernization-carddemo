@@ -1,5 +1,11 @@
 # CardDemo CDC Demo Jobs — Design Specification
 
+> **Status / provenance:** point-in-time design & authoring contract for the demo CDC jobs
+> (`CBDMO01C` setup/load, `CBDMO02C` daily-post), produced by a moab authoring + review pipeline.
+> The committed code, JCL, copybooks, and seed data are **authoritative** where they diverge from
+> this document. Kept for design rationale — the determinism contract, dataset inventory, the
+> MOCDC DML-only rule, and the isolated `AWS.M2.CARDDEMO.DEMO.*` family — not as a living spec.
+
 Author: mainframe batch design engineer
 Status: initial design (pre-implementation)
 Scope: two new deterministic COBOL batch jobs plus their JCL, copybooks, and
