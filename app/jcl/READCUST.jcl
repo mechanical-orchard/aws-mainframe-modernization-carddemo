@@ -1,5 +1,6 @@
 //READCUST JOB 'Read Customer Data file',CLASS=A,MSGCLASS=0,
 // NOTIFY=&SYUID
+//* MT-1676 fixture: EntryPoint contents changed; path remains stable.
 //******************************************************************
 //* Copyright Amazon.com, Inc. or its affiliates.                   
 //* All Rights Reserved.                                            
