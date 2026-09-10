@@ -3,6 +3,7 @@
       * Application : CardDemo                                          
       * Type        : BATCH COBOL Program                                
       * Function    : Post the records from daily transaction file.     
+      * MT-1676 fixture: contents changed while path remains stable.     
       ******************************************************************
       * Copyright Amazon.com, Inc. or its affiliates.                   
       * All Rights Reserved.                                            
