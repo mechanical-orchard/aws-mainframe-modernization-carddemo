@@ -37,7 +37,7 @@
            SELECT EXPORT-INPUT ASSIGN TO EXPFILE
                ORGANIZATION IS INDEXED
                ACCESS MODE IS SEQUENTIAL
-               RECORD KEY IS EXPORT-SEQUENCE-NUM
+               RECORD KEY IS EXP-KEY
                FILE STATUS IS WS-EXPORT-STATUS.
                
            SELECT CUSTOMER-OUTPUT ASSIGN TO CUSTOUT
@@ -74,9 +74,12 @@
        FILE SECTION.
        
        FD  EXPORT-INPUT
-           RECORDING MODE IS F
            RECORD CONTAINS 500 CHARACTERS.
-       01  EXPORT-INPUT-RECORD                        PIC X(500).
+      *    Match the export KSDS definition: KEYS(4 28).
+       01  EXPORT-INPUT-RECORD.
+           05  FILLER                                 PIC X(28).
+           05  EXP-KEY                                PIC X(4).
+           05  FILLER                                 PIC X(468).
 
        FD  CUSTOMER-OUTPUT
            RECORDING MODE IS F
