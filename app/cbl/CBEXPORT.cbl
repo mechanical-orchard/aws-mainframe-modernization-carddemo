@@ -88,11 +88,11 @@
 
        FD  EXPORT-OUTPUT
            RECORD CONTAINS 500 CHARACTERS.
-      *    Match the export KSDS definition: KEYS(4 28).
+      *    Match the export KSDS definition: KEYS(4 27).
        01  EXPORT-OUTPUT-RECORD.
-           05  FILLER                                 PIC X(28).
+           05  FILLER                                 PIC X(27).
            05  EXP-KEY                                PIC X(4).
-           05  FILLER                                 PIC X(468).
+           05  FILLER                                 PIC X(469).
 
        WORKING-STORAGE SECTION.
 
