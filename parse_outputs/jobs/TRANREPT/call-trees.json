@@ -1,0 +1,1861 @@
+{
+  "ShabakehVersion": "0.94.7",
+  "ShabakehConfig": {
+    "ClientProject": "aws-carddemo",
+    "ClientProjectSHA": "fa19a4a338e6d5aeb3ae30055addbc532eb40409",
+    "CorpusHash": "sha256:622219fd905fa0d4261d9881679ddd5bffd2273ca0a39cebb01ed87200168165",
+    "Targets": [
+      "job://TRANREPT"
+    ],
+    "Invocation": "extract -call-trees=parse_outputs/jobs/TRANREPT/call-trees.json -errors-and-warnings=parse_outputs/jobs/TRANREPT/errors-and-warnings.json --include-params job://TRANREPT",
+    "IncludeParams": true
+  },
+  "CallTrees": [
+    {
+      "ArtifactKind": "BATCH_JOB",
+      "ShortName": "TRANREPT",
+      "Language": "JCL",
+      "Key": "file://jcl/TRANREPT.jcl",
+      "Context": "JCL",
+      "CallSite": "file://jcl/TRANREPT.jcl:0:0",
+      "OnDiskPath": "jcl/TRANREPT.jcl",
+      "ContentHash": "sha256:7d8fc0777e6b9fb1c62aee6b4b10a67d127057c84b92203c7152f230b3db9571",
+      "CallFrameType": "Entry",
+      "EntryPointDeterminant": "jcl",
+      "Complexity": {
+        "NumLines": 85,
+        "NumLinesWithComment": 85,
+        "JCLSteps": 3,
+        "ComplexityContribution": 192
+      },
+      "Children": [
+        {
+          "ShortName": "TRANREPT",
+          "Language": "JCL",
+          "Key": "file://jcl/TRANREPT.jcl",
+          "Context": "JCL",
+          "CallSite": "file://jcl/TRANREPT.jcl:1:3",
+          "OnDiskPath": "jcl/TRANREPT.jcl",
+          "ContentHash": "sha256:7d8fc0777e6b9fb1c62aee6b4b10a67d127057c84b92203c7152f230b3db9571",
+          "CallFrameType": "JCLJob",
+          "JCLLabel": "TRANREPT",
+          "Params": [
+            {
+              "Value": "TRANSACTION REPORT",
+              "Coordinates": "file://jcl/TRANREPT.jcl:1:16"
+            },
+            {
+              "Name": "CLASS",
+              "Value": "A",
+              "Coordinates": "file://jcl/TRANREPT.jcl:2:4"
+            },
+            {
+              "Name": "MSGCLASS",
+              "Value": "0",
+              "Coordinates": "file://jcl/TRANREPT.jcl:2:12"
+            },
+            {
+              "Name": "NOTIFY",
+              "Value": "&SYSUID",
+              "Coordinates": "file://jcl/TRANREPT.jcl:2:23"
+            }
+          ],
+          "Children": [
+            {
+              "ShortName": "STEP05R",
+              "Language": "JCL",
+              "Key": "file://jcl/TRANREPT.jcl",
+              "Context": "JCL",
+              "CallSite": "file://jcl/TRANREPT.jcl:23:3",
+              "OnDiskPath": "jcl/TRANREPT.jcl",
+              "ContentHash": "sha256:7d8fc0777e6b9fb1c62aee6b4b10a67d127057c84b92203c7152f230b3db9571",
+              "CallFrameType": "JCLExec",
+              "JCLLabel": "STEP05R",
+              "JCLExecStepContentRange": "file://jcl/TRANREPT.jcl:23:0-29:0",
+              "Params": [
+                {
+                  "Name": "PROC",
+                  "Value": "REPROC",
+                  "Coordinates": "file://jcl/TRANREPT.jcl:23:16"
+                },
+                {
+                  "Name": "CNTLLIB",
+                  "Value": "AWS.M2.CARDDEMO.CNTL",
+                  "Coordinates": "file://jcl/TRANREPT.jcl:24:4"
+                }
+              ],
+              "DDGroups": [
+                {
+                  "DDName": "PRC001.FILEIN",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:26:21"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:27:11"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/TRANREPT.jcl:26:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "PRC001.FILEOUT",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "List": [
+                            {
+                              "Value": "NEW",
+                              "Coordinates": "file://jcl/TRANREPT.jcl:29:27"
+                            },
+                            {
+                              "Value": "CATLG",
+                              "Coordinates": "file://jcl/TRANREPT.jcl:29:31"
+                            },
+                            {
+                              "Value": "DELETE",
+                              "Coordinates": "file://jcl/TRANREPT.jcl:29:37"
+                            }
+                          ],
+                          "Coordinates": "file://jcl/TRANREPT.jcl:29:21"
+                        },
+                        {
+                          "Name": "UNIT",
+                          "Value": "SYSDA",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:30:11"
+                        },
+                        {
+                          "Name": "DCB",
+                          "List": [
+                            {
+                              "Name": "LRECL",
+                              "Value": "350",
+                              "Coordinates": "file://jcl/TRANREPT.jcl:31:16"
+                            },
+                            {
+                              "Name": "RECFM",
+                              "Value": "FB",
+                              "Coordinates": "file://jcl/TRANREPT.jcl:31:26"
+                            },
+                            {
+                              "Name": "BLKSIZE",
+                              "Value": "0",
+                              "Coordinates": "file://jcl/TRANREPT.jcl:31:35"
+                            }
+                          ],
+                          "Coordinates": "file://jcl/TRANREPT.jcl:31:11"
+                        },
+                        {
+                          "Name": "SPACE",
+                          "List": [
+                            {
+                              "Value": "CYL",
+                              "Coordinates": "file://jcl/TRANREPT.jcl:32:18"
+                            },
+                            {
+                              "List": [
+                                {
+                                  "Value": "1",
+                                  "Coordinates": "file://jcl/TRANREPT.jcl:32:23"
+                                },
+                                {
+                                  "Value": "1",
+                                  "Coordinates": "file://jcl/TRANREPT.jcl:32:25"
+                                }
+                              ],
+                              "Coordinates": "file://jcl/TRANREPT.jcl:32:22"
+                            },
+                            {
+                              "Value": "RLSE",
+                              "Coordinates": "file://jcl/TRANREPT.jcl:32:28"
+                            }
+                          ],
+                          "Coordinates": "file://jcl/TRANREPT.jcl:32:11"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.TRANSACT.BKUP(+1)",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:33:11"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/TRANREPT.jcl:29:3"
+                    }
+                  ]
+                }
+              ],
+              "Children": [
+                {
+                  "ArtifactKind": "PROC",
+                  "ShortName": "REPROC",
+                  "Language": "JCL",
+                  "Key": "file://proc/REPROC.prc",
+                  "Context": "PROC",
+                  "CallSite": "file://jcl/TRANREPT.jcl:23:3",
+                  "OnDiskPath": "proc/REPROC.prc",
+                  "ContentHash": "sha256:4562039d1c7b90f05cc946dd1cd1cb93571bb279740c5c9777acfa3ea23fbc9f",
+                  "CallFrameType": "Invocation",
+                  "Complexity": {
+                    "NumLines": 33,
+                    "NumLinesWithComment": 33,
+                    "JCLSteps": 1,
+                    "ComplexityContribution": 66
+                  },
+                  "Children": [
+                    {
+                      "ArtifactKind": "PROC",
+                      "ShortName": "REPROC",
+                      "Language": "JCL",
+                      "Key": "file://proc/REPROC.prc",
+                      "Context": "PROC",
+                      "CallSite": "file://proc/REPROC.prc:1:3",
+                      "OnDiskPath": "proc/REPROC.prc",
+                      "ContentHash": "sha256:4562039d1c7b90f05cc946dd1cd1cb93571bb279740c5c9777acfa3ea23fbc9f",
+                      "CallFrameType": "JCLProc",
+                      "JCLLabel": "REPROC",
+                      "Children": [
+                        {
+                          "ShortName": "PRC001",
+                          "Language": "JCL",
+                          "Key": "file://proc/REPROC.prc",
+                          "Context": "PROC",
+                          "CallSite": "file://proc/REPROC.prc:21:3",
+                          "OnDiskPath": "proc/REPROC.prc",
+                          "ContentHash": "sha256:4562039d1c7b90f05cc946dd1cd1cb93571bb279740c5c9777acfa3ea23fbc9f",
+                          "CallFrameType": "JCLExec",
+                          "JCLLabel": "PRC001",
+                          "JCLExecStepContentRange": "file://proc/REPROC.prc:21:0-27:0",
+                          "Params": [
+                            {
+                              "Name": "PGM",
+                              "Value": "IDCAMS",
+                              "Coordinates": "file://proc/REPROC.prc:21:15"
+                            }
+                          ],
+                          "DDGroups": [
+                            {
+                              "DDName": "SYSPRINT",
+                              "DDs": [
+                                {
+                                  "Params": [
+                                    {
+                                      "Name": "SYSOUT",
+                                      "Value": "*",
+                                      "Coordinates": "file://proc/REPROC.prc:22:15"
+                                    }
+                                  ],
+                                  "Coordinates": "file://proc/REPROC.prc:22:3"
+                                }
+                              ]
+                            },
+                            {
+                              "DDName": "FILEIN",
+                              "DDs": [
+                                {
+                                  "Params": [
+                                    {
+                                      "Name": "DISP",
+                                      "Value": "SHR",
+                                      "Coordinates": "file://proc/REPROC.prc:23:14"
+                                    },
+                                    {
+                                      "Name": "DSN",
+                                      "Value": "NULLFILE",
+                                      "Coordinates": "file://proc/REPROC.prc:24:11"
+                                    }
+                                  ],
+                                  "Coordinates": "file://proc/REPROC.prc:23:3"
+                                }
+                              ]
+                            },
+                            {
+                              "DDName": "FILEOUT",
+                              "DDs": [
+                                {
+                                  "Params": [
+                                    {
+                                      "Name": "DISP",
+                                      "Value": "SHR",
+                                      "Coordinates": "file://proc/REPROC.prc:25:14"
+                                    },
+                                    {
+                                      "Name": "DSN",
+                                      "Value": "NULLFILE",
+                                      "Coordinates": "file://proc/REPROC.prc:26:11"
+                                    }
+                                  ],
+                                  "Coordinates": "file://proc/REPROC.prc:25:3"
+                                }
+                              ]
+                            },
+                            {
+                              "DDName": "SYSIN",
+                              "DDs": [
+                                {
+                                  "Params": [
+                                    {
+                                      "Name": "DISP",
+                                      "Value": "SHR",
+                                      "Coordinates": "file://proc/REPROC.prc:27:14"
+                                    },
+                                    {
+                                      "Name": "DSN",
+                                      "Value": "AWS.M2.CARDDEMO.CNTL(REPROCT)",
+                                      "Coordinates": "file://proc/REPROC.prc:28:11"
+                                    }
+                                  ],
+                                  "Coordinates": "file://proc/REPROC.prc:27:3"
+                                }
+                              ]
+                            }
+                          ],
+                          "EffectiveDDGroups": [
+                            {
+                              "DDName": "SYSPRINT",
+                              "DDs": [
+                                {
+                                  "Params": [
+                                    {
+                                      "Name": "SYSOUT",
+                                      "Value": "*",
+                                      "Coordinates": "file://proc/REPROC.prc:22:15"
+                                    }
+                                  ],
+                                  "Coordinates": "file://proc/REPROC.prc:22:3"
+                                }
+                              ]
+                            },
+                            {
+                              "DDName": "FILEIN",
+                              "DDs": [
+                                {
+                                  "Params": [
+                                    {
+                                      "Name": "DISP",
+                                      "Value": "SHR",
+                                      "Coordinates": "file://jcl/TRANREPT.jcl:26:21"
+                                    },
+                                    {
+                                      "Name": "DSN",
+                                      "Value": "AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS",
+                                      "Coordinates": "file://jcl/TRANREPT.jcl:27:11"
+                                    }
+                                  ],
+                                  "Coordinates": "file://proc/REPROC.prc:23:3"
+                                }
+                              ]
+                            },
+                            {
+                              "DDName": "FILEOUT",
+                              "DDs": [
+                                {
+                                  "Params": [
+                                    {
+                                      "Name": "DISP",
+                                      "List": [
+                                        {
+                                          "Value": "NEW",
+                                          "Coordinates": "file://jcl/TRANREPT.jcl:29:27"
+                                        },
+                                        {
+                                          "Value": "CATLG",
+                                          "Coordinates": "file://jcl/TRANREPT.jcl:29:31"
+                                        },
+                                        {
+                                          "Value": "DELETE",
+                                          "Coordinates": "file://jcl/TRANREPT.jcl:29:37"
+                                        }
+                                      ],
+                                      "Coordinates": "file://jcl/TRANREPT.jcl:29:21"
+                                    },
+                                    {
+                                      "Name": "DSN",
+                                      "Value": "AWS.M2.CARDDEMO.TRANSACT.BKUP(+1)",
+                                      "Coordinates": "file://jcl/TRANREPT.jcl:33:11"
+                                    },
+                                    {
+                                      "Name": "UNIT",
+                                      "Value": "SYSDA",
+                                      "Coordinates": "file://jcl/TRANREPT.jcl:30:11"
+                                    },
+                                    {
+                                      "Name": "DCB",
+                                      "List": [
+                                        {
+                                          "Name": "LRECL",
+                                          "Value": "350",
+                                          "Coordinates": "file://jcl/TRANREPT.jcl:31:16"
+                                        },
+                                        {
+                                          "Name": "RECFM",
+                                          "Value": "FB",
+                                          "Coordinates": "file://jcl/TRANREPT.jcl:31:26"
+                                        },
+                                        {
+                                          "Name": "BLKSIZE",
+                                          "Value": "0",
+                                          "Coordinates": "file://jcl/TRANREPT.jcl:31:35"
+                                        }
+                                      ],
+                                      "Coordinates": "file://jcl/TRANREPT.jcl:31:11"
+                                    },
+                                    {
+                                      "Name": "SPACE",
+                                      "List": [
+                                        {
+                                          "Value": "CYL",
+                                          "Coordinates": "file://jcl/TRANREPT.jcl:32:18"
+                                        },
+                                        {
+                                          "List": [
+                                            {
+                                              "Value": "1",
+                                              "Coordinates": "file://jcl/TRANREPT.jcl:32:23"
+                                            },
+                                            {
+                                              "Value": "1",
+                                              "Coordinates": "file://jcl/TRANREPT.jcl:32:25"
+                                            }
+                                          ],
+                                          "Coordinates": "file://jcl/TRANREPT.jcl:32:22"
+                                        },
+                                        {
+                                          "Value": "RLSE",
+                                          "Coordinates": "file://jcl/TRANREPT.jcl:32:28"
+                                        }
+                                      ],
+                                      "Coordinates": "file://jcl/TRANREPT.jcl:32:11"
+                                    }
+                                  ],
+                                  "Coordinates": "file://proc/REPROC.prc:25:3"
+                                }
+                              ]
+                            },
+                            {
+                              "DDName": "SYSIN",
+                              "DDs": [
+                                {
+                                  "Params": [
+                                    {
+                                      "Name": "DISP",
+                                      "Value": "SHR",
+                                      "Coordinates": "file://proc/REPROC.prc:27:14"
+                                    },
+                                    {
+                                      "Name": "DSN",
+                                      "Value": "AWS.M2.CARDDEMO.CNTL(REPROCT)",
+                                      "Coordinates": "file://proc/REPROC.prc:28:11"
+                                    }
+                                  ],
+                                  "Coordinates": "file://proc/REPROC.prc:27:3"
+                                }
+                              ]
+                            }
+                          ],
+                          "Children": [
+                            {
+                              "ArtifactKind": "PROGRAM",
+                              "ShortName": "IDCAMS",
+                              "Language": "NONE",
+                              "Key": "system://IDCAMS",
+                              "Context": "EXECUTABLE",
+                              "CallSite": "file://proc/REPROC.prc:21:3",
+                              "CallFrameType": "Invocation",
+                              "DataFlows": [
+                                {
+                                  "Type": "read",
+                                  "ExecStep": "REPROC.PRC001",
+                                  "ExecStepCoordinates": "file://proc/REPROC.prc:21:3",
+                                  "Caller": "system://IDCAMS",
+                                  "CallerContext": "EXECUTABLE",
+                                  "IsReadForControlCard": true,
+                                  "DataReferences": [
+                                    {
+                                      "ArtifactKind": "CONTROL_CARD",
+                                      "ShortName": "REPROCT",
+                                      "Language": "CONTROL_STATEMENTS",
+                                      "Key": "dsn://AWS.M2.CARDDEMO.CNTL(REPROCT)",
+                                      "Coordinates": "file://proc/REPROC.prc:27:3",
+                                      "OnDiskPath": "ctl/REPROCT.ctl",
+                                      "ContentHash": "sha256:5c6b8f26aa53c23131265e715b53130a1a7afd88b5bd3319aeca91f3d1a55bf5"
+                                    }
+                                  ]
+                                }
+                              ],
+                              "Children": [
+                                {
+                                  "ArtifactKind": "CONTROL_CARD",
+                                  "ShortName": "REPROCT",
+                                  "Language": "CONTROL_STATEMENTS",
+                                  "Key": "file://ctl/REPROCT.ctl",
+                                  "Context": "IDCAMS",
+                                  "CallSite": "file://proc/REPROC.prc:21:3",
+                                  "OnDiskPath": "ctl/REPROCT.ctl",
+                                  "ContentHash": "sha256:5c6b8f26aa53c23131265e715b53130a1a7afd88b5bd3319aeca91f3d1a55bf5",
+                                  "CallFrameType": "Invocation",
+                                  "Complexity": {
+                                    "NumLines": 16,
+                                    "NumLinesWithComment": 16,
+                                    "ComplexityContribution": 8
+                                  },
+                                  "DataFlows": [
+                                    {
+                                      "Type": "write",
+                                      "ExecStep": "REPROC.PRC001",
+                                      "ExecStepCoordinates": "file://proc/REPROC.prc:21:3",
+                                      "Caller": "file://ctl/REPROCT.ctl",
+                                      "CallerContext": "IDCAMS",
+                                      "DataReferences": [
+                                        {
+                                          "ArtifactKind": "SYSOUT",
+                                          "ShortName": "(0)",
+                                          "Key": "sysout://(0)",
+                                          "Coordinates": "file://proc/REPROC.prc:22:3"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "Type": "copy",
+                                      "ExecStep": "REPROC.PRC001",
+                                      "ExecStepCoordinates": "file://proc/REPROC.prc:21:3",
+                                      "Caller": "file://ctl/REPROCT.ctl",
+                                      "CallerContext": "IDCAMS",
+                                      "CallerCoordinates": "file://ctl/REPROCT.ctl:15:5",
+                                      "CopySources": [
+                                        {
+                                          "ArtifactKind": "DATASET",
+                                          "ShortName": "AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS",
+                                          "Key": "dsn://AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS",
+                                          "Coordinates": "file://proc/REPROC.prc:23:3"
+                                        }
+                                      ],
+                                      "CopyTarget": {
+                                        "ArtifactKind": "DATASET",
+                                        "ShortName": "AWS.M2.CARDDEMO.TRANSACT.BKUP(+1)",
+                                        "Key": "dsn://AWS.M2.CARDDEMO.TRANSACT.BKUP(+1)",
+                                        "Coordinates": "file://proc/REPROC.prc:25:3",
+                                        "IsGDG": true
+                                      }
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "ShortName": "STEP05R",
+              "Language": "JCL",
+              "Key": "file://jcl/TRANREPT.jcl",
+              "Context": "JCL",
+              "CallSite": "file://jcl/TRANREPT.jcl:37:3",
+              "OnDiskPath": "jcl/TRANREPT.jcl",
+              "ContentHash": "sha256:7d8fc0777e6b9fb1c62aee6b4b10a67d127057c84b92203c7152f230b3db9571",
+              "CallFrameType": "JCLExec",
+              "JCLLabel": "STEP05R",
+              "JCLExecStepContentRange": "file://jcl/TRANREPT.jcl:37:0-51:0",
+              "Params": [
+                {
+                  "Name": "PGM",
+                  "Value": "SORT",
+                  "Coordinates": "file://jcl/TRANREPT.jcl:37:17"
+                }
+              ],
+              "DDGroups": [
+                {
+                  "DDName": "SORTIN",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:38:15"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.TRANSACT.BKUP(+1)",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:39:12"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/TRANREPT.jcl:38:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "SYMNAMES",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Value": "*",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:40:15"
+                        }
+                      ],
+                      "InlineData": "TRAN-CARD-NUM,263,16,ZD                                                \nTRAN-PROC-DT,305,10,CH                                                 \nPARM-START-DATE,C'2022-01-01'                                      //Da\nPARM-END-DATE,C'2022-07-06'                                        //Da\n",
+                      "Coordinates": "file://jcl/TRANREPT.jcl:40:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "SYSIN",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Value": "*",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:45:15"
+                        }
+                      ],
+                      "InlineData": " SORT FIELDS=(TRAN-CARD-NUM,A)                                         \n INCLUDE COND=(TRAN-PROC-DT,GE,PARM-START-DATE,AND,                    \n         TRAN-PROC-DT,LE,PARM-END-DATE)                                \n",
+                      "Coordinates": "file://jcl/TRANREPT.jcl:45:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "SYSOUT",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "SYSOUT",
+                          "Value": "*",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:50:15"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/TRANREPT.jcl:50:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "SORTOUT",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "List": [
+                            {
+                              "Value": "NEW",
+                              "Coordinates": "file://jcl/TRANREPT.jcl:51:21"
+                            },
+                            {
+                              "Value": "CATLG",
+                              "Coordinates": "file://jcl/TRANREPT.jcl:51:25"
+                            },
+                            {
+                              "Value": "DELETE",
+                              "Coordinates": "file://jcl/TRANREPT.jcl:51:31"
+                            }
+                          ],
+                          "Coordinates": "file://jcl/TRANREPT.jcl:51:15"
+                        },
+                        {
+                          "Name": "UNIT",
+                          "Value": "SYSDA",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:52:12"
+                        },
+                        {
+                          "Name": "DCB",
+                          "List": [
+                            {
+                              "Value": "*.SORTIN",
+                              "Coordinates": "file://jcl/TRANREPT.jcl:53:17"
+                            }
+                          ],
+                          "Coordinates": "file://jcl/TRANREPT.jcl:53:12"
+                        },
+                        {
+                          "Name": "SPACE",
+                          "List": [
+                            {
+                              "Value": "CYL",
+                              "Coordinates": "file://jcl/TRANREPT.jcl:54:19"
+                            },
+                            {
+                              "List": [
+                                {
+                                  "Value": "1",
+                                  "Coordinates": "file://jcl/TRANREPT.jcl:54:24"
+                                },
+                                {
+                                  "Value": "1",
+                                  "Coordinates": "file://jcl/TRANREPT.jcl:54:26"
+                                }
+                              ],
+                              "Coordinates": "file://jcl/TRANREPT.jcl:54:23"
+                            },
+                            {
+                              "Value": "RLSE",
+                              "Coordinates": "file://jcl/TRANREPT.jcl:54:29"
+                            }
+                          ],
+                          "Coordinates": "file://jcl/TRANREPT.jcl:54:12"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.TRANSACT.DALY(+1)",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:55:12"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/TRANREPT.jcl:51:3"
+                    }
+                  ]
+                }
+              ],
+              "EffectiveDDGroups": [
+                {
+                  "DDName": "SORTIN",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:38:15"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.TRANSACT.BKUP(+1)",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:39:12"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/TRANREPT.jcl:38:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "SYMNAMES",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Value": "*",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:40:15"
+                        }
+                      ],
+                      "InlineData": "TRAN-CARD-NUM,263,16,ZD                                                \nTRAN-PROC-DT,305,10,CH                                                 \nPARM-START-DATE,C'2022-01-01'                                      //Da\nPARM-END-DATE,C'2022-07-06'                                        //Da\n",
+                      "Coordinates": "file://jcl/TRANREPT.jcl:40:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "SYSIN",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Value": "*",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:45:15"
+                        }
+                      ],
+                      "InlineData": " SORT FIELDS=(TRAN-CARD-NUM,A)                                         \n INCLUDE COND=(TRAN-PROC-DT,GE,PARM-START-DATE,AND,                    \n         TRAN-PROC-DT,LE,PARM-END-DATE)                                \n",
+                      "Coordinates": "file://jcl/TRANREPT.jcl:45:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "SYSOUT",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "SYSOUT",
+                          "Value": "*",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:50:15"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/TRANREPT.jcl:50:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "SORTOUT",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "List": [
+                            {
+                              "Value": "NEW",
+                              "Coordinates": "file://jcl/TRANREPT.jcl:51:21"
+                            },
+                            {
+                              "Value": "CATLG",
+                              "Coordinates": "file://jcl/TRANREPT.jcl:51:25"
+                            },
+                            {
+                              "Value": "DELETE",
+                              "Coordinates": "file://jcl/TRANREPT.jcl:51:31"
+                            }
+                          ],
+                          "Coordinates": "file://jcl/TRANREPT.jcl:51:15"
+                        },
+                        {
+                          "Name": "UNIT",
+                          "Value": "SYSDA",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:52:12"
+                        },
+                        {
+                          "Name": "DCB",
+                          "List": [
+                            {
+                              "Value": "*.SORTIN",
+                              "Coordinates": "file://jcl/TRANREPT.jcl:53:17"
+                            }
+                          ],
+                          "Coordinates": "file://jcl/TRANREPT.jcl:53:12"
+                        },
+                        {
+                          "Name": "SPACE",
+                          "List": [
+                            {
+                              "Value": "CYL",
+                              "Coordinates": "file://jcl/TRANREPT.jcl:54:19"
+                            },
+                            {
+                              "List": [
+                                {
+                                  "Value": "1",
+                                  "Coordinates": "file://jcl/TRANREPT.jcl:54:24"
+                                },
+                                {
+                                  "Value": "1",
+                                  "Coordinates": "file://jcl/TRANREPT.jcl:54:26"
+                                }
+                              ],
+                              "Coordinates": "file://jcl/TRANREPT.jcl:54:23"
+                            },
+                            {
+                              "Value": "RLSE",
+                              "Coordinates": "file://jcl/TRANREPT.jcl:54:29"
+                            }
+                          ],
+                          "Coordinates": "file://jcl/TRANREPT.jcl:54:12"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.TRANSACT.DALY(+1)",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:55:12"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/TRANREPT.jcl:51:3"
+                    }
+                  ]
+                }
+              ],
+              "Children": [
+                {
+                  "ArtifactKind": "PROGRAM",
+                  "ShortName": "SORT",
+                  "Language": "NONE",
+                  "Key": "system://SORT",
+                  "Context": "EXECUTABLE",
+                  "CallSite": "file://jcl/TRANREPT.jcl:37:3",
+                  "CallFrameType": "Invocation",
+                  "DataFlows": [
+                    {
+                      "Type": "read",
+                      "ExecStep": "TRANREPT.STEP05R",
+                      "ExecStepCoordinates": "file://jcl/TRANREPT.jcl:37:3",
+                      "Caller": "system://SORT",
+                      "CallerContext": "EXECUTABLE",
+                      "IsReadForControlCard": true,
+                      "DataReferences": [
+                        {
+                          "ArtifactKind": "CONTROL_CARD",
+                          "ShortName": "TRANREPT.STEP05R.SYSIN",
+                          "Language": "CONTROL_STATEMENTS",
+                          "Key": "dd://982f9d62:TRANREPT.STEP05R.SYSIN",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:45:3",
+                          "IsNoise": true
+                        }
+                      ]
+                    }
+                  ],
+                  "Children": [
+                    {
+                      "ArtifactKind": "CONTROL_CARD",
+                      "ShortName": "TRANREPT.STEP05R.SYSIN",
+                      "Language": "CONTROL_STATEMENTS",
+                      "Key": "dd://982f9d62:TRANREPT.STEP05R.SYSIN",
+                      "Context": "SORT",
+                      "CallSite": "file://jcl/TRANREPT.jcl:37:3",
+                      "CallFrameType": "Invocation",
+                      "Complexity": {
+                        "NumLines": 4,
+                        "NumLinesWithComment": 4,
+                        "ComplexityContribution": 2
+                      },
+                      "SortBindings": {
+                        "DDAssignments": [
+                          {
+                            "DDName": "SORTIN\\d{0,2}",
+                            "Operation": "(implied)",
+                            "DataFlow": {
+                              "Type": "read",
+                              "ExecStep": "TRANREPT.STEP05R",
+                              "ExecStepCoordinates": "file://jcl/TRANREPT.jcl:37:3",
+                              "Caller": "dd://982f9d62:TRANREPT.STEP05R.SYSIN",
+                              "CallerContext": "SORT",
+                              "DataReferences": [
+                                {
+                                  "ArtifactKind": "DATASET",
+                                  "ShortName": "AWS.M2.CARDDEMO.TRANSACT.BKUP(+1)",
+                                  "Key": "dsn://AWS.M2.CARDDEMO.TRANSACT.BKUP(+1)",
+                                  "Coordinates": "file://jcl/TRANREPT.jcl:38:3",
+                                  "IsGDG": true
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "DDName": "SORTOUT",
+                            "Operation": "(implied)",
+                            "DataFlow": {
+                              "Type": "write",
+                              "ExecStep": "TRANREPT.STEP05R",
+                              "ExecStepCoordinates": "file://jcl/TRANREPT.jcl:37:3",
+                              "Caller": "dd://982f9d62:TRANREPT.STEP05R.SYSIN",
+                              "CallerContext": "SORT",
+                              "DataReferences": [
+                                {
+                                  "ArtifactKind": "DATASET",
+                                  "ShortName": "AWS.M2.CARDDEMO.TRANSACT.DALY(+1)",
+                                  "Key": "dsn://AWS.M2.CARDDEMO.TRANSACT.DALY(+1)",
+                                  "Coordinates": "file://jcl/TRANREPT.jcl:51:3",
+                                  "IsGDG": true
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      },
+                      "DataFlows": [
+                        {
+                          "Type": "read",
+                          "ExecStep": "TRANREPT.STEP05R",
+                          "ExecStepCoordinates": "file://jcl/TRANREPT.jcl:37:3",
+                          "Caller": "dd://982f9d62:TRANREPT.STEP05R.SYSIN",
+                          "CallerContext": "SORT",
+                          "DataReferences": [
+                            {
+                              "ArtifactKind": "DATASET",
+                              "ShortName": "AWS.M2.CARDDEMO.TRANSACT.BKUP(+1)",
+                              "Key": "dsn://AWS.M2.CARDDEMO.TRANSACT.BKUP(+1)",
+                              "Coordinates": "file://jcl/TRANREPT.jcl:38:3",
+                              "IsGDG": true
+                            }
+                          ]
+                        },
+                        {
+                          "Type": "write",
+                          "ExecStep": "TRANREPT.STEP05R",
+                          "ExecStepCoordinates": "file://jcl/TRANREPT.jcl:37:3",
+                          "Caller": "dd://982f9d62:TRANREPT.STEP05R.SYSIN",
+                          "CallerContext": "SORT",
+                          "DataReferences": [
+                            {
+                              "ArtifactKind": "DATASET",
+                              "ShortName": "AWS.M2.CARDDEMO.TRANSACT.DALY(+1)",
+                              "Key": "dsn://AWS.M2.CARDDEMO.TRANSACT.DALY(+1)",
+                              "Coordinates": "file://jcl/TRANREPT.jcl:51:3",
+                              "IsGDG": true
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "ShortName": "STEP10R",
+              "Language": "JCL",
+              "Key": "file://jcl/TRANREPT.jcl",
+              "Context": "JCL",
+              "CallSite": "file://jcl/TRANREPT.jcl:59:3",
+              "OnDiskPath": "jcl/TRANREPT.jcl",
+              "ContentHash": "sha256:7d8fc0777e6b9fb1c62aee6b4b10a67d127057c84b92203c7152f230b3db9571",
+              "CallFrameType": "JCLExec",
+              "JCLLabel": "STEP10R",
+              "JCLExecStepContentRange": "file://jcl/TRANREPT.jcl:59:0-76:0",
+              "Params": [
+                {
+                  "Name": "PGM",
+                  "Value": "CBTRN03C",
+                  "Coordinates": "file://jcl/TRANREPT.jcl:59:16"
+                }
+              ],
+              "DDGroups": [
+                {
+                  "DDName": "STEPLIB",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:60:15"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.LOADLIB",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:61:12"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/TRANREPT.jcl:60:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "SYSOUT",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "SYSOUT",
+                          "Value": "*",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:62:15"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/TRANREPT.jcl:62:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "SYSPRINT",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "SYSOUT",
+                          "Value": "*",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:63:15"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/TRANREPT.jcl:63:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "TRANFILE",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:65:15"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.TRANSACT.DALY(+1)",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:66:12"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/TRANREPT.jcl:65:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "CARDXREF",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:67:15"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:68:12"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/TRANREPT.jcl:67:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "TRANTYPE",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:69:15"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.TRANTYPE.VSAM.KSDS",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:70:12"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/TRANREPT.jcl:69:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "TRANCATG",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:71:15"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.TRANCATG.VSAM.KSDS",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:72:12"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/TRANREPT.jcl:71:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "DATEPARM",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:73:15"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.DATEPARM",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:74:12"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/TRANREPT.jcl:73:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "TRANREPT",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "List": [
+                            {
+                              "Value": "NEW",
+                              "Coordinates": "file://jcl/TRANREPT.jcl:76:21"
+                            },
+                            {
+                              "Value": "CATLG",
+                              "Coordinates": "file://jcl/TRANREPT.jcl:76:25"
+                            },
+                            {
+                              "Value": "DELETE",
+                              "Coordinates": "file://jcl/TRANREPT.jcl:76:31"
+                            }
+                          ],
+                          "Coordinates": "file://jcl/TRANREPT.jcl:76:15"
+                        },
+                        {
+                          "Name": "UNIT",
+                          "Value": "SYSDA",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:77:12"
+                        },
+                        {
+                          "Name": "DCB",
+                          "List": [
+                            {
+                              "Name": "LRECL",
+                              "Value": "133",
+                              "Coordinates": "file://jcl/TRANREPT.jcl:78:17"
+                            },
+                            {
+                              "Name": "RECFM",
+                              "Value": "FB",
+                              "Coordinates": "file://jcl/TRANREPT.jcl:78:27"
+                            },
+                            {
+                              "Name": "BLKSIZE",
+                              "Value": "0",
+                              "Coordinates": "file://jcl/TRANREPT.jcl:78:36"
+                            }
+                          ],
+                          "Coordinates": "file://jcl/TRANREPT.jcl:78:12"
+                        },
+                        {
+                          "Name": "SPACE",
+                          "List": [
+                            {
+                              "Value": "CYL",
+                              "Coordinates": "file://jcl/TRANREPT.jcl:79:19"
+                            },
+                            {
+                              "List": [
+                                {
+                                  "Value": "1",
+                                  "Coordinates": "file://jcl/TRANREPT.jcl:79:24"
+                                },
+                                {
+                                  "Value": "1",
+                                  "Coordinates": "file://jcl/TRANREPT.jcl:79:26"
+                                }
+                              ],
+                              "Coordinates": "file://jcl/TRANREPT.jcl:79:23"
+                            },
+                            {
+                              "Value": "RLSE",
+                              "Coordinates": "file://jcl/TRANREPT.jcl:79:29"
+                            }
+                          ],
+                          "Coordinates": "file://jcl/TRANREPT.jcl:79:12"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.TRANREPT(+1)",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:80:12"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/TRANREPT.jcl:76:3"
+                    }
+                  ]
+                }
+              ],
+              "EffectiveDDGroups": [
+                {
+                  "DDName": "STEPLIB",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:60:15"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.LOADLIB",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:61:12"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/TRANREPT.jcl:60:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "SYSOUT",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "SYSOUT",
+                          "Value": "*",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:62:15"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/TRANREPT.jcl:62:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "SYSPRINT",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "SYSOUT",
+                          "Value": "*",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:63:15"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/TRANREPT.jcl:63:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "TRANFILE",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:65:15"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.TRANSACT.DALY(+1)",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:66:12"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/TRANREPT.jcl:65:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "CARDXREF",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:67:15"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:68:12"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/TRANREPT.jcl:67:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "TRANTYPE",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:69:15"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.TRANTYPE.VSAM.KSDS",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:70:12"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/TRANREPT.jcl:69:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "TRANCATG",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:71:15"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.TRANCATG.VSAM.KSDS",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:72:12"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/TRANREPT.jcl:71:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "DATEPARM",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:73:15"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.DATEPARM",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:74:12"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/TRANREPT.jcl:73:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "TRANREPT",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "List": [
+                            {
+                              "Value": "NEW",
+                              "Coordinates": "file://jcl/TRANREPT.jcl:76:21"
+                            },
+                            {
+                              "Value": "CATLG",
+                              "Coordinates": "file://jcl/TRANREPT.jcl:76:25"
+                            },
+                            {
+                              "Value": "DELETE",
+                              "Coordinates": "file://jcl/TRANREPT.jcl:76:31"
+                            }
+                          ],
+                          "Coordinates": "file://jcl/TRANREPT.jcl:76:15"
+                        },
+                        {
+                          "Name": "UNIT",
+                          "Value": "SYSDA",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:77:12"
+                        },
+                        {
+                          "Name": "DCB",
+                          "List": [
+                            {
+                              "Name": "LRECL",
+                              "Value": "133",
+                              "Coordinates": "file://jcl/TRANREPT.jcl:78:17"
+                            },
+                            {
+                              "Name": "RECFM",
+                              "Value": "FB",
+                              "Coordinates": "file://jcl/TRANREPT.jcl:78:27"
+                            },
+                            {
+                              "Name": "BLKSIZE",
+                              "Value": "0",
+                              "Coordinates": "file://jcl/TRANREPT.jcl:78:36"
+                            }
+                          ],
+                          "Coordinates": "file://jcl/TRANREPT.jcl:78:12"
+                        },
+                        {
+                          "Name": "SPACE",
+                          "List": [
+                            {
+                              "Value": "CYL",
+                              "Coordinates": "file://jcl/TRANREPT.jcl:79:19"
+                            },
+                            {
+                              "List": [
+                                {
+                                  "Value": "1",
+                                  "Coordinates": "file://jcl/TRANREPT.jcl:79:24"
+                                },
+                                {
+                                  "Value": "1",
+                                  "Coordinates": "file://jcl/TRANREPT.jcl:79:26"
+                                }
+                              ],
+                              "Coordinates": "file://jcl/TRANREPT.jcl:79:23"
+                            },
+                            {
+                              "Value": "RLSE",
+                              "Coordinates": "file://jcl/TRANREPT.jcl:79:29"
+                            }
+                          ],
+                          "Coordinates": "file://jcl/TRANREPT.jcl:79:12"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.TRANREPT(+1)",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:80:12"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/TRANREPT.jcl:76:3"
+                    }
+                  ]
+                }
+              ],
+              "Children": [
+                {
+                  "ArtifactKind": "PROGRAM",
+                  "ShortName": "CBTRN03C",
+                  "Language": "COBOL",
+                  "Key": "file://cbl/CBTRN03C.cbl",
+                  "Context": "COBOL",
+                  "CallSite": "file://jcl/TRANREPT.jcl:59:3",
+                  "OnDiskPath": "cbl/CBTRN03C.cbl",
+                  "ContentHash": "sha256:8691e625502b7efcfd7ba4ae61797132e7b68f3fd5fedcdcc7dd6488f6871eef",
+                  "CallFrameType": "Invocation",
+                  "Complexity": {
+                    "NumLines": 693,
+                    "NumLinesWithComment": 782,
+                    "NumLinesNoCopybook": 596,
+                    "NumLinesNoCopybookWithComment": 650,
+                    "CyclomaticComplexity": 76,
+                    "ComplexityContribution": 678
+                  },
+                  "CobolBindings": {
+                    "ProgramID": "CBTRN03C",
+                    "DDAssignments": [
+                      {
+                        "Variable": "TRANSACT-FILE",
+                        "DDNames": [
+                          "TRANFILE"
+                        ],
+                        "References": [
+                          {
+                            "ArtifactKind": "DATASET",
+                            "ShortName": "AWS.M2.CARDDEMO.TRANSACT.DALY(+1)",
+                            "Key": "dsn://AWS.M2.CARDDEMO.TRANSACT.DALY(+1)",
+                            "Coordinates": "file://jcl/TRANREPT.jcl:65:3",
+                            "IsGDG": true
+                          }
+                        ],
+                        "RecordVariables": [
+                          {
+                            "Name": "FD-TRANFILE-REC",
+                            "Range": "file://cbl/CBTRN03C.cbl:62:0-65:0"
+                          },
+                          {
+                            "Name": "TRAN-RECORD",
+                            "Range": "file://cpy/CVTRA05Y.cpy:4:0-18:0"
+                          }
+                        ],
+                        "Mode": "INPUT",
+                        "Coordinates": "file://cbl/CBTRN03C.cbl:29:11"
+                      },
+                      {
+                        "Variable": "XREF-FILE",
+                        "VSAMType": "KSDS",
+                        "DDNames": [
+                          "CARDXREF"
+                        ],
+                        "References": [
+                          {
+                            "ArtifactKind": "DATASET",
+                            "ShortName": "AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS",
+                            "Key": "dsn://AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS",
+                            "Coordinates": "file://jcl/TRANREPT.jcl:67:3",
+                            "VSAM": "KSDS"
+                          }
+                        ],
+                        "RecordVariables": [
+                          {
+                            "Name": "FD-CARDXREF-REC",
+                            "Range": "file://cbl/CBTRN03C.cbl:68:0-70:0"
+                          },
+                          {
+                            "Name": "CARD-XREF-RECORD",
+                            "Range": "file://cpy/CVACT03Y.cpy:4:0-8:0"
+                          }
+                        ],
+                        "Mode": "INPUT",
+                        "Coordinates": "file://cbl/CBTRN03C.cbl:33:11"
+                      },
+                      {
+                        "Variable": "TRANTYPE-FILE",
+                        "VSAMType": "KSDS",
+                        "DDNames": [
+                          "TRANTYPE"
+                        ],
+                        "References": [
+                          {
+                            "ArtifactKind": "DATASET",
+                            "ShortName": "AWS.M2.CARDDEMO.TRANTYPE.VSAM.KSDS",
+                            "Key": "dsn://AWS.M2.CARDDEMO.TRANTYPE.VSAM.KSDS",
+                            "Coordinates": "file://jcl/TRANREPT.jcl:69:3",
+                            "VSAM": "KSDS"
+                          }
+                        ],
+                        "RecordVariables": [
+                          {
+                            "Name": "FD-TRANTYPE-REC",
+                            "Range": "file://cbl/CBTRN03C.cbl:73:0-75:0"
+                          },
+                          {
+                            "Name": "TRAN-TYPE-RECORD",
+                            "Range": "file://cpy/CVTRA03Y.cpy:4:0-7:0"
+                          }
+                        ],
+                        "Mode": "INPUT",
+                        "Coordinates": "file://cbl/CBTRN03C.cbl:39:11"
+                      },
+                      {
+                        "Variable": "TRANCATG-FILE",
+                        "VSAMType": "KSDS",
+                        "DDNames": [
+                          "TRANCATG"
+                        ],
+                        "References": [
+                          {
+                            "ArtifactKind": "DATASET",
+                            "ShortName": "AWS.M2.CARDDEMO.TRANCATG.VSAM.KSDS",
+                            "Key": "dsn://AWS.M2.CARDDEMO.TRANCATG.VSAM.KSDS",
+                            "Coordinates": "file://jcl/TRANREPT.jcl:71:3",
+                            "VSAM": "KSDS"
+                          }
+                        ],
+                        "RecordVariables": [
+                          {
+                            "Name": "FD-TRAN-CAT-RECORD",
+                            "Range": "file://cbl/CBTRN03C.cbl:78:0-82:0"
+                          },
+                          {
+                            "Name": "TRAN-CAT-RECORD",
+                            "Range": "file://cpy/CVTRA04Y.cpy:4:0-9:0"
+                          }
+                        ],
+                        "Mode": "INPUT",
+                        "Coordinates": "file://cbl/CBTRN03C.cbl:45:11"
+                      },
+                      {
+                        "Variable": "REPORT-FILE",
+                        "DDNames": [
+                          "TRANREPT"
+                        ],
+                        "References": [
+                          {
+                            "ArtifactKind": "DATASET",
+                            "ShortName": "AWS.M2.CARDDEMO.TRANREPT(+1)",
+                            "Key": "dsn://AWS.M2.CARDDEMO.TRANREPT(+1)",
+                            "Coordinates": "file://jcl/TRANREPT.jcl:76:3",
+                            "IsGDG": true
+                          }
+                        ],
+                        "RecordVariables": [
+                          {
+                            "Name": "FD-REPTFILE-REC",
+                            "Range": "file://cbl/CBTRN03C.cbl:85:0-85:0"
+                          }
+                        ],
+                        "Mode": "OUTPUT",
+                        "Coordinates": "file://cbl/CBTRN03C.cbl:51:11"
+                      },
+                      {
+                        "Variable": "DATE-PARMS-FILE",
+                        "DDNames": [
+                          "DATEPARM"
+                        ],
+                        "References": [
+                          {
+                            "ArtifactKind": "DATASET",
+                            "ShortName": "AWS.M2.CARDDEMO.DATEPARM",
+                            "Key": "dsn://AWS.M2.CARDDEMO.DATEPARM",
+                            "Coordinates": "file://jcl/TRANREPT.jcl:73:3"
+                          }
+                        ],
+                        "RecordVariables": [
+                          {
+                            "Name": "FD-DATEPARM-REC",
+                            "Range": "file://cbl/CBTRN03C.cbl:88:0-88:0"
+                          },
+                          {
+                            "Name": "WS-DATEPARM-RECORD",
+                            "Range": "file://cbl/CBTRN03C.cbl:122:0-125:0"
+                          }
+                        ],
+                        "Mode": "INPUT",
+                        "Coordinates": "file://cbl/CBTRN03C.cbl:55:11"
+                      }
+                    ],
+                    "Copybooks": [
+                      {
+                        "ArtifactKind": "COPYBOOK",
+                        "ShortName": "CVTRA05Y",
+                        "Language": "COBOL",
+                        "Key": "file://cpy/CVTRA05Y.cpy",
+                        "OnDiskPath": "cpy/CVTRA05Y.cpy",
+                        "ContentHash": "sha256:d7bde0e78ff608497087b9909c889ed39e347269f964bda767b92b547fbb5fec",
+                        "Context": "COBOL_COPYBOOK",
+                        "Coordinates": "file://cbl/CBTRN03C.cbl:93:7",
+                        "Division": "DATA DIVISION",
+                        "Section": "WORKING-STORAGE SECTION",
+                        "NumLines": 15,
+                        "NumLinesWithComment": 22
+                      },
+                      {
+                        "ArtifactKind": "COPYBOOK",
+                        "ShortName": "CVACT03Y",
+                        "Language": "COBOL",
+                        "Key": "file://cpy/CVACT03Y.cpy",
+                        "OnDiskPath": "cpy/CVACT03Y.cpy",
+                        "ContentHash": "sha256:ffc6079e09b28739e154bf6c1e1c36d408209faa91f6cf7008078dc596a1c370",
+                        "Context": "COBOL_COPYBOOK",
+                        "Coordinates": "file://cbl/CBTRN03C.cbl:98:7",
+                        "Division": "DATA DIVISION",
+                        "Section": "WORKING-STORAGE SECTION",
+                        "NumLines": 5,
+                        "NumLinesWithComment": 12
+                      },
+                      {
+                        "ArtifactKind": "COPYBOOK",
+                        "ShortName": "CVTRA03Y",
+                        "Language": "COBOL",
+                        "Key": "file://cpy/CVTRA03Y.cpy",
+                        "OnDiskPath": "cpy/CVTRA03Y.cpy",
+                        "ContentHash": "sha256:fb15dbc4a6924cbddce0704932f9e61c067ac10004cd00839dff0ed7c7bb0667",
+                        "Context": "COBOL_COPYBOOK",
+                        "Coordinates": "file://cbl/CBTRN03C.cbl:103:7",
+                        "Division": "DATA DIVISION",
+                        "Section": "WORKING-STORAGE SECTION",
+                        "NumLines": 4,
+                        "NumLinesWithComment": 11
+                      },
+                      {
+                        "ArtifactKind": "COPYBOOK",
+                        "ShortName": "CVTRA04Y",
+                        "Language": "COBOL",
+                        "Key": "file://cpy/CVTRA04Y.cpy",
+                        "OnDiskPath": "cpy/CVTRA04Y.cpy",
+                        "ContentHash": "sha256:89803bc13a06347e1f3d8a599a5383b87235b203dce9f18a486bc233186479f8",
+                        "Context": "COBOL_COPYBOOK",
+                        "Coordinates": "file://cbl/CBTRN03C.cbl:108:7",
+                        "Division": "DATA DIVISION",
+                        "Section": "WORKING-STORAGE SECTION",
+                        "NumLines": 6,
+                        "NumLinesWithComment": 13
+                      },
+                      {
+                        "ArtifactKind": "COPYBOOK",
+                        "ShortName": "CVTRA07Y",
+                        "Language": "COBOL",
+                        "Key": "file://cpy/CVTRA07Y.cpy",
+                        "OnDiskPath": "cpy/CVTRA07Y.cpy",
+                        "ContentHash": "sha256:72ba597b1a40e1e6cf908e15da9e6a818a0ab899ef1d27d15edeb074963102fa",
+                        "Context": "COBOL_COPYBOOK",
+                        "Coordinates": "file://cbl/CBTRN03C.cbl:113:7",
+                        "Division": "DATA DIVISION",
+                        "Section": "WORKING-STORAGE SECTION",
+                        "NumLines": 67,
+                        "NumLinesWithComment": 74
+                      }
+                    ]
+                  },
+                  "DataFlows": [
+                    {
+                      "Type": "read",
+                      "ExecStep": "TRANREPT.STEP10R",
+                      "ExecStepCoordinates": "file://jcl/TRANREPT.jcl:59:3",
+                      "Caller": "file://cbl/CBTRN03C.cbl",
+                      "CallerContext": "COBOL",
+                      "CallerCoordinates": "file://cbl/CBTRN03C.cbl:29:11",
+                      "DataReferences": [
+                        {
+                          "ArtifactKind": "DATASET",
+                          "ShortName": "AWS.M2.CARDDEMO.TRANSACT.DALY(+1)",
+                          "Key": "dsn://AWS.M2.CARDDEMO.TRANSACT.DALY(+1)",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:65:3",
+                          "IsGDG": true
+                        }
+                      ]
+                    },
+                    {
+                      "Type": "read",
+                      "ExecStep": "TRANREPT.STEP10R",
+                      "ExecStepCoordinates": "file://jcl/TRANREPT.jcl:59:3",
+                      "Caller": "file://cbl/CBTRN03C.cbl",
+                      "CallerContext": "COBOL",
+                      "CallerCoordinates": "file://cbl/CBTRN03C.cbl:33:11",
+                      "DataReferences": [
+                        {
+                          "ArtifactKind": "DATASET",
+                          "ShortName": "AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS",
+                          "Key": "dsn://AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:67:3",
+                          "VSAM": "KSDS"
+                        }
+                      ]
+                    },
+                    {
+                      "Type": "read",
+                      "ExecStep": "TRANREPT.STEP10R",
+                      "ExecStepCoordinates": "file://jcl/TRANREPT.jcl:59:3",
+                      "Caller": "file://cbl/CBTRN03C.cbl",
+                      "CallerContext": "COBOL",
+                      "CallerCoordinates": "file://cbl/CBTRN03C.cbl:39:11",
+                      "DataReferences": [
+                        {
+                          "ArtifactKind": "DATASET",
+                          "ShortName": "AWS.M2.CARDDEMO.TRANTYPE.VSAM.KSDS",
+                          "Key": "dsn://AWS.M2.CARDDEMO.TRANTYPE.VSAM.KSDS",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:69:3",
+                          "VSAM": "KSDS"
+                        }
+                      ]
+                    },
+                    {
+                      "Type": "read",
+                      "ExecStep": "TRANREPT.STEP10R",
+                      "ExecStepCoordinates": "file://jcl/TRANREPT.jcl:59:3",
+                      "Caller": "file://cbl/CBTRN03C.cbl",
+                      "CallerContext": "COBOL",
+                      "CallerCoordinates": "file://cbl/CBTRN03C.cbl:45:11",
+                      "DataReferences": [
+                        {
+                          "ArtifactKind": "DATASET",
+                          "ShortName": "AWS.M2.CARDDEMO.TRANCATG.VSAM.KSDS",
+                          "Key": "dsn://AWS.M2.CARDDEMO.TRANCATG.VSAM.KSDS",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:71:3",
+                          "VSAM": "KSDS"
+                        }
+                      ]
+                    },
+                    {
+                      "Type": "write",
+                      "ExecStep": "TRANREPT.STEP10R",
+                      "ExecStepCoordinates": "file://jcl/TRANREPT.jcl:59:3",
+                      "Caller": "file://cbl/CBTRN03C.cbl",
+                      "CallerContext": "COBOL",
+                      "CallerCoordinates": "file://cbl/CBTRN03C.cbl:51:11",
+                      "DataReferences": [
+                        {
+                          "ArtifactKind": "DATASET",
+                          "ShortName": "AWS.M2.CARDDEMO.TRANREPT(+1)",
+                          "Key": "dsn://AWS.M2.CARDDEMO.TRANREPT(+1)",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:76:3",
+                          "IsGDG": true
+                        }
+                      ]
+                    },
+                    {
+                      "Type": "read",
+                      "ExecStep": "TRANREPT.STEP10R",
+                      "ExecStepCoordinates": "file://jcl/TRANREPT.jcl:59:3",
+                      "Caller": "file://cbl/CBTRN03C.cbl",
+                      "CallerContext": "COBOL",
+                      "CallerCoordinates": "file://cbl/CBTRN03C.cbl:55:11",
+                      "DataReferences": [
+                        {
+                          "ArtifactKind": "DATASET",
+                          "ShortName": "AWS.M2.CARDDEMO.DATEPARM",
+                          "Key": "dsn://AWS.M2.CARDDEMO.DATEPARM",
+                          "Coordinates": "file://jcl/TRANREPT.jcl:73:3"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "Warnings": [
+            {
+              "Message": "JCL statement is not supported: JCLLIB",
+              "Coordinates": "file://jcl/TRANREPT.jcl:19:3"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "DynamicContent": {
+    "dd://982f9d62:TRANREPT.STEP05R.SYSIN": " SORT FIELDS=(TRAN-CARD-NUM,A)                                         \n INCLUDE COND=(TRAN-PROC-DT,GE,PARM-START-DATE,AND,                    \n         TRAN-PROC-DT,LE,PARM-END-DATE)                                \n"
+  },
+  "DebugInformation": {
+    
+  }
+}
