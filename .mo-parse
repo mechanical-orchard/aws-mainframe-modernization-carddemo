@@ -4,6 +4,7 @@
     "Directories": [
       "app-authorization-ims-db2-mq",
       "app-transaction-type-db2",
+      "app-dispute-db2",
       "app-vsam-mq",
       "asm",
       "bms",
@@ -43,6 +44,26 @@
       ],
       [
         "app-transaction-type-db2/jcl",
+        "jcl"
+      ],
+      [
+        "app-dispute-db2/cbl",
+        "cobol"
+      ],
+      [
+        "app-dispute-db2/ctl",
+        "control"
+      ],
+      [
+        "app-dispute-db2/dcl",
+        "database"
+      ],
+      [
+        "app-dispute-db2/ddl",
+        "database"
+      ],
+      [
+        "app-dispute-db2/jcl",
         "jcl"
       ],
       [
