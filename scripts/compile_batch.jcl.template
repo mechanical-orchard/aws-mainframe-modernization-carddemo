@@ -10,11 +10,11 @@
 //STEPLIB  DD DISP=SHR,                                                        
 //         DSN=IGY.SIGYCOMP.V63 
 //SYSIN    DD DISP=SHR,                                                 
-//         DSN=AWS.M2.CARDDEMO.CBL(&MEM)                                
+//         DSN=MO.CARDDEMO.CBL(&MEM)                                
 //SYSLIB   DD DISP=SHR,                                                 
-//         DSN=AWS.M2.CARDDEMO.CPY                                      
+//         DSN=MO.CARDDEMO.CPY                                      
 //SYSPRINT DD DISP=SHR,                                                 
-//         DSN=AWS.M2.CARDDEMO.LISTING(&MEM)                            
+//         DSN=MO.CARDDEMO.LISTING(&MEM)                            
 //SYSLIN   DD DSN=&&LOADSET,UNIT=3390,                                  
 //            DISP=(MOD,PASS),SPACE=(80,(10,10))                        
 //SYSUT1   DD SPACE=(80,(10,10),,,ROUND),UNIT=3390                      
@@ -40,7 +40,7 @@
 //CBLPRINT  EXEC PGM=IEBGENER,REGION=0M                                 
 //SYSPRINT  DD SYSOUT=*                                                 
 //SYSUT1    DD DISP=SHR,                                                
-//          DSN=AWS.M2.CARDDEMO.LISTING(&MEM)                           
+//          DSN=MO.CARDDEMO.LISTING(&MEM)                           
 //SYSUT2    DD SYSOUT=*                                                 
 //SYSIN     DD DUMMY                                                    
 //*                                                                     
@@ -54,10 +54,10 @@
 //         DD DSN=CSF.SCSFMOD0,DISP=SHR                                 
 //         DD DSN=CEE.SCEELKED,DISP=SHR                                 
 //         DD DSN=CEE.SCEELKEX,DISP=SHR                                 
-//         DD DSN=AWS.M2.CARDDEMO.LOADLIB,DISP=SHR                      
+//         DD DSN=MO.CARDDEMO.LOADLIB,DISP=SHR                      
 //SYSLIN   DD DSN=&&LOADSET,DISP=(OLD,DELETE)                           
 //SYSLMOD  DD DISP=SHR,                                                 
-//         DSN=AWS.M2.CARDDEMO.LOADLIB(&MEM)                            
+//         DSN=MO.CARDDEMO.LOADLIB(&MEM)                            
 //SYSUT1   DD UNIT=3390,DCB=BLKSIZE=1024,SPACE=(1024,(200,20))          
 // PEND                                                                 
 //*                                                                     
