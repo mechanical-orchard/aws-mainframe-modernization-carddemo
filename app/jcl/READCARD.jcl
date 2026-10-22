@@ -21,9 +21,9 @@
 //* *******************************************************************         
 //STEP05 EXEC PGM=CBACT02C                                                      
 //STEPLIB  DD DISP=SHR,                                                         
-//         DSN=AWS.M2.CARDDEMO.LOADLIB                                          
+//         DSN=MO.CARDDEMO.LOADLIB                                          
 //CARDFILE DD DISP=SHR,                                                         
-//         DSN=AWS.M2.CARDDEMO.CARDDATA.VSAM.KSDS                               
+//         DSN=MO.CARDDEMO.CARDDATA.VSAM.KSDS                               
 //SYSOUT   DD SYSOUT=*                                                          
 //SYSPRINT DD SYSOUT=*                                                          
 //*

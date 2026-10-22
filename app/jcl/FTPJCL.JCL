@@ -37,6 +37,6 @@
  pwd
  dir
  cd /ftpfolder
- PUT 'AWS.M2.CARDEMO.FTP.TEST' welcome.txt
+ PUT 'MO.CARDEMO.FTP.TEST' welcome.txt
  QUIT
 //*

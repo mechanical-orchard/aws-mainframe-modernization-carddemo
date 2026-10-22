@@ -20,9 +20,9 @@
 //* *******************************************************************
 //STEP05 EXEC PGM=CBCUS01C
 //STEPLIB  DD DISP=SHR,
-//         DSN=AWS.M2.CARDDEMO.LOADLIB
+//         DSN=MO.CARDDEMO.LOADLIB
 //CUSTFILE DD DISP=SHR,
-//         DSN=AWS.M2.CARDDEMO.CUSTDATA.VSAM.KSDS
+//         DSN=MO.CARDDEMO.CUSTDATA.VSAM.KSDS
 //SYSOUT   DD SYSOUT=*
 //SYSPRINT DD SYSOUT=*
 //*

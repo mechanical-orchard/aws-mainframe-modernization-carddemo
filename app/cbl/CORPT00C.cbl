@@ -87,7 +87,7 @@
          05 FILLER                     PIC X(80) VALUE
          "//*".
          05 FILLER                     PIC X(80) VALUE
-         "//JOBLIB JCLLIB ORDER=('AWS.M2.CARDDEMO.PROC')".
+         "//JOBLIB JCLLIB ORDER=('MO.CARDDEMO.PROC')".
          05 FILLER                     PIC X(80) VALUE
          "//*".
          05 FILLER                     PIC X(80) VALUE

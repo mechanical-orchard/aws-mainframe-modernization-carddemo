@@ -19,18 +19,18 @@
 //* *******************************************************************         
 //* CALL THE REPRO PROC                                                         
 //* *******************************************************************         
-//JOBLIB JCLLIB ORDER=('AWS.M2.CARDDEMO.PROC')                                  
+//JOBLIB JCLLIB ORDER=('MO.CARDDEMO.PROC')                                  
 //STEP05 EXEC PROC=REPROC,                                                      
-// CNTLLIB=AWS.M2.CARDDEMO.CNTL                                                 
+// CNTLLIB=MO.CARDDEMO.CNTL                                                 
 //*                                                                             
 //PRC001.FILEIN  DD DISP=SHR,                                                   
-//        DSN=AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS                                
+//        DSN=MO.CARDDEMO.TRANSACT.VSAM.KSDS                                
 //*                                                                             
 //PRC001.FILEOUT DD DISP=(NEW,CATLG,DELETE),                                    
 //        UNIT=SYSDA,                                                           
 //        DCB=(LRECL=350,RECFM=FB,BLKSIZE=0),                                   
 //        SPACE=(CYL,(1,1),RLSE),                                               
-//        DSN=AWS.M2.CARDDEMO.TRANSACT.BKUP(+1)                                 
+//        DSN=MO.CARDDEMO.TRANSACT.BKUP(+1)                                 
 //*
 //* Ver: CardDemo_v1.0-57-g40b7caa-110 Date: 2022-08-19 18:00:43 CDT
 //*
