@@ -22,7 +22,7 @@
 //*
 //PREDEL  EXEC PGM=IEFBR14
 //*
-//DD01     DD DSN=AWS.M2.CARDDEMO.USRSEC.PS,
+//DD01     DD DSN=MO.CARDDEMO.USRSEC.PS,
 //            DISP=(MOD,DELETE,DELETE)
 //*
 //*-------------------------------------------------------------------*
@@ -43,7 +43,7 @@ USER0003LAURITZ             ALME                PASSWORDU
 USER0004AVERARDO            MAZZI               PASSWORDU
 USER0005LEE                 TING                PASSWORDU
 /*
-//SYSUT2   DD DSN=AWS.M2.CARDDEMO.USRSEC.PS,
+//SYSUT2   DD DSN=MO.CARDDEMO.USRSEC.PS,
 //            DISP=(NEW,CATLG,DELETE),
 //            DCB=(LRECL=80,RECFM=FB,DSORG=PS,BLKSIZE=0),
 //            UNIT=SYSAD,SPACE=(TRK,(10,5),RLSE)
@@ -59,9 +59,9 @@ USER0005LEE                 TING                PASSWORDU
 //*
 //SYSPRINT DD  SYSOUT=*
 //SYSIN    DD  *
- DELETE                  AWS.M2.CARDDEMO.USRSEC.VSAM.KSDS
+ DELETE                  MO.CARDDEMO.USRSEC.VSAM.KSDS
  SET       MAXCC = 0
- DEFINE    CLUSTER (NAME(AWS.M2.CARDDEMO.USRSEC.VSAM.KSDS)    -
+ DEFINE    CLUSTER (NAME(MO.CARDDEMO.USRSEC.VSAM.KSDS)    -
                     KEYS(8,0)                                 -
                     RECORDSIZE(80,80)                         -
                     REUSE                                     -
@@ -69,8 +69,8 @@ USER0005LEE                 TING                PASSWORDU
                     TRACKS(45,15)                             -
                     FREESPACE(10,15)                          -
                     CISZ(8192))                               -
-           DATA    (NAME(AWS.M2.CARDDEMO.USRSEC.VSAM.KSDS.DAT)) -
-           INDEX   (NAME(AWS.M2.CARDDEMO.USRSEC.VSAM.KSDS.IDX))
+           DATA    (NAME(MO.CARDDEMO.USRSEC.VSAM.KSDS.DAT)) -
+           INDEX   (NAME(MO.CARDDEMO.USRSEC.VSAM.KSDS.IDX))
 /*
 //*
 //*-------------------------------------------------------------------*
@@ -79,8 +79,8 @@ USER0005LEE                 TING                PASSWORDU
 //*
 //STEP03  EXEC PGM=IDCAMS
 //*
-//IN       DD  DSN=AWS.M2.CARDDEMO.USRSEC.PS,DISP=SHR
-//OUT      DD  DSN=AWS.M2.CARDDEMO.USRSEC.VSAM.KSDS,DISP=SHR
+//IN       DD  DSN=MO.CARDDEMO.USRSEC.PS,DISP=SHR
+//OUT      DD  DSN=MO.CARDDEMO.USRSEC.VSAM.KSDS,DISP=SHR
 //SYSOUT   DD  SYSOUT=*
 //SYSPRINT DD  SYSOUT=*
 //SYSIN    DD  *

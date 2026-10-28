@@ -32,10 +32,10 @@
 //STEP05 EXEC PGM=IDCAMS                                                        
 //SYSPRINT DD   SYSOUT=*                                                        
 //SYSIN    DD   *                                                               
-   DELETE AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS -                                  
+   DELETE MO.CARDDEMO.TRANSACT.VSAM.KSDS -                                  
           CLUSTER                                                               
    IF MAXCC LE 08 THEN SET MAXCC = 0                                            
-   DELETE AWS.M2.CARDDEMO.TRANSACT.VSAM.AIX -                                   
+   DELETE MO.CARDDEMO.TRANSACT.VSAM.AIX -                                   
           ALTERNATEINDEX                                                        
    IF MAXCC LE 08 THEN SET MAXCC = 0                                            
 /*                                                                              
@@ -46,7 +46,7 @@
 //STEP10 EXEC PGM=IDCAMS                                                        
 //SYSPRINT DD   SYSOUT=*                                                        
 //SYSIN    DD   *                                                               
-   DEFINE CLUSTER (NAME(AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS) -                   
+   DEFINE CLUSTER (NAME(MO.CARDDEMO.TRANSACT.VSAM.KSDS) -                   
           CYLINDERS(1 5) -                                                      
           VOLUMES(AWSHJ1 -                                                      
           ) -                                                                   
@@ -56,9 +56,9 @@
           ERASE -                                                               
           INDEXED -                                                             
           ) -                                                                   
-          DATA (NAME(AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS.DATA) -                 
+          DATA (NAME(MO.CARDDEMO.TRANSACT.VSAM.KSDS.DATA) -                 
           ) -                                                                   
-          INDEX (NAME(AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS.INDEX) -               
+          INDEX (NAME(MO.CARDDEMO.TRANSACT.VSAM.KSDS.INDEX) -               
           )                                                                     
 /*                                                                              
 //* *******************************************************************         
@@ -67,9 +67,9 @@
 //STEP15 EXEC PGM=IDCAMS                                                        
 //SYSPRINT DD   SYSOUT=*                                                        
 //TRANSACT DD DISP=SHR,                                                         
-//         DSN=AWS.M2.CARDDEMO.DALYTRAN.PS.INIT                                 
+//         DSN=MO.CARDDEMO.DALYTRAN.PS.INIT                                 
 //TRANVSAM DD DISP=SHR,                                                         
-//         DSN=AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS                               
+//         DSN=MO.CARDDEMO.TRANSACT.VSAM.KSDS                               
 //SYSIN    DD   *                                                               
    REPRO INFILE(TRANSACT) OUTFILE(TRANVSAM)                                     
 /*                                                                              
@@ -79,16 +79,16 @@
 //STEP20  EXEC PGM=IDCAMS                                                       
 //SYSPRINT DD  SYSOUT=*                                                         
 //SYSIN    DD  *                                                                
-   DEFINE ALTERNATEINDEX (NAME(AWS.M2.CARDDEMO.TRANSACT.VSAM.AIX)-              
-   RELATE(AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS)                    -              
+   DEFINE ALTERNATEINDEX (NAME(MO.CARDDEMO.TRANSACT.VSAM.AIX)-              
+   RELATE(MO.CARDDEMO.TRANSACT.VSAM.KSDS)                    -              
    KEYS(26 304)                                                  -              
    NONUNIQUEKEY                                                  -              
    UPGRADE                                                       -              
    RECORDSIZE(350,350)                                           -              
    VOLUMES(AWSHJ1)                                               -              
    CYLINDERS(5,1))                                               -              
-   DATA (NAME(AWS.M2.CARDDEMO.TRANSACT.VSAM.AIX.DATA))           -              
-   INDEX (NAME(AWS.M2.CARDDEMO.TRANSACT.VSAM.AIX.INDEX))                        
+   DATA (NAME(MO.CARDDEMO.TRANSACT.VSAM.AIX.DATA))           -              
+   INDEX (NAME(MO.CARDDEMO.TRANSACT.VSAM.AIX.INDEX))                        
 /*                                                                              
 //*-------------------------------------------------------------------*         
 //* DEFINE PATH IS USED TO RELATE THE ALTERNATE INDEX TO BASE CLUSTER           
@@ -97,8 +97,8 @@
 //SYSPRINT DD  SYSOUT=*                                                         
 //SYSIN    DD  *                                                                
   DEFINE PATH                                           -                       
-   (NAME(AWS.M2.CARDDEMO.TRANSACT.VSAM.AIX.PATH)        -                       
-    PATHENTRY(AWS.M2.CARDDEMO.TRANSACT.VSAM.AIX))                               
+   (NAME(MO.CARDDEMO.TRANSACT.VSAM.AIX.PATH)        -                       
+    PATHENTRY(MO.CARDDEMO.TRANSACT.VSAM.AIX))                               
 /*                                                                              
 //*------------------------------------------------------------------           
 //* BUILD ALTERNATE INDEX CLUSTER                                               
@@ -107,8 +107,8 @@
 //SYSPRINT DD  SYSOUT=*                                                         
 //SYSIN    DD  *                                                                
    BLDINDEX                                                      -              
-   INDATASET(AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS)                 -              
-   OUTDATASET(AWS.M2.CARDDEMO.TRANSACT.VSAM.AIX)                                
+   INDATASET(MO.CARDDEMO.TRANSACT.VSAM.KSDS)                 -              
+   OUTDATASET(MO.CARDDEMO.TRANSACT.VSAM.AIX)                                
 /*                                                                              
 //*********************************************************************         
 //* Opem files in CICS region                                                   
