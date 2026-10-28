@@ -1,0 +1,49 @@
+ INSERT INTO CARDDEMO.DISPUTE
+      (DISP_ID,DISP_TRAN_ID,DISP_CARD_NUM,DISP_AMT,DISP_REASON_CD,
+       DISP_STATUS_CD,DISP_OPEN_TS,DISP_LAST_UPD_TS,DISP_DESC)
+ WITH DMY AS (SELECT * FROM SYSIBM.SYSDUMMY1)
+ SELECT 'DSP000000001','0000000000000101','4111111111111111',
+        125.50,'1010','01','2026-07-05-09.15.00.000000',
+        '2026-07-05-09.15.00.000000',
+        'Unauthorized online purchase reported by cardholder'   FROM DMY UNION ALL
+ SELECT 'DSP000000002','0000000000000102','4111111111111111',
+        89.99,'1030','02','2026-05-31-14.42.10.000000',
+        '2026-06-20-11.05.00.000000',
+        'Duplicate charge for same merchant on same day'        FROM DMY UNION ALL
+ SELECT 'DSP000000003','0000000000000205','4222222222222222',
+        1499.00,'1020','06','2026-05-01-08.30.00.000000',
+        '2026-06-15-16.20.00.000000',
+        'Suspected fraudulent high value transaction'           FROM DMY UNION ALL
+ SELECT 'DSP000000004','0000000000000310','4333333333333333',
+        45.00,'1050','04','2026-06-30-10.00.00.000000',
+        '2026-07-08-09.00.00.000000',
+        'Service not received - resolved with credit'           FROM DMY UNION ALL
+ SELECT 'DSP000000005','0000000000000411','4333333333333333',
+        320.75,'1040','01','2026-04-11-13.05.00.000000',
+        '2026-04-11-13.05.00.000000',
+        'Incorrect amount charged versus receipt'               FROM DMY
+ COMMIT;
+
+ INSERT INTO CARDDEMO.DISPUTE_HISTORY
+      (DSH_DISP_ID,DSH_SEQ,DSH_FROM_STATUS,DSH_TO_STATUS,
+       DSH_CHG_TS,DSH_CHG_USER,DSH_NOTE)
+ WITH DMY AS (SELECT * FROM SYSIBM.SYSDUMMY1)
+ SELECT 'DSP000000001',1,'00','01','2026-07-05-09.15.00.000000',
+        'ADMIN001','Dispute opened'                             FROM DMY UNION ALL
+ SELECT 'DSP000000002',1,'00','01','2026-05-31-14.42.10.000000',
+        'ADMIN001','Dispute opened'                             FROM DMY UNION ALL
+ SELECT 'DSP000000002',2,'01','02','2026-06-20-11.05.00.000000',
+        'ADMIN001','Assigned to analyst for review'             FROM DMY UNION ALL
+ SELECT 'DSP000000003',1,'00','01','2026-05-01-08.30.00.000000',
+        'ADMIN001','Dispute opened'                             FROM DMY UNION ALL
+ SELECT 'DSP000000003',2,'01','02','2026-05-10-09.00.00.000000',
+        'ADMIN001','Under fraud review'                         FROM DMY UNION ALL
+ SELECT 'DSP000000003',3,'02','06','2026-06-15-16.20.00.000000',
+        'ADMIN001','Escalated to fraud investigations team'     FROM DMY UNION ALL
+ SELECT 'DSP000000004',1,'00','01','2026-06-30-10.00.00.000000',
+        'ADMIN001','Dispute opened'                             FROM DMY UNION ALL
+ SELECT 'DSP000000004',2,'01','04','2026-07-08-09.00.00.000000',
+        'ADMIN001','Credit issued to cardholder'               FROM DMY UNION ALL
+ SELECT 'DSP000000005',1,'00','01','2026-04-11-13.05.00.000000',
+        'ADMIN001','Dispute opened'                             FROM DMY
+ COMMIT;
