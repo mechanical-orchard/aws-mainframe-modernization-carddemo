@@ -1,0 +1,152 @@
+{
+  "ShabakehVersion": "0.93.1",
+  "ShabakehConfig": {
+    "ClientProject": "aws-carddemo",
+    "ClientProjectSHA": "5480e798e972fd1ab02f075471ad75d774d36cc9",
+    "Targets": [
+      "job://CREASTMT"
+    ],
+    "Invocation": "extract -call-trees=parse_outputs/jobs/CREASTMT/call-trees.json -errors-and-warnings=parse_outputs/jobs/CREASTMT/errors-and-warnings.json --include-params job://CREASTMT",
+    "IncludeParams": true
+  },
+  "ErrorsAndWarnings": {
+    "EntryPointCounts": {
+      "OK": 0,
+      "Warnings": 0,
+      "Errors": 1
+    },
+    "PrefixCounts": {
+      "CREASTMT": {
+      "OK": 0,
+      "Warnings": 0,
+      "Errors": 1
+    }
+    },
+    "UniqueWarnings": {
+      "Unexpected token '[COBOL_TOKEN] 05 #0 10:21-10:23' in variable.  Rewinding.": 1,
+      "Unexpected token '[COBOL_TOKEN] 05 #0 11:21-11:23' in variable.  Rewinding.": 1,
+      "Unexpected token '[COBOL_TOKEN] 05 #0 12:21-12:23' in variable.  Rewinding.": 1,
+      "Unexpected token '[COBOL_TOKEN] 05 #0 13:21-13:23' in variable.  Rewinding.": 1,
+      "Unexpected token '[COBOL_TOKEN] 05 #0 14:21-14:23' in variable.  Rewinding.": 1,
+      "Unexpected token '[COBOL_TOKEN] 05 #0 15:21-15:23' in variable.  Rewinding.": 1,
+      "Unexpected token '[COBOL_TOKEN] 05 #0 16:21-16:23' in variable.  Rewinding.": 1,
+      "Unexpected token '[COBOL_TOKEN] 05 #0 17:21-17:23' in variable.  Rewinding.": 1,
+      "Unexpected token '[COBOL_TOKEN] 05 #0 18:21-18:23' in variable.  Rewinding.": 1,
+      "Unexpected token '[COBOL_TOKEN] 05 #0 19:21-19:23' in variable.  Rewinding.": 1,
+      "Unexpected token '[COBOL_TOKEN] 05 #0 20:21-20:23' in variable.  Rewinding.": 1,
+      "Unexpected token '[COBOL_TOKEN] 05 #0 21:21-21:23' in variable.  Rewinding.": 1,
+      "Unexpected token '[COBOL_TOKEN] 05 #0 22:21-22:23' in variable.  Rewinding.": 1,
+      "Unexpected token '[COBOL_TOKEN] 05 #0 23:13-23:15' in variable.  Rewinding.": 1,
+      "Unexpected token '[COBOL_TOKEN] 05 #0 7:21-7:23' in variable.  Rewinding.": 1,
+      "Unexpected token '[COBOL_TOKEN] 05 #0 8:21-8:23' in variable.  Rewinding.": 1,
+      "Unexpected token '[COBOL_TOKEN] 05 #0 9:21-9:23' in variable.  Rewinding.": 1
+    },
+    "Warnings": [
+      {
+        "Message": "Unexpected token '[COBOL_TOKEN] 05 #0 7:21-7:23' in variable.  Rewinding.",
+        "Coordinates": "file://cpy/CUSTREC.cpy:7:7",
+        "EntryPoint": "CREASTMT",
+        "EntryPointContext": "JCL"
+      },
+      {
+        "Message": "Unexpected token '[COBOL_TOKEN] 05 #0 8:21-8:23' in variable.  Rewinding.",
+        "Coordinates": "file://cpy/CUSTREC.cpy:8:7",
+        "EntryPoint": "CREASTMT",
+        "EntryPointContext": "JCL"
+      },
+      {
+        "Message": "Unexpected token '[COBOL_TOKEN] 05 #0 9:21-9:23' in variable.  Rewinding.",
+        "Coordinates": "file://cpy/CUSTREC.cpy:9:7",
+        "EntryPoint": "CREASTMT",
+        "EntryPointContext": "JCL"
+      },
+      {
+        "Message": "Unexpected token '[COBOL_TOKEN] 05 #0 10:21-10:23' in variable.  Rewinding.",
+        "Coordinates": "file://cpy/CUSTREC.cpy:10:7",
+        "EntryPoint": "CREASTMT",
+        "EntryPointContext": "JCL"
+      },
+      {
+        "Message": "Unexpected token '[COBOL_TOKEN] 05 #0 11:21-11:23' in variable.  Rewinding.",
+        "Coordinates": "file://cpy/CUSTREC.cpy:11:7",
+        "EntryPoint": "CREASTMT",
+        "EntryPointContext": "JCL"
+      },
+      {
+        "Message": "Unexpected token '[COBOL_TOKEN] 05 #0 12:21-12:23' in variable.  Rewinding.",
+        "Coordinates": "file://cpy/CUSTREC.cpy:12:7",
+        "EntryPoint": "CREASTMT",
+        "EntryPointContext": "JCL"
+      },
+      {
+        "Message": "Unexpected token '[COBOL_TOKEN] 05 #0 13:21-13:23' in variable.  Rewinding.",
+        "Coordinates": "file://cpy/CUSTREC.cpy:13:7",
+        "EntryPoint": "CREASTMT",
+        "EntryPointContext": "JCL"
+      },
+      {
+        "Message": "Unexpected token '[COBOL_TOKEN] 05 #0 14:21-14:23' in variable.  Rewinding.",
+        "Coordinates": "file://cpy/CUSTREC.cpy:14:7",
+        "EntryPoint": "CREASTMT",
+        "EntryPointContext": "JCL"
+      },
+      {
+        "Message": "Unexpected token '[COBOL_TOKEN] 05 #0 15:21-15:23' in variable.  Rewinding.",
+        "Coordinates": "file://cpy/CUSTREC.cpy:15:7",
+        "EntryPoint": "CREASTMT",
+        "EntryPointContext": "JCL"
+      },
+      {
+        "Message": "Unexpected token '[COBOL_TOKEN] 05 #0 16:21-16:23' in variable.  Rewinding.",
+        "Coordinates": "file://cpy/CUSTREC.cpy:16:7",
+        "EntryPoint": "CREASTMT",
+        "EntryPointContext": "JCL"
+      },
+      {
+        "Message": "Unexpected token '[COBOL_TOKEN] 05 #0 17:21-17:23' in variable.  Rewinding.",
+        "Coordinates": "file://cpy/CUSTREC.cpy:17:7",
+        "EntryPoint": "CREASTMT",
+        "EntryPointContext": "JCL"
+      },
+      {
+        "Message": "Unexpected token '[COBOL_TOKEN] 05 #0 18:21-18:23' in variable.  Rewinding.",
+        "Coordinates": "file://cpy/CUSTREC.cpy:18:7",
+        "EntryPoint": "CREASTMT",
+        "EntryPointContext": "JCL"
+      },
+      {
+        "Message": "Unexpected token '[COBOL_TOKEN] 05 #0 19:21-19:23' in variable.  Rewinding.",
+        "Coordinates": "file://cpy/CUSTREC.cpy:19:7",
+        "EntryPoint": "CREASTMT",
+        "EntryPointContext": "JCL"
+      },
+      {
+        "Message": "Unexpected token '[COBOL_TOKEN] 05 #0 20:21-20:23' in variable.  Rewinding.",
+        "Coordinates": "file://cpy/CUSTREC.cpy:20:7",
+        "EntryPoint": "CREASTMT",
+        "EntryPointContext": "JCL"
+      },
+      {
+        "Message": "Unexpected token '[COBOL_TOKEN] 05 #0 21:21-21:23' in variable.  Rewinding.",
+        "Coordinates": "file://cpy/CUSTREC.cpy:21:7",
+        "EntryPoint": "CREASTMT",
+        "EntryPointContext": "JCL"
+      },
+      {
+        "Message": "Unexpected token '[COBOL_TOKEN] 05 #0 22:21-22:23' in variable.  Rewinding.",
+        "Coordinates": "file://cpy/CUSTREC.cpy:22:7",
+        "EntryPoint": "CREASTMT",
+        "EntryPointContext": "JCL"
+      },
+      {
+        "Message": "Unexpected token '[COBOL_TOKEN] 05 #0 23:13-23:15' in variable.  Rewinding.",
+        "Coordinates": "file://cpy/CUSTREC.cpy:23:7",
+        "EntryPoint": "CREASTMT",
+        "EntryPointContext": "JCL"
+      }
+    ]
+  },
+  "DebugInformation": {
+    
+  }
+}
