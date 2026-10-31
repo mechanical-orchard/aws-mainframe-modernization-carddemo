@@ -1,0 +1,30 @@
+{
+  "ShabakehVersion": "0.94.52",
+  "ShabakehConfig": {
+    "ClientProject": "aws-carddemo",
+    "ClientProjectSHA": "33ec840c6594b234397babd60d09cf1338b5816d",
+    "CorpusHash": "sha256:e42ce3a90286b27e69deb0501b634401ee2674ebc20353b213210b22d14c14c1",
+    "Targets": [
+      "job://READCUST"
+    ],
+    "Invocation": "extract -call-trees=parse_outputs/jobs/READCUST/call-trees.json -errors-and-warnings=parse_outputs/jobs/READCUST/errors-and-warnings.json --include-params job://READCUST",
+    "IncludeParams": true
+  },
+  "ErrorsAndWarnings": {
+    "EntryPointCounts": {
+      "OK": 1,
+      "Warnings": 0,
+      "Errors": 0
+    },
+    "PrefixCounts": {
+      "READCUST": {
+      "OK": 1,
+      "Warnings": 0,
+      "Errors": 0
+    }
+    }
+  },
+  "DebugInformation": {
+    
+  }
+}
