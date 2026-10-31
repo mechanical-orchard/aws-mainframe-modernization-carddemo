@@ -22,24 +22,24 @@
 //* *******************************************************************         
 //STEP15 EXEC PGM=CBTRN02C                                                      
 //STEPLIB  DD DISP=SHR,                                                         
-//            DSN=AWS.M2.CARDDEMO.LOADLIB                                       
+//            DSN=MO.CARDDEMO.LOADLIB                                       
 //SYSPRINT DD SYSOUT=*                                                          
 //SYSOUT   DD SYSOUT=*                                                          
 //TRANFILE DD DISP=SHR,                                                         
-//         DSN=AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS                               
+//         DSN=MO.CARDDEMO.TRANSACT.VSAM.KSDS                               
 //DALYTRAN DD DISP=SHR,                                                         
-//         DSN=AWS.M2.CARDDEMO.DALYTRAN.PS                                      
+//         DSN=MO.CARDDEMO.DALYTRAN.PS                                      
 //XREFFILE DD DISP=SHR,                                                         
-//         DSN=AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS                               
+//         DSN=MO.CARDDEMO.CARDXREF.VSAM.KSDS                               
 //DALYREJS DD DISP=(NEW,CATLG,DELETE),                                          
 //         UNIT=SYSDA,                                                          
 //         DCB=(RECFM=F,LRECL=430,BLKSIZE=0),                                   
 //         SPACE=(CYL,(1,1),RLSE),                                              
-//         DSN=AWS.M2.CARDDEMO.DALYREJS(+1)                                     
+//         DSN=MO.CARDDEMO.DALYREJS(+1)                                     
 //ACCTFILE DD DISP=SHR,                                                         
-//         DSN=AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS                               
+//         DSN=MO.CARDDEMO.ACCTDATA.VSAM.KSDS                               
 //TCATBALF DD DISP=SHR,                                                         
-//         DSN=AWS.M2.CARDDEMO.TCATBALF.VSAM.KSDS                               
+//         DSN=MO.CARDDEMO.TCATBALF.VSAM.KSDS                               
 //*
 //* Ver: CardDemo_v1.0-15-g27d6c6f-68 Date: 2022-07-19 23:23:06 CDT
 //*
