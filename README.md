@@ -110,13 +110,13 @@ CardDemo includes several optional modules that extend the base functionality:
 
      | HLQ    | Name          | Format | Length |
      | :----- | :------------ | :----- | -----: |
-     | AWS.M2 | CARDDEMO.JCL  | FB     |     80 |
-     | AWS.M2 | CARDDEMO.PROC | FB     |     80 |
-     | AWS.M2 | CARDDEMO.CBL  | FB     |     80 |
-     | AWS.M2 | CARDDEMO.CPY  | FB     |     80 |
-     | AWS.M2 | CARDDEMO.BMS  | FB     |     80 |
-     | AWS.M2 | CARDDEMO.ASM  | FB     |     80 |
-     | AWS.M2 | CARDDEMO.MACLIB| FB    |     80 |
+     | MO     | CARDDEMO.JCL  | FB     |     80 |
+     | MO     | CARDDEMO.PROC | FB     |     80 |
+     | MO     | CARDDEMO.CBL  | FB     |     80 |
+     | MO     | CARDDEMO.CPY  | FB     |     80 |
+     | MO     | CARDDEMO.BMS  | FB     |     80 |
+     | MO     | CARDDEMO.ASM  | FB     |     80 |
+     | MO     | CARDDEMO.MACLIB| FB    |     80 |
 
 3. **Upload Source Code**
    - Upload the application source folders from the repository to your mainframe
@@ -130,18 +130,18 @@ CardDemo includes several optional modules that extend the base functionality:
 
      | Dataset name                      | Description                                  | Copybook     | Format | Length |
      | :---------------------------------| :------------------------------------------- | :----------- | :----- | -----: |
-     | AWS.M2.CARDDEMO.USRSEC.PS         | User Security file                           | CSUSR01Y     | FB     |     80 |
-     | AWS.M2.CARDDEMO.ACCTDATA.PS       | Account Data                                 | CVACT01Y     | FB     |    300 |
-     | AWS.M2.CARDDEMO.CARDDATA.PS       | Card Data                                    | CVACT02Y     | FB     |    150 |
-     | AWS.M2.CARDDEMO.CUSTDATA.PS       | Customer Data                                | CVCUS01Y     | FB     |    500 |
-     | AWS.M2.CARDDEMO.CARDXREF.PS       | Customer Account Card Cross reference        | CVACT03Y     | FB     |     50 |
-     | AWS.M2.CARDDEMO.DALYTRAN.PS.INIT  | Transaction database initialization record   | CVTRA06Y     | FB     |    350 |
-     | AWS.M2.CARDDEMO.DALYTRAN.PS       | Transaction data for posting                 | CVTRA06Y     | FB     |    350 |
-     | AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS| Online transaction data                      | CVTRA05Y     | FB     |    350 |
-     | AWS.M2.CARDDEMO.DISCGRP.PS        | Disclosure Groups                            | CVTRA02Y     | FB     |     50 |
-     | AWS.M2.CARDDEMO.TRANCATG.PS       | Transaction Category Types                   | CVTRA04Y     | FB     |     60 |
-     | AWS.M2.CARDDEMO.TRANTYPE.PS       | Transaction Types                            | CVTRA03Y     | FB     |     60 |
-     | AWS.M2.CARDDEMO.TCATBALF.PS       | Transaction Category Balance                 | CVTRA01Y     | FB     |     50 |
+     | MO.CARDDEMO.USRSEC.PS             | User Security file                           | CSUSR01Y     | FB     |     80 |
+     | MO.CARDDEMO.ACCTDATA.PS           | Account Data                                 | CVACT01Y     | FB     |    300 |
+     | MO.CARDDEMO.CARDDATA.PS           | Card Data                                    | CVACT02Y     | FB     |    150 |
+     | MO.CARDDEMO.CUSTDATA.PS           | Customer Data                                | CVCUS01Y     | FB     |    500 |
+     | MO.CARDDEMO.CARDXREF.PS           | Customer Account Card Cross reference        | CVACT03Y     | FB     |     50 |
+     | MO.CARDDEMO.DALYTRAN.PS.INIT      | Transaction database initialization record   | CVTRA06Y     | FB     |    350 |
+     | MO.CARDDEMO.DALYTRAN.PS           | Transaction data for posting                 | CVTRA06Y     | FB     |    350 |
+     | MO.CARDDEMO.TRANSACT.VSAM.KSDS    | Online transaction data                      | CVTRA05Y     | FB     |    350 |
+     | MO.CARDDEMO.DISCGRP.PS            | Disclosure Groups                            | CVTRA02Y     | FB     |     50 |
+     | MO.CARDDEMO.TRANCATG.PS           | Transaction Category Types                   | CVTRA04Y     | FB     |     60 |
+     | MO.CARDDEMO.TRANTYPE.PS           | Transaction Types                            | CVTRA03Y     | FB     |     60 |
+     | MO.CARDDEMO.TCATBALF.PS           | Transaction Category Balance                 | CVTRA01Y     | FB     |     50 |
 
 5. **Initialize the Environment**
    - Execute the following JCLs in sequence:

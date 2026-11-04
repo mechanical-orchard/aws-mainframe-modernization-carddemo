@@ -275,8 +275,8 @@ All components for the Credit Card Authorizations extension are located in the `
 
 | Queue Name | Description |
 |:-----------|:------------|
-| AWS.M2.CARDDEMO.PAUTH.REQUEST | Input queue for authorization requests |
-| AWS.M2.CARDDEMO.PAUTH.REPLY | Output queue for authorization responses |
+| MO.CARDDEMO.PAUTH.REQUEST     | Input queue for authorization requests |
+| MO.CARDDEMO.PAUTH.REPLY     | Output queue for authorization responses |
 ## Data Models
 
 ### MQ Message Formats

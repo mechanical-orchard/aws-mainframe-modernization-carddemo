@@ -22,7 +22,7 @@
 //STEP05 EXEC PGM=IDCAMS                                                        
 //SYSPRINT DD   SYSOUT=*                                                        
 //SYSIN    DD   *                                                               
-   DELETE AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS -                                  
+   DELETE MO.CARDDEMO.ACCTDATA.VSAM.KSDS -                                  
           CLUSTER                                                               
    IF MAXCC LE 08 THEN SET MAXCC = 0                                            
 /*                                                                              
@@ -33,7 +33,7 @@
 //STEP10 EXEC PGM=IDCAMS                                                        
 //SYSPRINT DD   SYSOUT=*                                                        
 //SYSIN    DD   *                                                               
-   DEFINE CLUSTER (NAME(AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS) -                   
+   DEFINE CLUSTER (NAME(MO.CARDDEMO.ACCTDATA.VSAM.KSDS) -                   
           CYLINDERS(1 5) -                                                      
           VOLUMES(AWSHJ1 -                                                      
           ) -                                                                   
@@ -43,9 +43,9 @@
           ERASE -                                                               
           INDEXED -                                                             
           ) -                                                                   
-          DATA (NAME(AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS.DATA) -                 
+          DATA (NAME(MO.CARDDEMO.ACCTDATA.VSAM.KSDS.DATA) -                 
           ) -                                                                   
-          INDEX (NAME(AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS.INDEX) -               
+          INDEX (NAME(MO.CARDDEMO.ACCTDATA.VSAM.KSDS.INDEX) -               
           )                                                                     
 /*                                                                              
 //* *******************************************************************         
@@ -54,9 +54,9 @@
 //STEP15 EXEC PGM=IDCAMS                                                        
 //SYSPRINT DD   SYSOUT=*                                                        
 //ACCTDATA DD DISP=SHR,                                                         
-//         DSN=AWS.M2.CARDDEMO.ACCTDATA.PS                                      
+//         DSN=MO.CARDDEMO.ACCTDATA.PS                                      
 //ACCTVSAM DD DISP=SHR,                                                         
-//         DSN=AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS                               
+//         DSN=MO.CARDDEMO.ACCTDATA.VSAM.KSDS                               
 //SYSIN    DD   *                                                               
    REPRO INFILE(ACCTDATA) OUTFILE(ACCTVSAM)                                     
 /*                                                                              

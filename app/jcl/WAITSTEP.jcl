@@ -20,7 +20,7 @@
 //* WAIT FOR CENTISECONDS IN THE PARM EG: 00003600  = 36 SECONDS
 //* *******************************************************************
 //WAIT     EXEC PGM=COBSWAIT                                            00040001
-//STEPLIB  DD DSN=AWS.M2.CARDDEMO.LOADLIB,DISP=SHR                      00050000
+//STEPLIB  DD DSN=MO.CARDDEMO.LOADLIB,DISP=SHR                          00050000
 //SYSOUT DD SYSOUT=*                                                    00060000
 //SYSIN    DD *                                                         00070000
 00003600      VALUE IN CENTISECONDS                                     00080000

@@ -22,37 +22,37 @@
 //SYSPRINT DD   SYSOUT=*                                                        
 //SYSIN    DD   *                                                               
    DEFINE GENERATIONDATAGROUP -                                                 
-   (NAME(AWS.M2.CARDDEMO.TRANSACT.BKUP) -                                       
+   (NAME(MO.CARDDEMO.TRANSACT.BKUP) -                                       
     LIMIT(5) -                                                                  
     SCRATCH -                                                                   
    )                                                                            
    IF LASTCC=12 THEN SET MAXCC=0                                                
    DEFINE GENERATIONDATAGROUP -                                                 
-   (NAME(AWS.M2.CARDDEMO.TRANSACT.DALY) -                                       
+   (NAME(MO.CARDDEMO.TRANSACT.DALY) -                                       
     LIMIT(5) -                                                                  
     SCRATCH -                                                                   
    )                                                                            
    IF LASTCC=12 THEN SET MAXCC=0                                                
    DEFINE GENERATIONDATAGROUP -                                                 
-   (NAME(AWS.M2.CARDDEMO.TRANREPT) -                                            
+   (NAME(MO.CARDDEMO.TRANREPT) -                                            
     LIMIT(5) -                                                                  
     SCRATCH -                                                                   
    )                                                                            
    IF LASTCC=12 THEN SET MAXCC=0                                                
    DEFINE GENERATIONDATAGROUP -                                                 
-   (NAME(AWS.M2.CARDDEMO.TCATBALF.BKUP) -                                       
+   (NAME(MO.CARDDEMO.TCATBALF.BKUP) -                                       
     LIMIT(5) -                                                                  
     SCRATCH -                                                                   
    )                                                                            
    IF LASTCC=12 THEN SET MAXCC=0                                                
    DEFINE GENERATIONDATAGROUP -                                                 
-   (NAME(AWS.M2.CARDDEMO.SYSTRAN) -                                             
+   (NAME(MO.CARDDEMO.SYSTRAN) -                                             
     LIMIT(5) -                                                                  
     SCRATCH -                                                                   
    )                                                                            
    IF LASTCC=12 THEN SET MAXCC=0                                                
    DEFINE GENERATIONDATAGROUP -                                                 
-   (NAME(AWS.M2.CARDDEMO.TRANSACT.COMBINED) -                                   
+   (NAME(MO.CARDDEMO.TRANSACT.COMBINED) -                                   
     LIMIT(5) -                                                                  
     SCRATCH -                                                                   
    )                                                                            

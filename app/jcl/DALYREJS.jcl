@@ -22,7 +22,7 @@
 //SYSPRINT DD   SYSOUT=*                                                        
 //SYSIN    DD   *                                                               
    DEFINE GENERATIONDATAGROUP -                                                 
-   (NAME(AWS.M2.CARDDEMO.DALYREJS) -                                            
+   (NAME(MO.CARDDEMO.DALYREJS) -                                            
     LIMIT(5) -                                                                  
     SCRATCH -                                                                   
    )                                                                            

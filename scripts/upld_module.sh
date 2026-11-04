@@ -34,6 +34,6 @@ then
 fi
 tnftp localhost 2121 <<EOF
 pwd
-put $module_path "'AWS.M2.CARDDEMO.$module_type($module_name)'" 
+put $module_path "'MO.CARDDEMO.$module_type($module_name)'" 
 bye
 EOF
