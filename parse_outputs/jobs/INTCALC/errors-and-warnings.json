@@ -2,7 +2,7 @@
   "ShabakehVersion": "0.94.58",
   "ShabakehConfig": {
     "ClientProject": "aws-carddemo",
-    "ClientProjectSHA": "4f66ca860b43da2affb0f267262c06d111c367a2",
+    "ClientProjectSHA": "8186665cd3640875eb9940abac3ca230d085b1be",
     "CorpusHash": "sha256:e42ce3a90286b27e69deb0501b634401ee2674ebc20353b213210b22d14c14c1",
     "Targets": [
       "job://INTCALC"
