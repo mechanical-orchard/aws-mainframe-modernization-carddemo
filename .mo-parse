@@ -3,6 +3,7 @@
     "ClientProjectRoot": "app",
     "Directories": [
       "app-authorization-ims-db2-mq",
+      "app-mo-db2",
       "app-transaction-type-db2",
       "app-vsam-mq",
       "asm",
@@ -21,6 +22,30 @@
       "app-transaction-type-db2/ctl/REPROCT.ctl"
     ],
     "Dirs": [
+      [
+        "app-mo-db2/cbl",
+        "cobol"
+      ],
+      [
+        "app-mo-db2/cpy",
+        "cobol"
+      ],
+      [
+        "app-mo-db2/ctl",
+        "control"
+      ],
+      [
+        "app-mo-db2/dcl",
+        "database"
+      ],
+      [
+        "app-mo-db2/ddl",
+        "database"
+      ],
+      [
+        "app-mo-db2/jcl",
+        "jcl"
+      ],
       [
         "app-transaction-type-db2/cbl",
         "cobol"
