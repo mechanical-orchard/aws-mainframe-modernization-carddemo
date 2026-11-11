@@ -11,7 +11,8 @@
       *               - Opening balance is the closing balance of the
       *                 account's latest earlier snapshot. With no
       *                 earlier snapshot it is seeded from the ACCTDATA
-      *                 current balance less the day's net activity
+      *                 current balance less every TRAN_HIST amount
+      *                 dated on or after the balance date
       *               - Credit limit comes from ACCTDATA
       *               - Inserts the snapshot; when one already exists
       *                 for the date (rerun) it is replaced and its
@@ -98,6 +99,8 @@
            05  WS-PREV-BAL-DATE                 PIC X(10).
            05  WS-IND-PREV-BAL-DATE             PIC S9(4) COMP.
            05  WS-PREV-CLOSE-BAL                PIC S9(10)V9(2) COMP-3.
+           05  WS-LATER-NET                     PIC S9(10)V9(2) COMP-3.
+           05  WS-IND-LATER-NET                 PIC S9(4) COMP.
 
       *****************************************************************
       *    Accounts with activity on the balance date, in account
@@ -310,9 +313,14 @@
 
            IF WS-IND-PREV-BAL-DATE < 0
       *       No earlier snapshot. The ACCTDATA current balance
-      *       already includes the day's postings, so back them out.
+      *       already includes every loaded transaction: the day's
+      *       postings, and interest from INTCALC, which is dated
+      *       when INTCALC ran. Back out everything dated on or after
+      *       the balance date.
               IF ACCOUNT-FOUND
-                 COMPUTE DCL-ADB-OPEN-BAL = ACCT-CURR-BAL - WS-DAY-NET
+                 PERFORM 2100-SUM-LATER-ACTIVITY
+                 COMPUTE DCL-ADB-OPEN-BAL =
+                         ACCT-CURR-BAL - WS-LATER-NET
               ELSE
                  MOVE ZERO TO DCL-ADB-OPEN-BAL
               END-IF
@@ -342,6 +350,26 @@
               MOVE ACCT-CREDIT-LIMIT    TO DCL-ADB-CREDIT-LIMIT
            ELSE
               MOVE ZERO                 TO DCL-ADB-CREDIT-LIMIT
+           END-IF.
+      *---------------------------------------------------------------*
+      * Net of the account's TRAN_HIST amounts dated on or after the
+      * balance date. SUM returns NULL when there are no rows.
+      *---------------------------------------------------------------*
+       2100-SUM-LATER-ACTIVITY.
+           EXEC SQL
+                SELECT SUM(TH_AMT)
+                  INTO :WS-LATER-NET :WS-IND-LATER-NET
+                  FROM CARDDEMO.TRAN_HIST
+                 WHERE TH_ACCT_ID    = :DCL-TH-ACCT-ID
+                   AND TH_TRAN_DATE >= :WS-BAL-DATE
+           END-EXEC
+           IF SQLCODE NOT = ZERO
+              MOVE 'SELECT SUM(TH_AMT) ON OR AFTER DATE'
+                TO WS-SQL-ACTION
+              PERFORM 9800-SQL-ERROR
+           END-IF
+           IF WS-IND-LATER-NET < 0
+              MOVE ZERO TO WS-LATER-NET
            END-IF.
       *---------------------------------------------------------------*
        2500-SAVE-DAILY-BALANCE.

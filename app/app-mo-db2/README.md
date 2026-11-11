@@ -98,11 +98,13 @@ This extension provides the following capabilities:
 
 ### Daily Run Order
 
-Run the jobs after the base daily batch has posted transactions (`POSTTRAN`):
+Run the jobs after the base batch has rebuilt the TRANSACT file (`COMBTRAN`):
 
 ```
-MODBLOAD -> MODBBAL -> MODBRPT -> MODBMNT
+POSTTRAN -> INTCALC -> TRANBKP -> COMBTRAN -> MODBLOAD -> MODBBAL -> MODBRPT -> MODBMNT
 ```
+
+`TRANBKP` empties TRANSACT, and `COMBTRAN` reloads it with the transactions posted by `POSTTRAN` and the interest transactions written by `INTCALC`. `MODBLOAD` run between those two jobs finds TRANSACT empty and loads nothing.
 
 Like the base batch jobs, the jobs that read VSAM files (`MODBLOAD`, `MODBBAL`) need the files closed in CICS (base job `CLOSEFIL`).
 
@@ -197,7 +199,7 @@ The extension creates database `CARDMODB` with one table space per table. Tables
 ### Program Logic
 
 - **CBMOD01C (load)**: Reads TRANSACT in key order and looks up each card in CARDXREF. It accepts timestamps in DB2 format and in the `YYYY-MM-DD HH:MM:SS.NNNNNN` form of the daily transaction input, rewriting the second into the first. Commits every 100 inserted rows.
-- **CBMOD02C (daily balances)**: A `GROUP BY` cursor totals each account's transactions for the balance date, in account order. The opening balance is the closing balance of the account's latest earlier snapshot. For an account's first snapshot it is the ACCTDATA current balance less the day's net amount, because the base posting job has already added the day's transactions to that balance. Commits every 100 accounts.
+- **CBMOD02C (daily balances)**: A `GROUP BY` cursor totals each account's transactions for the balance date, in account order. The opening balance is the closing balance of the account's latest earlier snapshot. For an account's first snapshot it is the ACCTDATA current balance less every loaded amount dated on or after the balance date. `POSTTRAN` and `INTCALC` have already added those transactions to the ACCTDATA balance, and `INTCALC` dates its interest transactions when it runs, which can be after the balance date. This assumes `MODBLOAD` has loaded every transaction included in the ACCTDATA balance. Commits every 100 accounts.
 - **CBMOD03C (report)**: Outer joins `TRAN_HIST` to `CARDDEMO.TRANSACTION_TYPE` and `CARDDEMO.TRANSACTION_TYPE_CATEGORY`, so a transaction with an unknown type or category is printed as `UNKNOWN` rather than left out. Ordered by account, type, category and transaction id, with a subtotal per type, a total per account and a grand total. Read only.
 - **CBMOD04C (maintenance)**: Updates the over-limit flag through a `FOR UPDATE` cursor only when it changes, committing every 100 updates. DB2 computes the purge cutoff as the as-of date minus the retention days, and the program checks the deleted row count (`SQLERRD(3)`) against a count taken first.
 
@@ -214,7 +216,7 @@ The extension creates database `CARDMODB` with one table space per table. Tables
 This module integrates with the base CardDemo application in the following ways:
 
 1. **Reads Base VSAM Files**: TRANSACT (posted transactions), CARDXREF (card to account) and ACCTDATA (balances and credit limits), the same files the base batch jobs use
-2. **Runs After the Base Posting Job**: `MODBLOAD` loads what `POSTTRAN` has posted
+2. **Runs After the Base Batch Rebuilds TRANSACT**: `MODBLOAD` loads the daily transactions posted by `POSTTRAN` and the interest transactions from `INTCALC`, after `COMBTRAN` has merged them into TRANSACT
 3. **Uses the Transaction Type Tables**: The report joins to the tables of the Transaction Type Management extension
 4. **Separate DB2 Objects**: Its own database (`CARDMODB`), package collection and plan, so creating, dropping or rebinding it does not affect the other DB2 extensions
 5. **No Base Changes**: No base program, copybook or file is changed, and nothing is written back to the VSAM files
