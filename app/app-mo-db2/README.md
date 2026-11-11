@@ -5,11 +5,7 @@
 
 ## Overview
 
-The Transaction History extension is an optional, batch-only module for the CardDemo application. It copies posted transactions from the base VSAM files into DB2, builds daily account balance snapshots from them, prints a transaction history report, and runs daily maintenance over the DB2 tables.
-
-The module runs after the base daily batch and reads the same VSAM files, so it works on the same CardDemo data as the base application. It does not change any base program or write back to any base file.
-
-Every job is deterministic: business dates come from a parameter record instead of the system clock, and every job can be rerun. Running a job twice with the same input and starting data gives the same output.
+The Transaction History module is an optional extension for the CardDemo application that demonstrates DB2 integration patterns in batch COBOL programs using embedded static SQL. This module loads posted transactions from the VSAM-based transaction processing system into DB2 tables, builds daily account balances from them, and reports on and maintains that history, working alongside the existing VSAM files without changing them.
 
 ## Table of Contents
 - [Features](#features)
@@ -24,205 +20,138 @@ Every job is deterministic: business dates come from a parameter record instead 
 
 This extension provides the following capabilities:
 
-- **Transaction History Load**: Load posted transactions from the TRANSACT VSAM file into a DB2 table, with account numbers from the card cross reference
-- **Daily Balances**: Build one balance snapshot per account per day from the loaded transactions
-- **Transaction History Report**: Print transactions for a date range with type and category descriptions, subtotals and totals
-- **Daily Maintenance**: Flag accounts over their credit limit and purge history past a retention period
-- **DB2 Batch Patterns**: Demonstrates DB2 patterns common in batch COBOL programs, including:
-  - Static embedded SQL under the TSO attach (`IKJEFT01` / `DSN RUN`)
-  - Mixed VSAM and DB2 processing in one program
-  - Cursors held across commits (`WITH HOLD`) and commit checkpoints
-  - Null indicators and `VARCHAR` host variables
-  - Aggregation (`GROUP BY`, `SUM`, `COUNT`, `MAX`) and outer joins
-  - Insert-or-update on duplicate key (`SQLCODE -803`)
-  - Positioned update (`WHERE CURRENT OF`) and searched delete
-  - DB2 date arithmetic
-  - Error reporting with `DSNTIAR`
+- **Transaction History**: Load posted transactions from the VSAM transaction file into a DB2 table through a batch job
+- **Daily Balances**: Build daily account balance snapshots and flag accounts that are over their credit limit
+- **Reporting**: Produce a transaction history report with transaction type and category descriptions from DB2
+- **Batch Maintenance**: Purge transaction history older than a retention period
+- **DB2 Integration**: Demonstrates various DB2 integration patterns in batch, including:
+  - Static embedded SQL with host variables and null indicators
+  - Cursor processing across commits and positioned updates
+  - Aggregation (GROUP BY, SUM, COUNT, MAX) and outer joins
+  - Insert, update and delete operations, including insert-or-update on duplicate keys
+  - DB2 precompiler integration in a batch (TSO attach) environment
+  - Proper error handling with SQLCA and DSNTIAR
 
 ## Components
 
 ### Batch Components
 
-| Job      | Program            | Function |
-|:---------|:-------------------|:---------|
-| MODBCRT  | DSNTIAD / DSNTEP4  | Creates the `CARDMODB` database, tables and indexes, then lists them from the DB2 catalog |
-| MODBDRP  | DSNTIAD            | Drops the `CARDMODB` database to reset the extension |
-| MODBLOAD | CBMOD01C           | Loads the TRANSACT VSAM file into `CARDDEMO.TRAN_HIST` |
-| MODBBAL  | CBMOD02C           | Builds `CARDDEMO.ACCT_DAILY_BAL` for a balance date |
-| MODBRPT  | CBMOD03C           | Prints the transaction history report for a date range |
-| MODBMNT  | CBMOD04C           | Flags over-limit accounts and purges old transaction history |
-
-### Build Components
-
-| Member                       | Function |
-|:-----------------------------|:---------|
-| `samples/proc/BLDBTDB2.prc`  | Batch COBOL DB2 build: precompile, compile, link-edit with `DSNELI`, bind package and plan |
-| `samples/jcl/BATDBCMP.jcl`   | Runs `BLDBTDB2` for one program |
+| Job      | Program  | Function                                                     |
+|:---------|:---------|:-------------------------------------------------------------|
+| MODBCRT  | DSNTIAD  | Creates the DB2 database and tables for transaction history  |
+| MODBDRP  | DSNTIAD  | Drops the DB2 database to reset the extension                |
+| MODBLOAD | CBMOD01C | Loads posted transactions from VSAM into DB2                 |
+| MODBBAL  | CBMOD02C | Builds daily account balances from transaction history       |
+| MODBRPT  | CBMOD03C | Produces the transaction history report                      |
+| MODBMNT  | CBMOD04C | Flags over-limit accounts and purges old transaction history |
 
 ### Directory Structure
 
-- **cbl/**: Batch COBOL DB2 programs
-- **cpy/**: Copybooks for the parameter, reject and report records, and common error handling
-- **ctl/**: SQL input for the DB2 utilities (create, drop, catalog listing)
-- **dcl/**: DB2 declarations (DCLGEN)
-- **ddl/**: DB2 table and index definitions
-- **jcl/**: JCL for the batch jobs
+- **cbl/**: COBOL programs for transaction history processing
+- **cpy/**: Copybooks for data structures
+- **dcl/**: DB2 declarations
+- **ddl/**: DB2 table definitions
+- **jcl/**: JCL for batch operations
+- **ctl/**: Control files for DB2 operations
 
 ## Installation
 
 ### Prerequisites
-- Base CardDemo application installed, with its VSAM files loaded
-- DB2 subsystem configured and accessible from batch
-- The Transaction Type Management extension (`app-transaction-type-db2`) tables, created by job `CREADB21`. Only the report job `MODBRPT` uses them
-- z/OS 2.1 or later (the JCL uses `SYMBOLS=JCLONLY` in-stream data) and DB2 10 or later (partition-by-growth table spaces)
+- Base CardDemo application installed and operational
+- DB2 subsystem configured and accessible (DB2 10 or later)
+- Transaction Type Management extension (`app-transaction-type-db2`) installed, for the report
 
 ### Installation Steps
 
-1. **Upload the Source**
-   - `cbl/` to `CARDDEMO.CBL`, `cpy/` to `CARDDEMO.CPY`, `dcl/` to `CARDDEMO.DCL`, `ctl/` to `CARDDEMO.CNTL` and `jcl/` to `CARDDEMO.JCL`
-   - `samples/proc/BLDBTDB2.prc` to `CARDDEMO.PROC.UTIL`
-   - Create `CARDDEMO.DCL` and `CARDDEMO.DBRMLIB` (FB 80) if they do not exist yet
+1. **Create DB2 Objects**
+   - Change the storage group `AWST1STG` in `ctl/MODBCRT.ctl` to one available in your DB2 subsystem
+   - Execute the MODBCRT job to create the necessary DB2 database and tables
 
-2. **Set Up for Your Environment**
-   - Change the storage group `AWST1STG` in `ctl/MODBCRT.ctl` to one that exists in your DB2 subsystem
-   - Review the `SET` statements at the top of each job: `HLQ`, `DB2S` (subsystem id), the DB2 `SDSNEXIT`, `SDSNLOAD` and `RUNLIB.LOAD` libraries, and the utility and application plan names
+2. **Compile Programs**
+   - Compile the COBOL programs with DB2 precompiler support
+   - The sample JCL `samples/jcl/BATDBCMP.jcl` and procedure `samples/proc/BLDBTDB2.prc` precompile, compile, link-edit and bind each program into plan `CARDMODB`
 
-3. **Create DB2 Objects**
-   - Run `MODBCRT`. Step `STEP20` lists the new tables and indexes, and checks that the `app-transaction-type-db2` tables exist
+3. **Set Job Parameters**
+   - Review the `SET` statements at the top of each job: high-level qualifier, DB2 subsystem, DB2 libraries and plan names. The jobs pass these to their in-stream DB2 commands, which needs z/OS 2.1 or later
 
-4. **Compile and Bind the Programs**
-   - Run `samples/jcl/BATDBCMP.jcl` once for each of `CBMOD01C`, `CBMOD02C`, `CBMOD03C` and `CBMOD04C`, setting `MEMNAME` each time
-   - The programs are bound into package collection `CARDMODB` and plan `CARDMODB`
+4. **Load Initial Data**
+   - Run the base daily batch through COMBTRAN, then execute the MODBLOAD job to load the posted transactions into DB2
 
 ## Usage
 
-### Daily Run Order
+### Batch Transaction History Processing
 
-Run the jobs after the base batch has rebuilt the TRANSACT file (`COMBTRAN`):
+Run the jobs after the base daily batch has rebuilt the transaction file (COMBTRAN), in this order:
 
-```
-POSTTRAN -> INTCALC -> TRANBKP -> COMBTRAN -> MODBLOAD -> MODBBAL -> MODBRPT -> MODBMNT
-```
+1. Execute the MODBLOAD job to load posted transactions into DB2
+   - Transactions that are already loaded are skipped, so the job can be rerun
+   - Rejected transactions are written to `MODB.LOADREJS` with a reason code
+2. Execute the MODBBAL job to build daily account balances for the date in its PARMFILE
+   - Rerunning it for the same date replaces that date's balances
+3. Execute the MODBRPT job to produce the transaction history report for the date range in its PARMFILE
+   - The report is written to `MODB.TRANRPT`
+4. Execute the MODBMNT job to flag accounts over their credit limit and purge transaction history older than the retention days in its PARMFILE
 
-`TRANBKP` empties TRANSACT, and `COMBTRAN` reloads it with the transactions posted by `POSTTRAN` and the interest transactions written by `INTCALC`. `MODBLOAD` run between those two jobs finds TRANSACT empty and loads nothing.
-
-Like the base batch jobs, the jobs that read VSAM files (`MODBLOAD`, `MODBBAL`) need the files closed in CICS (base job `CLOSEFIL`).
-
-### Run Parameters
-
-`MODBBAL`, `MODBRPT` and `MODBMNT` read an 80-byte parameter record from DD `PARMFILE`, in-stream in each job. Columns 1-21 have the same layout as the base `DATEPARM` record.
-
-| Columns | Field        | Used by | Meaning |
-|:--------|:-------------|:--------|:--------|
-| 1-10    | Start date   | MODBBAL, MODBRPT, MODBMNT | `YYYY-MM-DD`. Balance date, first report date, or as-of date |
-| 12-21   | End date     | MODBRPT | `YYYY-MM-DD`. Last report date |
-| 23-26   | Retain days  | MODBMNT | 4 digits, for example `0030`. Days of transaction history to keep |
-
-The sample jobs use `2022-06-10`, the date of the CardDemo sample daily transactions.
-
-### Rerunning and Resetting
-
-- `MODBLOAD` skips transactions that are already loaded, so it can be rerun after a failure
-- `MODBBAL` replaces the snapshots of its balance date when rerun, and clears their over-limit flags for `MODBMNT` to set again
-- `MODBRPT` and `MODBMNT` can be rerun at any time
-- To start over, run `MODBDRP` and then `MODBCRT`. `MODBDRP` drops both tables and all of their data
-
-### Outputs
-
-| Job      | DD       | Dataset              | Format | Content |
-|:---------|:---------|:---------------------|:-------|:--------|
-| MODBLOAD | REJFILE  | `&HLQ..MODB.LOADREJS`| FB 430 | Rejected transactions: the 350-byte TRANSACT record and an 80-byte reason trailer |
-| MODBRPT  | REPTFILE | `&HLQ..MODB.TRANRPT` | FB 133 | Transaction history report |
-
-Each job deletes its output dataset from the previous run before writing a new one. Every program writes run totals to `SYSOUT`.
-
-### Return and Abend Codes
-
-| Job      | RC 4 means |
-|:---------|:-----------|
-| MODBLOAD | Some transactions were rejected (see `REJFILE`) |
-| MODBBAL  | An account was not found in ACCTDATA. Its snapshot gets a credit limit of 0 |
-| MODBMNT  | The number of rows purged differs from the number counted before the purge |
-
-| Abend | Meaning |
-|:------|:--------|
-| U0997 | Invalid run parameters |
-| U0998 | Unexpected SQLCODE. The program displays the `DSNTIAR` message and rolls back first |
-| U0999 | File I/O error |
-
-### Reject Reason Codes (MODBLOAD)
-
-| Code | Reason |
-|:-----|:-------|
-| 0100 | Card number not found in the card cross reference |
-| 0101 | Original timestamp is not a valid timestamp |
-| 0102 | Processing timestamp is not a valid timestamp |
-| 0103 | DB2 rejected a date or timestamp value (`SQLCODE -180` or `-181`) |
+TRANBKP empties the transaction file until COMBTRAN reloads it, so MODBLOAD finds no transactions if it runs between those two jobs. As with the base batch jobs, the VSAM files must be closed in CICS (CLOSEFIL). The header of each job describes its parameters and return codes. To start over, run MODBDRP and then MODBCRT.
 
 ## Technical Details
 
 ### DB2 Tables
 
-The extension creates database `CARDMODB` with one table space per table. Tables are qualified with `CARDDEMO`, the same schema as the Transaction Type Management extension.
+The extension uses the following DB2 tables:
 
-- **CARDDEMO.TRAN_HIST**: Posted transaction history, one row per transaction
-  - TH_TRAN_ID (CHAR(16)): Transaction id (Primary Key)
-  - TH_ACCT_ID (DECIMAL(11,0)): Account id, from the card cross reference
+- **CARDDEMO.TRAN_HIST**: Stores posted transaction history
+  - TH_TRAN_ID (CHAR(16)): Transaction ID (Primary Key)
+  - TH_ACCT_ID (DECIMAL(11,0)): Account ID from the card cross reference
   - TH_CARD_NUM (CHAR(16)): Card number
   - TH_TYPE_CD (CHAR(2)): Transaction type code
   - TH_CAT_CD (CHAR(4)): Transaction category code
   - TH_SOURCE (CHAR(10)): Transaction source
-  - TH_DESC (VARCHAR(100)): Description
-  - TH_AMT (DECIMAL(11,2)): Amount
-  - TH_MERCHANT_ID (DECIMAL(9,0), nullable): Merchant id. NULL when zero
-  - TH_MERCHANT_NAME (VARCHAR(50), nullable): Merchant name. NULL when blank
-  - TH_MERCHANT_CITY (VARCHAR(50), nullable): Merchant city. NULL when blank
-  - TH_MERCHANT_ZIP (CHAR(10), nullable): Merchant zip. NULL when blank
-  - TH_TRAN_DATE (DATE): Date of the original timestamp
+  - TH_DESC (VARCHAR(100)): Transaction description
+  - TH_AMT (DECIMAL(11,2)): Transaction amount
+  - TH_MERCHANT_ID (DECIMAL(9,0)): Merchant ID, NULL when there is no merchant
+  - TH_MERCHANT_NAME (VARCHAR(50)): Merchant name, NULL when blank
+  - TH_MERCHANT_CITY (VARCHAR(50)): Merchant city, NULL when blank
+  - TH_MERCHANT_ZIP (CHAR(10)): Merchant zip code, NULL when blank
+  - TH_TRAN_DATE (DATE): Transaction date, from the original timestamp
   - TH_ORIG_TS (TIMESTAMP): Original timestamp
-  - TH_PROC_TS (TIMESTAMP, nullable): Processing timestamp. NULL when blank
-  - Indexes: `XTRANH01` (unique, TH_TRAN_ID) and `XTRANH02` (TH_TRAN_DATE, TH_ACCT_ID)
+  - TH_PROC_TS (TIMESTAMP): Processing timestamp, NULL when blank
 
-- **CARDDEMO.ACCT_DAILY_BAL**: Account balance snapshot, one row per account per day with activity
-  - ADB_ACCT_ID (DECIMAL(11,0)): Account id (Primary Key)
+- **CARDDEMO.ACCT_DAILY_BAL**: Stores daily account balance snapshots
+  - ADB_ACCT_ID (DECIMAL(11,0)): Account ID (Primary Key)
   - ADB_BAL_DATE (DATE): Balance date (Primary Key)
-  - ADB_OPEN_BAL (DECIMAL(12,2)): Opening balance
+  - ADB_OPEN_BAL (DECIMAL(12,2)): Opening balance: the closing balance of the account's previous snapshot, or for its first snapshot the ACCTDATA balance less the transactions dated on or after the balance date
   - ADB_CREDIT_AMT (DECIMAL(12,2)): Total of the day's amounts that are zero or more
   - ADB_DEBIT_AMT (DECIMAL(12,2)): Total of the day's negative amounts
-  - ADB_CLOSE_BAL (DECIMAL(12,2)): Opening balance plus the day's amounts
+  - ADB_CLOSE_BAL (DECIMAL(12,2)): Closing balance
   - ADB_TRAN_CNT (INTEGER): Number of transactions
   - ADB_CREDIT_LIMIT (DECIMAL(12,2)): Credit limit from ACCTDATA
-  - ADB_OVERLIMIT_FLG (CHAR(1)): `Y` when the closing balance is above a non-zero credit limit
-  - ADB_FLAG_DATE (DATE, nullable): Date the account was flagged. NULL when not flagged
-  - Index: `XACDBL01` (unique, ADB_ACCT_ID, ADB_BAL_DATE)
-
-### Program Logic
-
-- **CBMOD01C (load)**: Reads TRANSACT in key order and looks up each card in CARDXREF. It accepts timestamps in DB2 format and in the `YYYY-MM-DD HH:MM:SS.NNNNNN` form of the daily transaction input, rewriting the second into the first. Commits every 100 inserted rows.
-- **CBMOD02C (daily balances)**: A `GROUP BY` cursor totals each account's transactions for the balance date, in account order. The opening balance is the closing balance of the account's latest earlier snapshot. For an account's first snapshot it is the ACCTDATA current balance less every loaded amount dated on or after the balance date. `POSTTRAN` and `INTCALC` have already added those transactions to the ACCTDATA balance, and `INTCALC` dates its interest transactions when it runs, which can be after the balance date. This assumes `MODBLOAD` has loaded every transaction included in the ACCTDATA balance. Commits every 100 accounts.
-- **CBMOD03C (report)**: Outer joins `TRAN_HIST` to `CARDDEMO.TRANSACTION_TYPE` and `CARDDEMO.TRANSACTION_TYPE_CATEGORY`, so a transaction with an unknown type or category is printed as `UNKNOWN` rather than left out. Ordered by account, type, category and transaction id, with a subtotal per type, a total per account and a grand total. Read only.
-- **CBMOD04C (maintenance)**: Updates the over-limit flag through a `FOR UPDATE` cursor only when it changes, committing every 100 updates. DB2 computes the purge cutoff as the as-of date minus the retention days, and the program checks the deleted row count (`SQLERRD(3)`) against a count taken first.
+  - ADB_OVERLIMIT_FLG (CHAR(1)): Y when the closing balance is above the credit limit
+  - ADB_FLAG_DATE (DATE): Date the account was flagged, NULL when not flagged
 
 ### Integration Patterns
 
-1. **TSO Attach**: Programs run under `IKJEFT01` with `DSN RUN PROGRAM(...) PLAN(CARDMODB)` and are link-edited with `DSNELI`
-2. **Host Variables Visible to the Precompiler**: Host variables are declared in the program or in DCLGEN members included with `EXEC SQL INCLUDE`, never in COBOL `COPY` members, so the separate DB2 precompiler (`DSNHPC`) can see them. The shared copybooks contain no SQL
-3. **Commit Checkpoints**: Programs that change data commit every 100 changes, and their cursors are declared `WITH HOLD` to stay open across commits
-4. **Error Handling**: Each SQL statement checks `SQLCODE`. Expected conditions (`+100`, `-803`, `-180`, `-181`) are handled in line. Anything else displays the `DSNTIAR` message, rolls back and abends
-5. **Deterministic Output**: Dates come from the parameter record, and every cursor whose rows are written out has an `ORDER BY`. The `FOR UPDATE` cursor of CBMOD04C cannot have one, so CBMOD04C writes only totals
+This extension demonstrates several DB2 integration patterns:
+
+1. **Static Embedded SQL**: All programs use static SQL statements embedded in COBOL code, with host variables declared in the program or in DCLGEN members
+2. **Cursor Processing**: The MODBBAL and MODBRPT jobs read DB2 data through cursors, and the MODBMNT job updates rows through a FOR UPDATE cursor (WHERE CURRENT OF)
+3. **Commit Processing**: Programs that change data commit every 100 changes, with cursors declared WITH HOLD so they stay open across commits
+4. **Null Indicators**: Optional merchant and timestamp columns, aggregate results and outer-join columns use null indicator variables
+5. **DB2 Precompiler Integration**: Programs are precompiled with DSNHPC, link-edited with DSNELI and run under the TSO attach (IKJEFT01 and DSN RUN)
+6. **Error Handling**: Each SQL statement checks SQLCODE. Unexpected errors are reported with DSNTIAR, rolled back and abended
+7. **Deterministic Processing**: Business dates come from the PARMFILE instead of the system clock, and every cursor whose rows are written out has an ORDER BY, so a rerun with the same input gives the same output
 
 ## Integration with Base Application
 
 This module integrates with the base CardDemo application in the following ways:
 
-1. **Reads Base VSAM Files**: TRANSACT (posted transactions), CARDXREF (card to account) and ACCTDATA (balances and credit limits), the same files the base batch jobs use
-2. **Runs After the Base Batch Rebuilds TRANSACT**: `MODBLOAD` loads the daily transactions posted by `POSTTRAN` and the interest transactions from `INTCALC`, after `COMBTRAN` has merged them into TRANSACT
-3. **Uses the Transaction Type Tables**: The report joins to the tables of the Transaction Type Management extension
-4. **Separate DB2 Objects**: Its own database (`CARDMODB`), package collection and plan, so creating, dropping or rebinding it does not affect the other DB2 extensions
-5. **No Base Changes**: No base program, copybook or file is changed, and nothing is written back to the VSAM files
+1. **Transaction Data**: The MODBLOAD job reads the base transaction file (TRANSACT) after COMBTRAN, with the card cross reference (CARDXREF) for account numbers
+2. **Account Data**: The MODBBAL job reads balances and credit limits from the base account file (ACCTDATA)
+3. **Reference Data**: The MODBRPT job joins to the transaction type and category tables of the Transaction Type Management extension
+4. **Read-Only Integration**: The module reads the base VSAM files but does not change any base program or file. Its DB2 database (`CARDMODB`) and plan (`CARDMODB`) are separate from the other DB2 extensions
 
 ## Dependencies
 
-- Base CardDemo application and its VSAM files
+- Base CardDemo application
 - DB2 subsystem
-- Transaction Type Management extension (`app-transaction-type-db2`) tables, for `MODBRPT`
+- Transaction Type Management extension (`app-transaction-type-db2`)
