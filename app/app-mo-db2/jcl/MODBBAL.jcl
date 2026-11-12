@@ -38,15 +38,15 @@
 //*    DB2LOAD - DB2 SDSNLOAD LIBRARY
 //*    PLAN    - PLAN THE APP-MO-DB2 PROGRAMS ARE BOUND INTO
 //*********************************************************************
+//*  EXPORT COMES FIRST: JES SUBSTITUTES ONLY THE SYMBOLS SET AFTER IT
+//*  INTO THE IN-STREAM SYSTSIN DATA (SYMBOLS=JCLONLY)
+//*********************************************************************
+// EXPORT SYMLIST=*
 //   SET HLQ=MO.CARDDEMO
 //   SET DB2S=DS13
 //   SET DB2EXIT=DSNV13.SDSNEXIT
 //   SET DB2LOAD=DSNV13.SDSNLOAD
 //   SET PLAN=CARDMODB
-//*********************************************************************
-//*  MAKE THE JCL SYMBOLS AVAILABLE TO THE IN-STREAM SYSTSIN DATA
-//*********************************************************************
-// EXPORT SYMLIST=*
 //*********************************************************************
 //*  STEP10 : RUN CBMOD02C UNDER THE TSO ATTACH
 //*********************************************************************

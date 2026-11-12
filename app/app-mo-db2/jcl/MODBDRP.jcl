@@ -37,16 +37,16 @@
 //*    DB2RUNL - DB2 RUNLIB.LOAD LIBRARY (DSNTIAD)
 //*    TIADPLN - PLAN NAME FOR DSNTIAD
 //*********************************************************************
+//*  EXPORT COMES FIRST: JES SUBSTITUTES ONLY THE SYMBOLS SET AFTER IT
+//*  INTO THE IN-STREAM SYSTSIN DATA (SYMBOLS=JCLONLY)
+//*********************************************************************
+// EXPORT SYMLIST=*
 //   SET HLQ=MO.CARDDEMO
 //   SET DB2S=DS13
 //   SET DB2EXIT=DSNV13.SDSNEXIT
 //   SET DB2LOAD=DSNV13.SDSNLOAD
 //   SET DB2RUNL=DSNV13.RUNLIB.LOAD
 //   SET TIADPLN=DSNTIA13
-//*********************************************************************
-//*  MAKE THE JCL SYMBOLS AVAILABLE TO THE IN-STREAM SYSTSIN DATA
-//*********************************************************************
-// EXPORT SYMLIST=*
 //*********************************************************************
 //*  STEP10 : DROP THE TABLESPACES WITH DSNTIAD
 //*********************************************************************

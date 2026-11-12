@@ -47,6 +47,10 @@
 //*    TIADPLN - PLAN NAME FOR DSNTIAD
 //*    TEP2PLN - PLAN NAME FOR DSNTEP2
 //*********************************************************************
+//*  EXPORT COMES FIRST: JES SUBSTITUTES ONLY THE SYMBOLS SET AFTER IT
+//*  INTO THE IN-STREAM SYSTSIN DATA (SYMBOLS=JCLONLY)
+//*********************************************************************
+// EXPORT SYMLIST=*
 //   SET HLQ=MO.CARDDEMO
 //   SET DB2S=DS13
 //   SET DB2EXIT=DSNV13.SDSNEXIT
@@ -54,10 +58,6 @@
 //   SET DB2RUNL=DSNV13.RUNLIB.LOAD
 //   SET TIADPLN=DSNTIA13
 //   SET TEP2PLN=DSNTEP13
-//*********************************************************************
-//*  MAKE THE JCL SYMBOLS AVAILABLE TO THE IN-STREAM SYSTSIN DATA
-//*********************************************************************
-// EXPORT SYMLIST=*
 //*********************************************************************
 //*  STEP05 : CREATE THE CARDDEMO DATABASE IF IT IS MISSING (DSNTIAD)
 //*********************************************************************

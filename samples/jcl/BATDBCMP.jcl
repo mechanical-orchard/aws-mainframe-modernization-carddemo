@@ -35,6 +35,10 @@
 //*    COLL    - package collection the plan includes
 //*    QUAL    - qualifier for unqualified table names
 //*********************************************************************
+//*  Export comes first: JES substitutes only the symbols set after
+//*  it into the in-stream SYSTSIN data of the PROC
+//*********************************************************************
+// EXPORT SYMLIST=*
 //   SET MEMNAME=CBMOD01C
 //   SET HLQ=MO.CARDDEMO
 //   SET SSID=DS13
@@ -45,10 +49,6 @@
 //*  Add proclib reference
 //*********************************************************************
 //CCLIBS  JCLLIB ORDER=&HLQ..PRC.UTIL
-//*********************************************************************
-//*  Make JCL Symbols available to PROC
-//*********************************************************************
-// EXPORT SYMLIST=*
 //*********************************************************************
 //*  compile the COBOL code:
 //*********************************************************************
