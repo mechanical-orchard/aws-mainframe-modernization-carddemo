@@ -182,7 +182,9 @@
            MOVE MODB-PARM-START-DATE TO WS-PARM-DATE.
       *---------------------------------------------------------------*
       * Check the retention days, then let Db2 check the as-of date
-      * and work out the purge cutoff with date arithmetic.
+      * and work out the purge cutoff. DAYS turns the date into a day
+      * number, the retention days are subtracted, and DATE turns the
+      * result back into a date.
       *---------------------------------------------------------------*
        0200-VALIDATE-PARMS.
            IF MODB-PARM-RETAIN-DAYS IS NOT NUMERIC
@@ -195,8 +197,8 @@
 
            EXEC SQL
                 SELECT CHAR(DATE(:WS-PARM-DATE), ISO)
-                     , CHAR(DATE(:WS-PARM-DATE)
-                            - :WS-RETAIN-DAYS DAYS, ISO)
+                     , CHAR(DATE(DAYS(DATE(:WS-PARM-DATE))
+                                 - :WS-RETAIN-DAYS), ISO)
                   INTO :WS-ASOF-DATE
                      , :WS-CUTOFF-DATE
                   FROM SYSIBM.SYSDUMMY1
