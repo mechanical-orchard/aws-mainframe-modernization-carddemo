@@ -15,7 +15,7 @@
 -- language governing permissions and limitations under the License.
 -- ------------------------------------------------------------------
 -- LIST THE APP-MO-DB2 OBJECTS FROM THE DB2 CATALOG.
--- RUN THROUGH DSNTEP4 BY JOB MODBCRT AFTER THE CREATE STEP.
+-- RUN THROUGH DSNTEP2 BY JOB MODBCRT AFTER THE CREATE STEP.
 -- ------------------------------------------------------------------
 -- APP-MO-DB2 TABLES AND INDEXES IN THE CARDDEMO DATABASE.
 -- EXPECT TABLES TRAN_HIST AND ACCT_DAILY_BAL, AND INDEXES

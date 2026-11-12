@@ -1,4 +1,4 @@
-//MODBCRT  JOB (DB2CR),'CREATE MO DB2',CLASS=A,MSGCLASS=H,
+//MODBCRT  JOB (DB2CR),'CREATE MO DB2',CLASS=A,MSGCLASS=0,
 //         MSGLEVEL=(1,1),NOTIFY=&SYSUID,TIME=1440
 //*********************************************************************
 //* Copyright (c) 2026 Mechanical Orchard, Inc.
@@ -43,17 +43,17 @@
 //*    DB2S    - DB2 SUBSYSTEM ID
 //*    DB2EXIT - DB2 SDSNEXIT LIBRARY
 //*    DB2LOAD - DB2 SDSNLOAD LIBRARY
-//*    DB2RUNL - DB2 RUNLIB.LOAD LIBRARY (DSNTIAD AND DSNTEP4)
+//*    DB2RUNL - DB2 RUNLIB.LOAD LIBRARY (DSNTIAD AND DSNTEP2)
 //*    TIADPLN - PLAN NAME FOR DSNTIAD
-//*    TEP4PLN - PLAN NAME FOR DSNTEP4
+//*    TEP2PLN - PLAN NAME FOR DSNTEP2
 //*********************************************************************
 //   SET HLQ=MO.CARDDEMO
-//   SET DB2S=DAZ1
-//   SET DB2EXIT=OEM.DB2.&DB2S..SDSNEXIT
-//   SET DB2LOAD=OEMA.DB2.VERSIONA.SDSNLOAD
-//   SET DB2RUNL=OEM.DB2.&DB2S..RUNLIB.LOAD
-//   SET TIADPLN=DSNTIAD
-//   SET TEP4PLN=DSNTEP4
+//   SET DB2S=DS13
+//   SET DB2EXIT=DSNV13.SDSNEXIT
+//   SET DB2LOAD=DSNV13.SDSNLOAD
+//   SET DB2RUNL=DSNV13.RUNLIB.LOAD
+//   SET TIADPLN=DSNTIA13
+//   SET TEP2PLN=DSNTEP13
 //*********************************************************************
 //*  MAKE THE JCL SYMBOLS AVAILABLE TO THE IN-STREAM SYSTSIN DATA
 //*********************************************************************
@@ -91,7 +91,7 @@
   END
 /*
 //*********************************************************************
-//*  STEP20 : LIST THE NEW OBJECTS FROM THE CATALOG WITH DSNTEP4
+//*  STEP20 : LIST THE NEW OBJECTS FROM THE CATALOG WITH DSNTEP2
 //*********************************************************************
 //STEP20   EXEC PGM=IKJEFT01,DYNAMNBR=20,COND=(4,LT,STEP10)
 //STEPLIB  DD DISP=SHR,DSN=&DB2RUNL
@@ -103,7 +103,7 @@
 //SYSIN    DD DISP=SHR,DSN=&HLQ..CNTL(MODBVER)
 //SYSTSIN  DD *,SYMBOLS=JCLONLY
   DSN SYSTEM(&DB2S)
-  RUN PROGRAM(DSNTEP4) PLAN(&TEP4PLN) -
+  RUN PROGRAM(DSNTEP2) PLAN(&TEP2PLN) -
       PARMS('/ALIGN(LHS) MIXED')
   END
 /*

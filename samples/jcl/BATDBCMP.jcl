@@ -1,4 +1,4 @@
-//BATDBCMP JOB 'Compile Batch DB2 PGM',CLASS=A,MSGCLASS=H,
+//BATDBCMP JOB 'Compile Batch DB2 PGM',CLASS=A,MSGCLASS=0,
 //             MSGLEVEL=(1,1),REGION=0M,NOTIFY=&SYSUID,TIME=1440
 //*********************************************************************
 //*  Compile, link and bind one batch COBOL Db2 program.
@@ -37,14 +37,14 @@
 //*********************************************************************
 //   SET MEMNAME=CBMOD01C
 //   SET HLQ=MO.CARDDEMO
-//   SET SSID=DAZ1
+//   SET SSID=DS13
 //   SET PLAN=CARDMODB
 //   SET COLL=CARDMODB
 //   SET QUAL=CARDDEMO
 //*********************************************************************
 //*  Add proclib reference
 //*********************************************************************
-//CCLIBS  JCLLIB ORDER=&HLQ..PROC.UTIL
+//CCLIBS  JCLLIB ORDER=&HLQ..PRC.UTIL
 //*********************************************************************
 //*  Make JCL Symbols available to PROC
 //*********************************************************************

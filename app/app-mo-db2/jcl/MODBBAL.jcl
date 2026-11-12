@@ -1,4 +1,4 @@
-//MODBBAL  JOB (COBOL),'MO DB2 DAILY BAL',CLASS=A,MSGCLASS=H,
+//MODBBAL  JOB (COBOL),'MO DB2 DAILY BAL',CLASS=A,MSGCLASS=0,
 //         MSGLEVEL=(1,1),NOTIFY=&SYSUID,TIME=1440
 //*********************************************************************
 //* Copyright (c) 2026 Mechanical Orchard, Inc.
@@ -39,9 +39,9 @@
 //*    PLAN    - PLAN THE APP-MO-DB2 PROGRAMS ARE BOUND INTO
 //*********************************************************************
 //   SET HLQ=MO.CARDDEMO
-//   SET DB2S=DAZ1
-//   SET DB2EXIT=OEM.DB2.&DB2S..SDSNEXIT
-//   SET DB2LOAD=OEMA.DB2.VERSIONA.SDSNLOAD
+//   SET DB2S=DS13
+//   SET DB2EXIT=DSNV13.SDSNEXIT
+//   SET DB2LOAD=DSNV13.SDSNLOAD
 //   SET PLAN=CARDMODB
 //*********************************************************************
 //*  MAKE THE JCL SYMBOLS AVAILABLE TO THE IN-STREAM SYSTSIN DATA
