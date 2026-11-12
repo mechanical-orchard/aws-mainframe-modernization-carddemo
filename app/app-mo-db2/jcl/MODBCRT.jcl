@@ -47,6 +47,10 @@
 //*    TIADPLN - PLAN NAME FOR DSNTIAD
 //*    TEP4PLN - PLAN NAME FOR DSNTEP4
 //*********************************************************************
+//*  EXPORT COMES FIRST: JES SUBSTITUTES ONLY THE SYMBOLS SET AFTER IT
+//*  INTO THE IN-STREAM SYSTSIN DATA (SYMBOLS=JCLONLY)
+//*********************************************************************
+// EXPORT SYMLIST=*
 //   SET HLQ=AWS.M2.CARDDEMO
 //   SET DB2S=DAZ1
 //   SET DB2EXIT=OEM.DB2.&DB2S..SDSNEXIT
@@ -54,10 +58,6 @@
 //   SET DB2RUNL=OEM.DB2.&DB2S..RUNLIB.LOAD
 //   SET TIADPLN=DSNTIAD
 //   SET TEP4PLN=DSNTEP4
-//*********************************************************************
-//*  MAKE THE JCL SYMBOLS AVAILABLE TO THE IN-STREAM SYSTSIN DATA
-//*********************************************************************
-// EXPORT SYMLIST=*
 //*********************************************************************
 //*  STEP05 : CREATE THE CARDDEMO DATABASE IF IT IS MISSING (DSNTIAD)
 //*********************************************************************

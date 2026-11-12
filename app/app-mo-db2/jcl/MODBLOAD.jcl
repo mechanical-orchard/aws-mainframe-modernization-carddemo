@@ -45,15 +45,15 @@
 //*    DB2LOAD - DB2 SDSNLOAD LIBRARY
 //*    PLAN    - PLAN THE APP-MO-DB2 PROGRAMS ARE BOUND INTO
 //*********************************************************************
+//*  EXPORT COMES FIRST: JES SUBSTITUTES ONLY THE SYMBOLS SET AFTER IT
+//*  INTO THE IN-STREAM SYSTSIN DATA (SYMBOLS=JCLONLY)
+//*********************************************************************
+// EXPORT SYMLIST=*
 //   SET HLQ=AWS.M2.CARDDEMO
 //   SET DB2S=DAZ1
 //   SET DB2EXIT=OEM.DB2.&DB2S..SDSNEXIT
 //   SET DB2LOAD=OEMA.DB2.VERSIONA.SDSNLOAD
 //   SET PLAN=CARDMODB
-//*********************************************************************
-//*  MAKE THE JCL SYMBOLS AVAILABLE TO THE IN-STREAM SYSTSIN DATA
-//*********************************************************************
-// EXPORT SYMLIST=*
 //*********************************************************************
 //*  STEP05 : DELETE THE REJECT FILE OF THE PREVIOUS RUN
 //*********************************************************************

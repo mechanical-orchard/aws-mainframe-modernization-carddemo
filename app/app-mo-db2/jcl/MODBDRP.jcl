@@ -37,16 +37,16 @@
 //*    DB2RUNL - DB2 RUNLIB.LOAD LIBRARY (DSNTIAD)
 //*    TIADPLN - PLAN NAME FOR DSNTIAD
 //*********************************************************************
+//*  EXPORT COMES FIRST: JES SUBSTITUTES ONLY THE SYMBOLS SET AFTER IT
+//*  INTO THE IN-STREAM SYSTSIN DATA (SYMBOLS=JCLONLY)
+//*********************************************************************
+// EXPORT SYMLIST=*
 //   SET HLQ=AWS.M2.CARDDEMO
 //   SET DB2S=DAZ1
 //   SET DB2EXIT=OEM.DB2.&DB2S..SDSNEXIT
 //   SET DB2LOAD=OEMA.DB2.VERSIONA.SDSNLOAD
 //   SET DB2RUNL=OEM.DB2.&DB2S..RUNLIB.LOAD
 //   SET TIADPLN=DSNTIAD
-//*********************************************************************
-//*  MAKE THE JCL SYMBOLS AVAILABLE TO THE IN-STREAM SYSTSIN DATA
-//*********************************************************************
-// EXPORT SYMLIST=*
 //*********************************************************************
 //*  STEP10 : DROP THE TABLESPACES WITH DSNTIAD
 //*********************************************************************
