@@ -31,15 +31,20 @@
 //*    MEMNAME - program to compile, link and bind
 //*    HLQ     - high level qualifier of the CardDemo libraries
 //*    SSID    - Db2 subsystem id
-//*    PLAN    - plan the batch jobs run with
+//*    PLAN    - plan the batch jobs run with. CARDDEMO is shared
+//*              with app-transaction-type-db2. Its PKLIST already
+//*              includes every package in collection CARDDEMO, so
+//*              the plan bind only re-creates it with the options
+//*              BLDCIDB2 uses, and it may fail harmlessly while CICS
+//*              has the plan in use
 //*    COLL    - package collection the plan includes
 //*    QUAL    - qualifier for unqualified table names
 //*********************************************************************
 //   SET MEMNAME=CBMOD01C
 //   SET HLQ=AWS.M2.CARDDEMO
 //   SET SSID=DAZ1
-//   SET PLAN=CARDMODB
-//   SET COLL=CARDMODB
+//   SET PLAN=CARDDEMO
+//   SET COLL=CARDDEMO
 //   SET QUAL=CARDDEMO
 //*********************************************************************
 //*  Add proclib reference

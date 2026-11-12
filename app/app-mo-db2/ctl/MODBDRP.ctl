@@ -14,10 +14,16 @@
 -- either express or implied. See the License for the specific
 -- language governing permissions and limitations under the License.
 -- ------------------------------------------------------------------
--- DROP THE CARDMODB DATABASE. THIS DROPS EVERY TABLESPACE, TABLE
--- AND INDEX THAT MODBCRT CREATED, AND ALL OF THEIR DATA.
+-- DROP THE TWO APP-MO-DB2 TABLE SPACES. THIS DROPS THE TABLES
+-- CARDDEMO.TRAN_HIST AND CARDDEMO.ACCT_DAILY_BAL, THEIR INDEXES AND
+-- ALL OF THEIR DATA. THE CARDDEMO DATABASE AND THE
+-- APP-TRANSACTION-TYPE-DB2 TABLES ARE NOT TOUCHED.
 -- RUN THROUGH DSNTIAD BY JOB MODBDRP.
 -- ------------------------------------------------------------------
-  DROP DATABASE CARDMODB;
+  SET CURRENT SQLID = 'SYSADM';
+
+  DROP TABLESPACE CARDDEMO.MOTHST01;
+
+  DROP TABLESPACE CARDDEMO.MOADBL01;
 
   COMMIT;

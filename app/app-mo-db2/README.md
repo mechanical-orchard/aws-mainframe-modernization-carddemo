@@ -38,8 +38,8 @@ This extension provides the following capabilities:
 
 | Job      | Program  | Function                                                     |
 |:---------|:---------|:-------------------------------------------------------------|
-| MODBCRT  | DSNTIAD  | Creates the DB2 database and tables for transaction history  |
-| MODBDRP  | DSNTIAD  | Drops the DB2 database to reset the extension                |
+| MODBCRT  | DSNTIAD  | Creates the DB2 tables for transaction history               |
+| MODBDRP  | DSNTIAD  | Drops the DB2 tables to reset the extension                  |
 | MODBLOAD | CBMOD01C | Loads posted transactions from VSAM into DB2                 |
 | MODBBAL  | CBMOD02C | Builds daily account balances from transaction history       |
 | MODBRPT  | CBMOD03C | Produces the transaction history report                      |
@@ -58,18 +58,18 @@ This extension provides the following capabilities:
 
 ### Prerequisites
 - Base CardDemo application installed and operational
-- DB2 subsystem configured and accessible (DB2 10 or later)
-- Transaction Type Management extension (`app-transaction-type-db2`) installed, for the report
+- DB2 subsystem configured and accessible
+- Transaction Type Management extension (`app-transaction-type-db2`) installed: its CARDDEMO database holds this extension's tables, and the report reads its tables
 
 ### Installation Steps
 
 1. **Create DB2 Objects**
-   - Change the storage group `AWST1STG` in `ctl/MODBCRT.ctl` to one available in your DB2 subsystem
-   - Execute the MODBCRT job to create the necessary DB2 database and tables
+   - Execute the CREADB21 job of the Transaction Type Management extension first, to create the CARDDEMO database
+   - Execute the MODBCRT job to create the necessary DB2 tables in the CARDDEMO database
 
 2. **Compile Programs**
    - Compile the COBOL programs with DB2 precompiler support
-   - The sample JCL `samples/jcl/BATDBCMP.jcl` and procedure `samples/proc/BLDBTDB2.prc` precompile, compile, link-edit and bind each program into plan `CARDMODB`
+   - The sample JCL `samples/jcl/BATDBCMP.jcl` and procedure `samples/proc/BLDBTDB2.prc` precompile, compile, link-edit and bind each program into package collection `CARDDEMO`, which plan `CARDDEMO` already includes
 
 3. **Set Job Parameters**
    - Review the `SET` statements at the top of each job: high-level qualifier, DB2 subsystem, DB2 libraries and plan names. The jobs pass these to their in-stream DB2 commands, which needs z/OS 2.1 or later
@@ -148,7 +148,8 @@ This module integrates with the base CardDemo application in the following ways:
 1. **Transaction Data**: The MODBLOAD job reads the base transaction file (TRANSACT) after COMBTRAN, with the card cross reference (CARDXREF) for account numbers
 2. **Account Data**: The MODBBAL job reads balances and credit limits from the base account file (ACCTDATA)
 3. **Reference Data**: The MODBRPT job joins to the transaction type and category tables of the Transaction Type Management extension
-4. **Read-Only Integration**: The module reads the base VSAM files but does not change any base program or file. Its DB2 database (`CARDMODB`) and plan (`CARDMODB`) are separate from the other DB2 extensions
+4. **Read-Only Integration**: The module reads the base VSAM files but does not change any base program or file
+5. **Shared DB2 Objects**: Its tables are in two table spaces of their own in the CARDDEMO database, and its programs run with the CARDDEMO plan, both shared with the Transaction Type Management extension. MODBDRP drops only this extension's table spaces
 
 ## Dependencies
 

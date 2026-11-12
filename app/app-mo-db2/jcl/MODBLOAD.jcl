@@ -49,7 +49,7 @@
 //   SET DB2S=DAZ1
 //   SET DB2EXIT=OEM.DB2.&DB2S..SDSNEXIT
 //   SET DB2LOAD=OEMA.DB2.VERSIONA.SDSNLOAD
-//   SET PLAN=CARDMODB
+//   SET PLAN=CARDDEMO
 //*********************************************************************
 //*  MAKE THE JCL SYMBOLS AVAILABLE TO THE IN-STREAM SYSTSIN DATA
 //*********************************************************************

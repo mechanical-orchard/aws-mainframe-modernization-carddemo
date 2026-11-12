@@ -132,7 +132,7 @@
          QUALIFIER (&QUAL) -
          ACTION    (REPLACE)  -
          ISOLATION (CS)       -
-         CURRENTDATA(NO)      -
+         CURRENTDATA(YES)     -
          EXPLAIN   (NO)       -
          ENCODING  (EBCDIC)
  END
@@ -154,7 +154,7 @@
          QUALIFIER (&QUAL) -
          ACTION    (REPLACE)  RETAIN   -
          ISOLATION (CS)       -
-         CURRENTDATA(NO)      -
+         CURRENTDATA(YES)     -
          ENCODING  (EBCDIC)
  END
 /*
