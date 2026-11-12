@@ -1,0 +1,5 @@
+CREATE UNIQUE INDEX CARDDEMO.XTRANH01
+    ON CARDDEMO.TRAN_HIST
+        (TH_TRAN_ID   ASC)
+                    ERASE NO
+                    CLOSE NO;
