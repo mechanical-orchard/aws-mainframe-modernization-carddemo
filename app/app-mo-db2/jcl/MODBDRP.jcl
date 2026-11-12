@@ -16,13 +16,14 @@
 //* either express or implied. See the License for the specific
 //* language governing permissions and limitations under the License
 //*********************************************************************
-//* DROP THE CARDMODB DATABASE, AND WITH IT EVERY TABLESPACE, TABLE
-//* AND INDEX THAT MODBCRT CREATED.
+//* DROP THE APP-MO-DB2 TABLESPACES MOTHST01 AND MOADBL01, AND WITH
+//* THEM EVERY TABLE AND INDEX THAT MODBCRT CREATED. THE CARDDEMO
+//* DATABASE AND ANYTHING ELSE IN IT STAY IN PLACE.
 //*
 //* *** WARNING ***
 //* THIS DROPS CARDDEMO.TRAN_HIST AND CARDDEMO.ACCT_DAILY_BAL AND
 //* ALL OF THEIR DATA. USE IT TO RESET APP-MO-DB2 BEFORE RERUNNING
-//* MODBCRT. THE STEP ENDS WITH RC 0 EVEN IF THE DATABASE DOES NOT
+//* MODBCRT. THE STEP ENDS WITH RC 0 EVEN IF THE TABLESPACES DO NOT
 //* EXIST (DSNTIAD PARM RC0), SO CHECK SYSPRINT FOR SQL ERRORS.
 //*
 //* DSNTIAD DOES NOT SUPPORT COMMENTS IN ITS INPUT, SO MEMBER
@@ -47,7 +48,7 @@
 //*********************************************************************
 // EXPORT SYMLIST=*
 //*********************************************************************
-//*  STEP10 : DROP THE DATABASE WITH DSNTIAD
+//*  STEP10 : DROP THE TABLESPACES WITH DSNTIAD
 //*********************************************************************
 //STEP10   EXEC PGM=IKJEFT01,DYNAMNBR=20
 //STEPLIB  DD DISP=SHR,DSN=&DB2RUNL
