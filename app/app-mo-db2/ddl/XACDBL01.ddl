@@ -2,5 +2,4 @@ CREATE UNIQUE INDEX CARDDEMO.XACDBL01
     ON CARDDEMO.ACCT_DAILY_BAL
         (ADB_ACCT_ID  ASC,
          ADB_BAL_DATE ASC)
-                    ERASE NO
                     CLOSE NO;

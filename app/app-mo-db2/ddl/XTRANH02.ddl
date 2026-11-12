@@ -2,5 +2,4 @@ CREATE INDEX CARDDEMO.XTRANH02
     ON CARDDEMO.TRAN_HIST
         (TH_TRAN_DATE ASC,
          TH_ACCT_ID   ASC)
-                    ERASE NO
                     CLOSE NO;
