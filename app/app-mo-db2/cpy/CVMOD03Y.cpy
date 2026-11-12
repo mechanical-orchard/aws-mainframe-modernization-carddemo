@@ -103,6 +103,26 @@
            05  MODB-RPT-AT-AMT                  PIC --,---,---,--9.99.
            05  FILLER                           PIC X(03) VALUE SPACES.
 
+       01  MODB-RPT-BALANCE-LINE.
+           05  FILLER                           PIC X(04) VALUE SPACES.
+           05  FILLER                           PIC X(16) VALUE
+               'Closing balance '.
+           05  MODB-RPT-B-DATE                  PIC X(10).
+           05  FILLER                           PIC X(02) VALUE ': '.
+           05  MODB-RPT-B-CLOSE-BAL             PIC --,---,---,--9.99.
+           05  FILLER                           PIC X(05) VALUE SPACES.
+           05  FILLER                           PIC X(14) VALUE
+               'Credit limit: '.
+           05  MODB-RPT-B-LIMIT                 PIC --,---,---,--9.99.
+           05  FILLER                           PIC X(48) VALUE SPACES.
+
+       01  MODB-RPT-NO-BALANCE-LINE.
+           05  FILLER                           PIC X(04) VALUE SPACES.
+           05  FILLER                           PIC X(21) VALUE
+               'No daily balance for '.
+           05  MODB-RPT-NB-DATE                 PIC X(10).
+           05  FILLER                           PIC X(98) VALUE SPACES.
+
        01  MODB-RPT-GRAND-TOTAL.
            05  FILLER                           PIC X(11) VALUE
                'Grand total'.

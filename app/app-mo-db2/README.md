@@ -22,7 +22,7 @@ This extension provides the following capabilities:
 
 - **Transaction History**: Load posted transactions from the VSAM transaction file into a DB2 table through a batch job
 - **Daily Balances**: Build daily account balance snapshots and flag accounts that are over their credit limit
-- **Reporting**: Produce a transaction history report with transaction type and category descriptions from DB2
+- **Reporting**: Produce a transaction history report from DB2, with each account's closing balance and credit limit
 - **Batch Maintenance**: Purge transaction history older than a retention period
 - **DB2 Integration**: Demonstrates various DB2 integration patterns in batch, including:
   - Static embedded SQL with host variables and null indicators
@@ -59,7 +59,6 @@ This extension provides the following capabilities:
 ### Prerequisites
 - Base CardDemo application installed and operational
 - DB2 subsystem configured and accessible
-- Transaction Type Management extension (`app-transaction-type-db2`) installed, for the report
 
 ### Installation Steps
 
@@ -90,6 +89,7 @@ Run the jobs after the base daily batch has rebuilt the transaction file (COMBTR
    - Rerunning it for the same date replaces that date's balances
 3. Execute the MODBRPT job to produce the transaction history report for the date range in its PARMFILE
    - The report is written to `MODB.TRANRPT`
+   - Each account shows its closing balance and credit limit from the MODBBAL run for the last date of the range, or says it has no daily balance
 4. Execute the MODBMNT job to flag accounts over their credit limit and purge transaction history older than the retention days in its PARMFILE
 
 TRANBKP empties the transaction file until COMBTRAN reloads it, so MODBLOAD finds no transactions if it runs between those two jobs. As with the base batch jobs, the VSAM files must be closed in CICS (CLOSEFIL). The header of each job describes its parameters and return codes. To start over, run MODBDRP and then MODBCRT.
@@ -147,7 +147,7 @@ This module integrates with the base CardDemo application in the following ways:
 
 1. **Transaction Data**: The MODBLOAD job reads the base transaction file (TRANSACT) after COMBTRAN, with the card cross reference (CARDXREF) for account numbers
 2. **Account Data**: The MODBBAL job reads balances and credit limits from the base account file (ACCTDATA)
-3. **Reference Data**: The MODBRPT job joins to the transaction type and category tables of the Transaction Type Management extension
+3. **Reference Data**: The MODBRPT job looks up transaction type and category names in the base transaction type and category files (TRANTYPE and TRANCATG)
 4. **Read-Only Integration**: The module reads the base VSAM files but does not change any base program or file
 5. **Separate DB2 Objects**: Its own DB2 database (`CARDMODB`), package collection and plan (`CARDMODB`), so creating, dropping or rebinding it does not affect the other DB2 extensions
 
@@ -155,4 +155,3 @@ This module integrates with the base CardDemo application in the following ways:
 
 - Base CardDemo application
 - DB2 subsystem
-- Transaction Type Management extension (`app-transaction-type-db2`)
