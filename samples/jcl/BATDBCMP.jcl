@@ -31,22 +31,15 @@
 //*    MEMNAME - program to compile, link and bind
 //*    HLQ     - high level qualifier of the CardDemo libraries
 //*    SSID    - Db2 subsystem id
-//*    PLAN    - plan the batch jobs run with. CARDDEMO is shared
-//*              with app-transaction-type-db2, and its PKLIST
-//*              already includes every package in collection
-//*              CARDDEMO. The last step, BINDPL, only creates the
-//*              plan if it is missing: when the plan already exists
-//*              it ends RC 8 with an "already exists" message, which
-//*              is expected. Any other step ending above RC 4 is a
-//*              real failure
+//*    PLAN    - plan the batch jobs run with
 //*    COLL    - package collection the plan includes
 //*    QUAL    - qualifier for unqualified table names
 //*********************************************************************
 //   SET MEMNAME=CBMOD01C
 //   SET HLQ=MO.CARDDEMO
 //   SET SSID=DAZ1
-//   SET PLAN=CARDDEMO
-//   SET COLL=CARDDEMO
+//   SET PLAN=CARDMODB
+//   SET COLL=CARDMODB
 //   SET QUAL=CARDDEMO
 //*********************************************************************
 //*  Add proclib reference
