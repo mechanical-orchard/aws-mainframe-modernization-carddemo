@@ -37,7 +37,7 @@
 //*    TIADPLN - PLAN NAME FOR DSNTIAD
 //*    TEP4PLN - PLAN NAME FOR DSNTEP4
 //*********************************************************************
-//   SET HLQ=AWS.M2.CARDDEMO
+//   SET HLQ=MO.CARDDEMO
 //   SET DB2S=DAZ1
 //   SET DB2EXIT=OEM.DB2.&DB2S..SDSNEXIT
 //   SET DB2LOAD=OEMA.DB2.VERSIONA.SDSNLOAD

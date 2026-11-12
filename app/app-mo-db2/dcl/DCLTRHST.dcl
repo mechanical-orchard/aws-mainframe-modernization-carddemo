@@ -17,7 +17,7 @@
       ******************************************************************
       ******************************************************************
       * DCLGEN TABLE(CARDDEMO.TRAN_HIST)                               *
-      *        LIBRARY(AWS.M2.CARDDEMO.DCL(DCLTRHST))                  *
+      *        LIBRARY(MO.CARDDEMO.DCL(DCLTRHST))                      *
       *        ACTION(REPLACE)                                         *
       *        LANGUAGE(COBOL)                                         *
       *        NAMES(DCL-)                                             *

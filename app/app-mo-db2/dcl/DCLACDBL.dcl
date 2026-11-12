@@ -17,7 +17,7 @@
       ******************************************************************
       ******************************************************************
       * DCLGEN TABLE(CARDDEMO.ACCT_DAILY_BAL)                          *
-      *        LIBRARY(AWS.M2.CARDDEMO.DCL(DCLACDBL))                  *
+      *        LIBRARY(MO.CARDDEMO.DCL(DCLACDBL))                      *
       *        ACTION(REPLACE)                                         *
       *        LANGUAGE(COBOL)                                         *
       *        NAMES(DCL-)                                             *

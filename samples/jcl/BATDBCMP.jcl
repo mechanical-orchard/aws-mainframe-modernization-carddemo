@@ -41,7 +41,7 @@
 //*    QUAL    - qualifier for unqualified table names
 //*********************************************************************
 //   SET MEMNAME=CBMOD01C
-//   SET HLQ=AWS.M2.CARDDEMO
+//   SET HLQ=MO.CARDDEMO
 //   SET SSID=DAZ1
 //   SET PLAN=CARDDEMO
 //   SET COLL=CARDDEMO
