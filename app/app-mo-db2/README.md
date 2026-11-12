@@ -69,7 +69,7 @@ This extension provides the following capabilities:
 
 2. **Compile Programs**
    - Compile the COBOL programs with DB2 precompiler support
-   - The sample JCL `samples/jcl/BATDBCMP.jcl` and procedure `samples/proc/BLDBTDB2.prc` precompile, compile, link-edit and bind each program into package collection `CARDDEMO`, which plan `CARDDEMO` already includes
+   - The sample JCL `samples/jcl/BATDBCMP.jcl` and procedure `samples/proc/BLDBTDB2.prc` precompile, compile, link-edit and bind each program into package collection `CARDDEMO`, which plan `CARDDEMO` already includes. The build creates the plan only if it does not exist yet (`ACTION(ADD)`) and never replaces it, so when the plan already exists its last step, `BINDPL`, ends RC 8 with an "already exists" message. That is expected
 
 3. **Set Job Parameters**
    - Review the `SET` statements at the top of each job: high-level qualifier, DB2 subsystem, DB2 libraries and plan names. The jobs pass these to their in-stream DB2 commands, which needs z/OS 2.1 or later

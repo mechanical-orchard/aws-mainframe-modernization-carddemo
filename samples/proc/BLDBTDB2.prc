@@ -26,7 +26,12 @@
 //*  COBOL  - COBOL compile of the precompiled source
 //*  LKED   - Link-edit with the TSO attach interface DSNELI
 //*  BINDPK - Bind package &MEMNAME into collection &COLL
-//*  BINDPL - Bind plan &PLAN with PKLIST(&COLL..*)
+//*  BINDPL - Create plan &PLAN with PKLIST(&COLL..*) if it does not
+//*           exist yet. ACTION(ADD) never replaces an existing
+//*           plan, so on a system that already has the plan this
+//*           step ends RC 8 with an "already exists" message, which
+//*           is expected: the plan's PKLIST already includes the
+//*           package just bound in BINDPK.
 //*
 //*  The SYSTSIN data of the bind steps uses JCL symbols, so the
 //*  calling job must SET MEMNAME, SSID, PLAN, COLL and QUAL and
@@ -139,7 +144,8 @@
 /*
 //OKBIND  IF (RC <= 4) THEN
 //*********************************************************
-//*       Bind plan &PLAN over every package in &COLL
+//*       Create plan &PLAN over every package in &COLL, unless
+//*       it already exists (then RC 8, expected)
 //*********************************************************
 //BINDPL  EXEC PGM=IKJEFT01
 //STEPLIB  DD DISP=SHR,DSN=&SDSNEXIT
@@ -152,7 +158,7 @@
  BIND    PLAN      (&PLAN) -
          PKLIST    (&COLL..*) -
          QUALIFIER (&QUAL) -
-         ACTION    (REPLACE)  RETAIN   -
+         ACTION    (ADD)      -
          ISOLATION (CS)       -
          CURRENTDATA(YES)     -
          ENCODING  (EBCDIC)

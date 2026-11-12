@@ -32,11 +32,13 @@
 //*    HLQ     - high level qualifier of the CardDemo libraries
 //*    SSID    - Db2 subsystem id
 //*    PLAN    - plan the batch jobs run with. CARDDEMO is shared
-//*              with app-transaction-type-db2. Its PKLIST already
-//*              includes every package in collection CARDDEMO, so
-//*              the plan bind only re-creates it with the options
-//*              BLDCIDB2 uses, and it may fail harmlessly while CICS
-//*              has the plan in use
+//*              with app-transaction-type-db2, and its PKLIST
+//*              already includes every package in collection
+//*              CARDDEMO. The last step, BINDPL, only creates the
+//*              plan if it is missing: when the plan already exists
+//*              it ends RC 8 with an "already exists" message, which
+//*              is expected. Any other step ending above RC 4 is a
+//*              real failure
 //*    COLL    - package collection the plan includes
 //*    QUAL    - qualifier for unqualified table names
 //*********************************************************************
