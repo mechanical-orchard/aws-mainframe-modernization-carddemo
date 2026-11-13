@@ -22,7 +22,7 @@
 //STEP05 EXEC PGM=IDCAMS                                                        
 //SYSPRINT DD   SYSOUT=*                                                        
 //SYSIN    DD   *                                                               
-   DELETE AWS.M2.CARDDEMO.TCATBALF.VSAM.KSDS -                                  
+   DELETE MO.CARDDEMO.TCATBALF.VSAM.KSDS -                                  
           CLUSTER                                                               
    SET    MAXCC = 0                                                             
 /*                                                                              
@@ -33,7 +33,7 @@
 //STEP10 EXEC PGM=IDCAMS                                                        
 //SYSPRINT DD   SYSOUT=*                                                        
 //SYSIN    DD   *                                                               
-   DEFINE CLUSTER (NAME(AWS.M2.CARDDEMO.TCATBALF.VSAM.KSDS) -                   
+   DEFINE CLUSTER (NAME(MO.CARDDEMO.TCATBALF.VSAM.KSDS) -                   
           CYLINDERS(1 5) -                                                      
           VOLUMES(AWSHJ1 -                                                      
           ) -                                                                   
@@ -43,9 +43,9 @@
           ERASE -                                                               
           INDEXED -                                                             
           ) -                                                                   
-          DATA (NAME(AWS.M2.CARDDEMO.TCATBALF.VSAM.KSDS.DATA) -                 
+          DATA (NAME(MO.CARDDEMO.TCATBALF.VSAM.KSDS.DATA) -                 
           ) -                                                                   
-          INDEX (NAME(AWS.M2.CARDDEMO.TCATBALF.VSAM.KSDS.INDEX) -               
+          INDEX (NAME(MO.CARDDEMO.TCATBALF.VSAM.KSDS.INDEX) -               
           )                                                                     
 /*                                                                              
 //* *******************************************************************         
@@ -54,9 +54,9 @@
 //STEP15 EXEC PGM=IDCAMS                                                        
 //SYSPRINT DD   SYSOUT=*                                                        
 //TCATBAL DD DISP=SHR,                                                          
-//         DSN=AWS.M2.CARDDEMO.TCATBALF.PS                                      
+//         DSN=MO.CARDDEMO.TCATBALF.PS                                      
 //TCATBALV DD DISP=OLD,                                                         
-//         DSN=AWS.M2.CARDDEMO.TCATBALF.VSAM.KSDS                               
+//         DSN=MO.CARDDEMO.TCATBALF.VSAM.KSDS                               
 //SYSIN    DD   *                                                               
    REPRO INFILE(TCATBAL) OUTFILE(TCATBALV)                                      
 /*                                                                              

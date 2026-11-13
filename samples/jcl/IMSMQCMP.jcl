@@ -20,7 +20,7 @@
 //****  Check with your Administrator for                        ******
 //****  JCL suitable to your environment                         ******
 //*********************************************************************
-//   SET HLQ=AWS.M2
+//   SET HLQ=MO
 //   SET CICSHLQ=CICSTS
 //   SET IMSHLQ=IMS
 //   SET MQHLQ=MQ

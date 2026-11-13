@@ -18,7 +18,7 @@
 //******************************************************************
 //STEP05R  EXEC PGM=SORT                                                  
 //SORTIN   DD DISP=SHR,                                                 
-//         DSN=AWS.M2.CARDDEMO.TRANSACT.BKUP(0)                                 
+//         DSN=MO.CARDDEMO.TRANSACT.BKUP(0)                                 
 //SYMNAMES DD *
 TRAN-CARD-NUM,263,16,ZD
 TRAN-PROC-DT,305,10,CH               
@@ -32,7 +32,7 @@ PARM-DATE,C'2022-06-02'
 //         UNIT=SYSDA,
 //         DCB=(*.SORTIN),
 //         SPACE=(CYL,(1,1),RLSE),
-//         DSN=AWS.M2.CARDDEMO.TRANSACT.DALY(+1)
+//         DSN=MO.CARDDEMO.TRANSACT.DALY(+1)
 //*
 //* Ver: CardDemo_v1.0-57-g40b7caa-110 Date: 2022-08-19 18:00:43 CDT
 //*
