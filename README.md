@@ -85,7 +85,14 @@ CardDemo includes several optional modules that extend the base functionality:
    - Account details inquiry via MQ (CDRA transaction)
    - Demonstrates asynchronous processing patterns
 
-4. **Additional JCL Utilities**
+4. **Transaction History and Daily Balances with DB2**
+   - Load posted transactions from VSAM into DB2 tables
+   - Build daily account balance snapshots and flag accounts over their credit limit
+   - Produce a transaction history report from DB2
+   - Demonstrates batch DB2 patterns including cursors held across commits, null indicators, joins, aggregation and positioned updates
+   - More details: [Transaction History Extension](./app/app-mo-db2)
+
+5. **Additional JCL Utilities**
    - FTP integration
    - Text-to-PDF conversion
    - DB2 and IMS DB load/unload operations
@@ -155,6 +162,7 @@ CardDemo includes several optional modules that extend the base functionality:
      | CUSTFILE | Creates customer database                         |                 |
      | XREFFILE | Loads Customer Card account cross reference       |                 |
      | CREADB21 | Creates CardDemo Db2 database and loads tables    | Db2: Transaction Type Mgmt |
+     | MODBCRT  | Creates Db2 tables for transaction history        | Db2: Transaction History |
      | TRANFILE | Copies initial Transaction file to VSAM           |                 |
      | TRANEXTR | Extracts TRAN type and category tables from Db2   | Db2: Transaction Type Mgmt |
      | DISCGRP  | Copies initial Disclosure Group file to VSAM      |                 |
@@ -226,6 +234,10 @@ Execute the following JCLs in sequence to run the full batch process:
 | INTCALC  | Run interest calculations                           |                 |
 | TRANBKP  | Backup Transaction database                         |                 |
 | COMBTRAN | Combine system transactions with daily ones         |                 |
+| MODBLOAD | Load transactions into Db2 transaction history      | Db2: Transaction History |
+| MODBBAL  | Build daily account balances in Db2                 | Db2: Transaction History |
+| MODBRPT  | Produce transaction history report from Db2         | Db2: Transaction History |
+| MODBMNT  | Flag over-limit accounts and purge Db2 history      | Db2: Transaction History |
 | CREASTMT | Produce transaction statement                       |                 |
 | TRANIDX  | Define alternate index on transaction file          |                 |
 | OPENFIL  | Makes files available to CICS                       |                 |
@@ -323,6 +335,12 @@ Admin users can perform the following functions:
 | ESDSRRDS | IDCAMS   | Create ESDS and RRDS VSAM files                      |                |
 | CBPAUP0J | CBPAUP0C | Purge Expired Authorizations                         | IMS-DB2-MQ: Pending Authorizations |
 | MNTTRDB2 | COBTUPDT | Maintain Transaction type table                      | Db2: Transaction Type Mgmt |
+| MODBCRT  | DSNTIAD  | Create Db2 tables for transaction history            | Db2: Transaction History |
+| MODBDRP  | DSNTIAD  | Drop Db2 tables for transaction history              | Db2: Transaction History |
+| MODBLOAD | CBMOD01C | Load transactions into Db2 transaction history       | Db2: Transaction History |
+| MODBBAL  | CBMOD02C | Build daily account balances in Db2                  | Db2: Transaction History |
+| MODBRPT  | CBMOD03C | Transaction history report from Db2                  | Db2: Transaction History |
+| MODBMNT  | CBMOD04C | Flag over-limit accounts and purge Db2 history       | Db2: Transaction History |
 | WAITSTEP | COBSWAIT | Wait job for given time                              |                |
 
 ### Application Screens
