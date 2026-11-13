@@ -1,0 +1,1732 @@
+{
+  "ShabakehVersion": "0.93.1",
+  "ShabakehConfig": {
+    "ClientProject": "aws-carddemo",
+    "ClientProjectSHA": "b7a12c6f5b7e9b265e40cfe0744472f46da1e992",
+    "Targets": [
+      "job://CREASTMT"
+    ],
+    "Invocation": "extract -call-trees=parse_outputs/jobs/CREASTMT/call-trees.json -errors-and-warnings=parse_outputs/jobs/CREASTMT/errors-and-warnings.json --include-params job://CREASTMT",
+    "IncludeParams": true
+  },
+  "CallTrees": [
+    {
+      "Key": "file://jcl/CREASTMT.JCL",
+      "Context": "JCL",
+      "CallSite": "file://jcl/CREASTMT.JCL:0:0",
+      "OnDiskPath": "jcl/CREASTMT.JCL",
+      "CallFrameType": "Entry",
+      "EntryPointDeterminant": "jcl",
+      "Complexity": {
+        "NumLines": 98,
+        "NumLinesWithComment": 98,
+        "JCLSteps": 5,
+        "ComplexityContribution": 299
+      },
+      "Children": [
+        {
+          "Key": "file://jcl/CREASTMT.JCL",
+          "Context": "JCL",
+          "CallSite": "file://jcl/CREASTMT.JCL:1:3",
+          "OnDiskPath": "jcl/CREASTMT.JCL",
+          "CallFrameType": "JCLJob",
+          "JCLLabel": "CREASTMT",
+          "Params": [
+            {
+              "Value": "Create Statement",
+              "Coordinates": "file://jcl/CREASTMT.JCL:1:16"
+            },
+            {
+              "Name": "CLASS",
+              "Value": "A",
+              "Coordinates": "file://jcl/CREASTMT.JCL:1:35"
+            },
+            {
+              "Name": "MSGCLASS",
+              "Value": "H",
+              "Coordinates": "file://jcl/CREASTMT.JCL:1:43"
+            },
+            {
+              "Name": "MSGLEVEL",
+              "List": [
+                {
+                  "Value": "1",
+                  "Coordinates": "file://jcl/CREASTMT.JCL:1:64"
+                },
+                {
+                  "Value": "1",
+                  "Coordinates": "file://jcl/CREASTMT.JCL:1:66"
+                }
+              ],
+              "Coordinates": "file://jcl/CREASTMT.JCL:1:54"
+            },
+            {
+              "Name": "NOTIFY",
+              "Value": "&SYSUID",
+              "Coordinates": "file://jcl/CREASTMT.JCL:2:12"
+            },
+            {
+              "Name": "TIME",
+              "Value": "1440",
+              "Coordinates": "file://jcl/CREASTMT.JCL:2:27"
+            }
+          ],
+          "Children": [
+            {
+              "Key": "file://jcl/CREASTMT.JCL",
+              "Context": "JCL",
+              "CallSite": "file://jcl/CREASTMT.JCL:22:3",
+              "OnDiskPath": "jcl/CREASTMT.JCL",
+              "CallFrameType": "JCLExec",
+              "JCLLabel": "DELDEF01",
+              "JCLExecStepContentRange": "file://jcl/CREASTMT.JCL:22:0-24:0",
+              "Params": [
+                {
+                  "Name": "PGM",
+                  "Value": "IDCAMS",
+                  "Coordinates": "file://jcl/CREASTMT.JCL:22:17"
+                }
+              ],
+              "DDGroups": [
+                {
+                  "DDName": "SYSPRINT",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "SYSOUT",
+                          "Value": "*",
+                          "Coordinates": "file://jcl/CREASTMT.JCL:23:16"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/CREASTMT.JCL:23:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "SYSIN",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Value": "*",
+                          "Coordinates": "file://jcl/CREASTMT.JCL:24:16"
+                        }
+                      ],
+                      "InlineData": "  DELETE    AWS.M2.CARDDEMO.TRXFL.SEQ\n  DELETE    AWS.M2.CARDDEMO.TRXFL.VSAM.KSDS                     -\n            CLUSTER\n  SET       MAXCC = 0\n  DEFINE    CLUSTER  (NAME(AWS.M2.CARDDEMO.TRXFL.VSAM.KSDS)     -\n                      KEYS(32 0)                                -\n                      VOLUMES(TSU023)                           -\n                      RECORDSIZE(350 350)                       -\n                      SHAREOPTIONS(2 3)                         -\n                      ERASE                                     -\n                      INDEXED                                   -\n                      CYL(1 5))                                 -\n            DATA      (NAME(AWS.M2.CARDDEMO.TRXFL.DATA)         -\n                      CISZ(4096))                               -\n            INDEX     (NAME(AWS.M2.CARDDEMO.TRXFL.INDEX))\n",
+                      "Coordinates": "file://jcl/CREASTMT.JCL:24:3"
+                    }
+                  ]
+                }
+              ],
+              "Children": [
+                {
+                  "Key": "system://IDCAMS",
+                  "Context": "EXECUTABLE",
+                  "CallSite": "file://jcl/CREASTMT.JCL:22:3",
+                  "CallFrameType": "Invocation",
+                  "DataFlows": [
+                    {
+                      "Type": "read",
+                      "ExecStep": "CREASTMT.DELDEF01",
+                      "ExecStepCoordinates": "file://jcl/CREASTMT.JCL:22:3",
+                      "Caller": "system://IDCAMS",
+                      "CallerContext": "EXECUTABLE",
+                      "IsReadForControlCard": true,
+                      "DataReferences": [
+                        {
+                          "Key": "dd://c31e3aed:CREASTMT.DELDEF01.SYSIN",
+                          "Coordinates": "file://jcl/CREASTMT.JCL:24:3",
+                          "IsNoise": true
+                        }
+                      ]
+                    }
+                  ],
+                  "Children": [
+                    {
+                      "Key": "dd://c31e3aed:CREASTMT.DELDEF01.SYSIN",
+                      "Context": "IDCAMS",
+                      "CallSite": "file://jcl/CREASTMT.JCL:22:3",
+                      "CallFrameType": "Invocation",
+                      "Complexity": {
+                        "NumLines": 16,
+                        "NumLinesWithComment": 16,
+                        "ComplexityContribution": 8
+                      },
+                      "DataFlows": [
+                        {
+                          "Type": "write",
+                          "ExecStep": "CREASTMT.DELDEF01",
+                          "ExecStepCoordinates": "file://jcl/CREASTMT.JCL:22:3",
+                          "Caller": "dd://c31e3aed:CREASTMT.DELDEF01.SYSIN",
+                          "CallerContext": "IDCAMS",
+                          "DataReferences": [
+                            {
+                              "Key": "sysout://(H)",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:23:3"
+                            }
+                          ]
+                        },
+                        {
+                          "Type": "delete",
+                          "ExecStep": "CREASTMT.DELDEF01",
+                          "ExecStepCoordinates": "file://jcl/CREASTMT.JCL:22:3",
+                          "Caller": "dd://c31e3aed:CREASTMT.DELDEF01.SYSIN",
+                          "CallerContext": "IDCAMS",
+                          "DataReferences": [
+                            {
+                              "Key": "dsn://AWS.M2.CARDDEMO.TRXFL.SEQ",
+                              "Coordinates": "dd://c31e3aed:CREASTMT.DELDEF01.SYSIN:1:3"
+                            }
+                          ]
+                        },
+                        {
+                          "Type": "delete",
+                          "ExecStep": "CREASTMT.DELDEF01",
+                          "ExecStepCoordinates": "file://jcl/CREASTMT.JCL:22:3",
+                          "Caller": "dd://c31e3aed:CREASTMT.DELDEF01.SYSIN",
+                          "CallerContext": "IDCAMS",
+                          "DataReferences": [
+                            {
+                              "Key": "dsn://AWS.M2.CARDDEMO.TRXFL.VSAM.KSDS",
+                              "Coordinates": "dd://c31e3aed:CREASTMT.DELDEF01.SYSIN:2:3"
+                            }
+                          ]
+                        },
+                        {
+                          "Type": "write",
+                          "ExecStep": "CREASTMT.DELDEF01",
+                          "ExecStepCoordinates": "file://jcl/CREASTMT.JCL:22:3",
+                          "Caller": "dd://c31e3aed:CREASTMT.DELDEF01.SYSIN",
+                          "CallerContext": "IDCAMS",
+                          "IsLowConfidence": true,
+                          "LowConfidenceReason": "This is from an IDCAMS DEFINE command and Imogen Parse's interpretation of the data flow type (read, write, etc.) may be wrong.",
+                          "DataReferences": [
+                            {
+                              "Key": "dsn://AWS.M2.CARDDEMO.TRXFL.VSAM.KSDS",
+                              "Coordinates": "dd://c31e3aed:CREASTMT.DELDEF01.SYSIN:5:28",
+                              "VSAM": "KSDS"
+                            }
+                          ]
+                        },
+                        {
+                          "Type": "write",
+                          "ExecStep": "CREASTMT.DELDEF01",
+                          "ExecStepCoordinates": "file://jcl/CREASTMT.JCL:22:3",
+                          "Caller": "dd://c31e3aed:CREASTMT.DELDEF01.SYSIN",
+                          "CallerContext": "IDCAMS",
+                          "IsLowConfidence": true,
+                          "LowConfidenceReason": "This is from an IDCAMS DEFINE command and Imogen Parse's interpretation of the data flow type (read, write, etc.) may be wrong.",
+                          "DataReferences": [
+                            {
+                              "Key": "dsn://AWS.M2.CARDDEMO.TRXFL.DATA",
+                              "Coordinates": "dd://c31e3aed:CREASTMT.DELDEF01.SYSIN:13:29",
+                              "VSAM": "KSDS"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "Key": "file://jcl/CREASTMT.JCL",
+              "Context": "JCL",
+              "CallSite": "file://jcl/CREASTMT.JCL:44:3",
+              "OnDiskPath": "jcl/CREASTMT.JCL",
+              "CallFrameType": "JCLExec",
+              "JCLLabel": "STEP010",
+              "JCLExecStepContentRange": "file://jcl/CREASTMT.JCL:44:0-52:0",
+              "Params": [
+                {
+                  "Name": "PGM",
+                  "Value": "SORT",
+                  "Coordinates": "file://jcl/CREASTMT.JCL:44:17"
+                }
+              ],
+              "DDGroups": [
+                {
+                  "DDName": "SORTIN",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://jcl/CREASTMT.JCL:45:16"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS",
+                          "Coordinates": "file://jcl/CREASTMT.JCL:45:25"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/CREASTMT.JCL:45:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "SYSPRINT",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "SYSOUT",
+                          "Value": "*",
+                          "Coordinates": "file://jcl/CREASTMT.JCL:46:16"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/CREASTMT.JCL:46:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "SYSOUT",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "SYSOUT",
+                          "Value": "*",
+                          "Coordinates": "file://jcl/CREASTMT.JCL:47:16"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/CREASTMT.JCL:47:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "SORTOUT",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.TRXFL.SEQ",
+                          "Coordinates": "file://jcl/CREASTMT.JCL:48:16"
+                        },
+                        {
+                          "Name": "DISP",
+                          "List": [
+                            {
+                              "Value": "NEW",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:49:22"
+                            },
+                            {
+                              "Value": "CATLG",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:49:26"
+                            },
+                            {
+                              "Value": "DELETE",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:49:32"
+                            }
+                          ],
+                          "Coordinates": "file://jcl/CREASTMT.JCL:49:16"
+                        },
+                        {
+                          "Name": "UNIT",
+                          "Value": "SYSDA",
+                          "Coordinates": "file://jcl/CREASTMT.JCL:49:40"
+                        },
+                        {
+                          "Name": "DCB",
+                          "List": [
+                            {
+                              "Name": "LRECL",
+                              "Value": "350",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:50:21"
+                            },
+                            {
+                              "Name": "BLKSIZE",
+                              "Value": "3500",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:50:31"
+                            },
+                            {
+                              "Name": "RECFM",
+                              "Value": "FB",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:50:44"
+                            }
+                          ],
+                          "Coordinates": "file://jcl/CREASTMT.JCL:50:16"
+                        },
+                        {
+                          "Name": "SPACE",
+                          "List": [
+                            {
+                              "Value": "CYL",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:51:23"
+                            },
+                            {
+                              "List": [
+                                {
+                                  "Value": "1",
+                                  "Coordinates": "file://jcl/CREASTMT.JCL:51:28"
+                                },
+                                {
+                                  "Value": "1",
+                                  "Coordinates": "file://jcl/CREASTMT.JCL:51:30"
+                                }
+                              ],
+                              "Coordinates": "file://jcl/CREASTMT.JCL:51:27"
+                            },
+                            {
+                              "Value": "RLSE",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:51:33"
+                            }
+                          ],
+                          "Coordinates": "file://jcl/CREASTMT.JCL:51:16"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/CREASTMT.JCL:48:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "SYSIN",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Value": "*",
+                          "Coordinates": "file://jcl/CREASTMT.JCL:52:15"
+                        }
+                      ],
+                      "InlineData": "  SORT FIELDS=(263,16,CH,A,1,16,CH,A)\n  OUTREC FIELDS=(1:263,16,17:1,262,279:279,50)\n",
+                      "Coordinates": "file://jcl/CREASTMT.JCL:52:3"
+                    }
+                  ]
+                }
+              ],
+              "Children": [
+                {
+                  "Key": "system://SORT",
+                  "Context": "EXECUTABLE",
+                  "CallSite": "file://jcl/CREASTMT.JCL:44:3",
+                  "CallFrameType": "Invocation",
+                  "DataFlows": [
+                    {
+                      "Type": "read",
+                      "ExecStep": "CREASTMT.STEP010",
+                      "ExecStepCoordinates": "file://jcl/CREASTMT.JCL:44:3",
+                      "Caller": "system://SORT",
+                      "CallerContext": "EXECUTABLE",
+                      "IsReadForControlCard": true,
+                      "DataReferences": [
+                        {
+                          "Key": "dd://d9eae3c0:CREASTMT.STEP010.SYSIN",
+                          "Coordinates": "file://jcl/CREASTMT.JCL:52:3",
+                          "IsNoise": true
+                        }
+                      ]
+                    }
+                  ],
+                  "Children": [
+                    {
+                      "Key": "dd://d9eae3c0:CREASTMT.STEP010.SYSIN",
+                      "Context": "SORT",
+                      "CallSite": "file://jcl/CREASTMT.JCL:44:3",
+                      "CallFrameType": "Invocation",
+                      "Complexity": {
+                        "NumLines": 3,
+                        "NumLinesWithComment": 3,
+                        "ComplexityContribution": 1
+                      },
+                      "SortBindings": {
+                        "DDAssignments": [
+                          {
+                            "DDName": "SORTIN\\d{0,2}",
+                            "Operation": "(implied)",
+                            "DataFlow": {
+                              "Type": "read",
+                              "ExecStep": "CREASTMT.STEP010",
+                              "ExecStepCoordinates": "file://jcl/CREASTMT.JCL:44:3",
+                              "Caller": "dd://d9eae3c0:CREASTMT.STEP010.SYSIN",
+                              "CallerContext": "SORT",
+                              "DataReferences": [
+                                {
+                                  "Key": "dsn://AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS",
+                                  "Coordinates": "file://jcl/CREASTMT.JCL:45:3"
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "DDName": "SORTOUT",
+                            "Operation": "(implied)",
+                            "DataFlow": {
+                              "Type": "write",
+                              "ExecStep": "CREASTMT.STEP010",
+                              "ExecStepCoordinates": "file://jcl/CREASTMT.JCL:44:3",
+                              "Caller": "dd://d9eae3c0:CREASTMT.STEP010.SYSIN",
+                              "CallerContext": "SORT",
+                              "DataReferences": [
+                                {
+                                  "Key": "dsn://AWS.M2.CARDDEMO.TRXFL.SEQ",
+                                  "Coordinates": "file://jcl/CREASTMT.JCL:48:3"
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      },
+                      "DataFlows": [
+                        {
+                          "Type": "read",
+                          "ExecStep": "CREASTMT.STEP010",
+                          "ExecStepCoordinates": "file://jcl/CREASTMT.JCL:44:3",
+                          "Caller": "dd://d9eae3c0:CREASTMT.STEP010.SYSIN",
+                          "CallerContext": "SORT",
+                          "DataReferences": [
+                            {
+                              "Key": "dsn://AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:45:3"
+                            }
+                          ]
+                        },
+                        {
+                          "Type": "write",
+                          "ExecStep": "CREASTMT.STEP010",
+                          "ExecStepCoordinates": "file://jcl/CREASTMT.JCL:44:3",
+                          "Caller": "dd://d9eae3c0:CREASTMT.STEP010.SYSIN",
+                          "CallerContext": "SORT",
+                          "DataReferences": [
+                            {
+                              "Key": "dsn://AWS.M2.CARDDEMO.TRXFL.SEQ",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:48:3"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "Key": "file://jcl/CREASTMT.JCL",
+              "Context": "JCL",
+              "CallSite": "file://jcl/CREASTMT.JCL:56:3",
+              "OnDiskPath": "jcl/CREASTMT.JCL",
+              "CallFrameType": "JCLExec",
+              "JCLLabel": "STEP020",
+              "JCLExecStepContentRange": "file://jcl/CREASTMT.JCL:56:0-60:0",
+              "Params": [
+                {
+                  "Name": "PGM",
+                  "Value": "IDCAMS",
+                  "Coordinates": "file://jcl/CREASTMT.JCL:56:17"
+                },
+                {
+                  "Name": "COND",
+                  "List": [
+                    {
+                      "Value": "0",
+                      "Coordinates": "file://jcl/CREASTMT.JCL:56:34"
+                    },
+                    {
+                      "Value": "NE",
+                      "Coordinates": "file://jcl/CREASTMT.JCL:56:36"
+                    }
+                  ],
+                  "Coordinates": "file://jcl/CREASTMT.JCL:56:28"
+                }
+              ],
+              "DDGroups": [
+                {
+                  "DDName": "SYSPRINT",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "SYSOUT",
+                          "Value": "*",
+                          "Coordinates": "file://jcl/CREASTMT.JCL:57:16"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/CREASTMT.JCL:57:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "INFILE",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://jcl/CREASTMT.JCL:58:16"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.TRXFL.SEQ",
+                          "Coordinates": "file://jcl/CREASTMT.JCL:58:25"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/CREASTMT.JCL:58:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "OUTFILE",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://jcl/CREASTMT.JCL:59:16"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.TRXFL.VSAM.KSDS",
+                          "Coordinates": "file://jcl/CREASTMT.JCL:59:25"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/CREASTMT.JCL:59:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "SYSIN",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Value": "*",
+                          "Coordinates": "file://jcl/CREASTMT.JCL:60:16"
+                        }
+                      ],
+                      "InlineData": "  REPRO INFILE(INFILE) OUTFILE(OUTFILE)\n",
+                      "Coordinates": "file://jcl/CREASTMT.JCL:60:3"
+                    }
+                  ]
+                }
+              ],
+              "Children": [
+                {
+                  "Key": "system://IDCAMS",
+                  "Context": "EXECUTABLE",
+                  "CallSite": "file://jcl/CREASTMT.JCL:56:3",
+                  "CallFrameType": "Invocation",
+                  "DataFlows": [
+                    {
+                      "Type": "read",
+                      "ExecStep": "CREASTMT.STEP020",
+                      "ExecStepCoordinates": "file://jcl/CREASTMT.JCL:56:3",
+                      "Caller": "system://IDCAMS",
+                      "CallerContext": "EXECUTABLE",
+                      "IsReadForControlCard": true,
+                      "DataReferences": [
+                        {
+                          "Key": "dd://aff89f13:CREASTMT.STEP020.SYSIN",
+                          "Coordinates": "file://jcl/CREASTMT.JCL:60:3",
+                          "IsNoise": true
+                        }
+                      ]
+                    }
+                  ],
+                  "Children": [
+                    {
+                      "Key": "dd://aff89f13:CREASTMT.STEP020.SYSIN",
+                      "Context": "IDCAMS",
+                      "CallSite": "file://jcl/CREASTMT.JCL:56:3",
+                      "CallFrameType": "Invocation",
+                      "Complexity": {
+                        "NumLines": 2,
+                        "NumLinesWithComment": 2,
+                        "ComplexityContribution": 1
+                      },
+                      "DataFlows": [
+                        {
+                          "Type": "write",
+                          "ExecStep": "CREASTMT.STEP020",
+                          "ExecStepCoordinates": "file://jcl/CREASTMT.JCL:56:3",
+                          "Caller": "dd://aff89f13:CREASTMT.STEP020.SYSIN",
+                          "CallerContext": "IDCAMS",
+                          "DataReferences": [
+                            {
+                              "Key": "sysout://(H)",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:57:3"
+                            }
+                          ]
+                        },
+                        {
+                          "Type": "copy",
+                          "ExecStep": "CREASTMT.STEP020",
+                          "ExecStepCoordinates": "file://jcl/CREASTMT.JCL:56:3",
+                          "Caller": "dd://aff89f13:CREASTMT.STEP020.SYSIN",
+                          "CallerContext": "IDCAMS",
+                          "CallerCoordinates": "dd://aff89f13:CREASTMT.STEP020.SYSIN:1:3",
+                          "CopySources": [
+                            {
+                              "Key": "dsn://AWS.M2.CARDDEMO.TRXFL.SEQ",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:58:3"
+                            }
+                          ],
+                          "CopyTarget": {
+                            "Key": "dsn://AWS.M2.CARDDEMO.TRXFL.VSAM.KSDS",
+                            "Coordinates": "file://jcl/CREASTMT.JCL:59:3"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "Key": "file://jcl/CREASTMT.JCL",
+              "Context": "JCL",
+              "CallSite": "file://jcl/CREASTMT.JCL:66:3",
+              "OnDiskPath": "jcl/CREASTMT.JCL",
+              "CallFrameType": "JCLExec",
+              "JCLLabel": "STEP030",
+              "JCLExecStepContentRange": "file://jcl/CREASTMT.JCL:66:0-72:0",
+              "Params": [
+                {
+                  "Name": "PGM",
+                  "Value": "IEFBR14",
+                  "Coordinates": "file://jcl/CREASTMT.JCL:66:17"
+                },
+                {
+                  "Name": "COND",
+                  "List": [
+                    {
+                      "Value": "0",
+                      "Coordinates": "file://jcl/CREASTMT.JCL:66:35"
+                    },
+                    {
+                      "Value": "NE",
+                      "Coordinates": "file://jcl/CREASTMT.JCL:66:37"
+                    }
+                  ],
+                  "Coordinates": "file://jcl/CREASTMT.JCL:66:29"
+                }
+              ],
+              "DDGroups": [
+                {
+                  "DDName": "HTMLFILE",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "List": [
+                            {
+                              "Value": "MOD",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:67:21"
+                            },
+                            {
+                              "Value": "DELETE",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:67:25"
+                            },
+                            {
+                              "Value": "DELETE",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:67:32"
+                            }
+                          ],
+                          "Coordinates": "file://jcl/CREASTMT.JCL:67:15"
+                        },
+                        {
+                          "Name": "UNIT",
+                          "Value": "SYSDA",
+                          "Coordinates": "file://jcl/CREASTMT.JCL:68:12"
+                        },
+                        {
+                          "Name": "DCB",
+                          "List": [
+                            {
+                              "Name": "LRECL",
+                              "Value": "80",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:69:17"
+                            },
+                            {
+                              "Name": "BLKSIZE",
+                              "Value": "3200",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:69:26"
+                            },
+                            {
+                              "Name": "RECFM",
+                              "Value": "FB",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:69:39"
+                            }
+                          ],
+                          "Coordinates": "file://jcl/CREASTMT.JCL:69:12"
+                        },
+                        {
+                          "Name": "SPACE",
+                          "List": [
+                            {
+                              "Value": "CYL",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:70:19"
+                            },
+                            {
+                              "List": [
+                                {
+                                  "Value": "1",
+                                  "Coordinates": "file://jcl/CREASTMT.JCL:70:24"
+                                },
+                                {
+                                  "Value": "1",
+                                  "Coordinates": "file://jcl/CREASTMT.JCL:70:26"
+                                }
+                              ],
+                              "Coordinates": "file://jcl/CREASTMT.JCL:70:23"
+                            },
+                            {
+                              "Value": "RLSE",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:70:29"
+                            }
+                          ],
+                          "Coordinates": "file://jcl/CREASTMT.JCL:70:12"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.STATEMNT.HTML",
+                          "Coordinates": "file://jcl/CREASTMT.JCL:71:12"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/CREASTMT.JCL:67:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "STMTFILE",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "List": [
+                            {
+                              "Value": "MOD",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:72:21"
+                            },
+                            {
+                              "Value": "DELETE",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:72:25"
+                            },
+                            {
+                              "Value": "DELETE",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:72:32"
+                            }
+                          ],
+                          "Coordinates": "file://jcl/CREASTMT.JCL:72:15"
+                        },
+                        {
+                          "Name": "DCB",
+                          "List": [
+                            {
+                              "Name": "LRECL",
+                              "Value": "80",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:73:17"
+                            },
+                            {
+                              "Name": "BLKSIZE",
+                              "Value": "8000",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:73:26"
+                            },
+                            {
+                              "Name": "RECFM",
+                              "Value": "FB",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:73:39"
+                            }
+                          ],
+                          "Coordinates": "file://jcl/CREASTMT.JCL:73:12"
+                        },
+                        {
+                          "Name": "SPACE",
+                          "List": [
+                            {
+                              "Value": "CYL",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:74:19"
+                            },
+                            {
+                              "List": [
+                                {
+                                  "Value": "1",
+                                  "Coordinates": "file://jcl/CREASTMT.JCL:74:24"
+                                },
+                                {
+                                  "Value": "1",
+                                  "Coordinates": "file://jcl/CREASTMT.JCL:74:26"
+                                }
+                              ],
+                              "Coordinates": "file://jcl/CREASTMT.JCL:74:23"
+                            },
+                            {
+                              "Value": "RLSE",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:74:29"
+                            }
+                          ],
+                          "Coordinates": "file://jcl/CREASTMT.JCL:74:12"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.STATEMNT.PS",
+                          "Coordinates": "file://jcl/CREASTMT.JCL:75:12"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/CREASTMT.JCL:72:3"
+                    }
+                  ]
+                }
+              ],
+              "DataFlows": [
+                {
+                  "Type": "delete",
+                  "ExecStep": "CREASTMT.STEP030",
+                  "ExecStepCoordinates": "file://jcl/CREASTMT.JCL:66:3",
+                  "Caller": "file://jcl/CREASTMT.JCL",
+                  "CallerContext": "JCL",
+                  "DataReferences": [
+                    {
+                      "Key": "dsn://AWS.M2.CARDDEMO.STATEMNT.HTML",
+                      "Coordinates": "file://jcl/CREASTMT.JCL:67:3"
+                    },
+                    {
+                      "Key": "dsn://AWS.M2.CARDDEMO.STATEMNT.PS",
+                      "Coordinates": "file://jcl/CREASTMT.JCL:72:3"
+                    }
+                  ]
+                }
+              ],
+              "Children": [
+                {
+                  "Key": "system://IEFBR14",
+                  "Context": "EXECUTABLE",
+                  "CallSite": "file://jcl/CREASTMT.JCL:66:3",
+                  "CallFrameType": "Invocation"
+                }
+              ]
+            },
+            {
+              "Key": "file://jcl/CREASTMT.JCL",
+              "Context": "JCL",
+              "CallSite": "file://jcl/CREASTMT.JCL:79:3",
+              "OnDiskPath": "jcl/CREASTMT.JCL",
+              "CallFrameType": "JCLExec",
+              "JCLLabel": "STEP040",
+              "JCLExecStepContentRange": "file://jcl/CREASTMT.JCL:79:0-92:0",
+              "Params": [
+                {
+                  "Name": "PGM",
+                  "Value": "CBSTM03A",
+                  "Coordinates": "file://jcl/CREASTMT.JCL:79:17"
+                },
+                {
+                  "Name": "COND",
+                  "List": [
+                    {
+                      "Value": "0",
+                      "Coordinates": "file://jcl/CREASTMT.JCL:79:36"
+                    },
+                    {
+                      "Value": "NE",
+                      "Coordinates": "file://jcl/CREASTMT.JCL:79:38"
+                    }
+                  ],
+                  "Coordinates": "file://jcl/CREASTMT.JCL:79:30"
+                }
+              ],
+              "DDGroups": [
+                {
+                  "DDName": "STEPLIB",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://jcl/CREASTMT.JCL:80:16"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.LOADLIB",
+                          "Coordinates": "file://jcl/CREASTMT.JCL:80:25"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/CREASTMT.JCL:80:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "SYSPRINT",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "SYSOUT",
+                          "Value": "*",
+                          "Coordinates": "file://jcl/CREASTMT.JCL:81:16"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/CREASTMT.JCL:81:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "SYSOUT",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "SYSOUT",
+                          "Value": "*",
+                          "Coordinates": "file://jcl/CREASTMT.JCL:82:16"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/CREASTMT.JCL:82:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "TRNXFILE",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://jcl/CREASTMT.JCL:83:16"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.TRXFL.VSAM.KSDS",
+                          "Coordinates": "file://jcl/CREASTMT.JCL:83:25"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/CREASTMT.JCL:83:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "XREFFILE",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://jcl/CREASTMT.JCL:84:16"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS",
+                          "Coordinates": "file://jcl/CREASTMT.JCL:84:25"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/CREASTMT.JCL:84:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "ACCTFILE",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://jcl/CREASTMT.JCL:85:16"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS",
+                          "Coordinates": "file://jcl/CREASTMT.JCL:85:25"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/CREASTMT.JCL:85:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "CUSTFILE",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://jcl/CREASTMT.JCL:86:16"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.CUSTDATA.VSAM.KSDS",
+                          "Coordinates": "file://jcl/CREASTMT.JCL:86:25"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/CREASTMT.JCL:86:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "STMTFILE",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "List": [
+                            {
+                              "Value": "NEW",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:87:21"
+                            },
+                            {
+                              "Value": "CATLG",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:87:25"
+                            },
+                            {
+                              "Value": "DELETE",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:87:31"
+                            }
+                          ],
+                          "Coordinates": "file://jcl/CREASTMT.JCL:87:15"
+                        },
+                        {
+                          "Name": "UNIT",
+                          "Value": "SYSDA",
+                          "Coordinates": "file://jcl/CREASTMT.JCL:88:12"
+                        },
+                        {
+                          "Name": "DCB",
+                          "List": [
+                            {
+                              "Name": "LRECL",
+                              "Value": "80",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:89:17"
+                            },
+                            {
+                              "Name": "BLKSIZE",
+                              "Value": "8000",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:89:26"
+                            },
+                            {
+                              "Name": "RECFM",
+                              "Value": "FB",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:89:39"
+                            }
+                          ],
+                          "Coordinates": "file://jcl/CREASTMT.JCL:89:12"
+                        },
+                        {
+                          "Name": "SPACE",
+                          "List": [
+                            {
+                              "Value": "CYL",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:90:19"
+                            },
+                            {
+                              "List": [
+                                {
+                                  "Value": "1",
+                                  "Coordinates": "file://jcl/CREASTMT.JCL:90:24"
+                                },
+                                {
+                                  "Value": "1",
+                                  "Coordinates": "file://jcl/CREASTMT.JCL:90:26"
+                                }
+                              ],
+                              "Coordinates": "file://jcl/CREASTMT.JCL:90:23"
+                            },
+                            {
+                              "Value": "RLSE",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:90:29"
+                            }
+                          ],
+                          "Coordinates": "file://jcl/CREASTMT.JCL:90:12"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.STATEMNT.PS",
+                          "Coordinates": "file://jcl/CREASTMT.JCL:91:12"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/CREASTMT.JCL:87:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "HTMLFILE",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "List": [
+                            {
+                              "Value": "NEW",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:92:22"
+                            },
+                            {
+                              "Value": "CATLG",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:92:26"
+                            },
+                            {
+                              "Value": "DELETE",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:92:32"
+                            }
+                          ],
+                          "Coordinates": "file://jcl/CREASTMT.JCL:92:16"
+                        },
+                        {
+                          "Name": "UNIT",
+                          "Value": "SYSDA",
+                          "Coordinates": "file://jcl/CREASTMT.JCL:93:12"
+                        },
+                        {
+                          "Name": "DCB",
+                          "List": [
+                            {
+                              "Name": "LRECL",
+                              "Value": "100",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:94:17"
+                            },
+                            {
+                              "Name": "BLKSIZE",
+                              "Value": "800",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:94:27"
+                            },
+                            {
+                              "Name": "RECFM",
+                              "Value": "FB",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:94:39"
+                            }
+                          ],
+                          "Coordinates": "file://jcl/CREASTMT.JCL:94:12"
+                        },
+                        {
+                          "Name": "SPACE",
+                          "List": [
+                            {
+                              "Value": "CYL",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:95:19"
+                            },
+                            {
+                              "List": [
+                                {
+                                  "Value": "1",
+                                  "Coordinates": "file://jcl/CREASTMT.JCL:95:24"
+                                },
+                                {
+                                  "Value": "1",
+                                  "Coordinates": "file://jcl/CREASTMT.JCL:95:26"
+                                }
+                              ],
+                              "Coordinates": "file://jcl/CREASTMT.JCL:95:23"
+                            },
+                            {
+                              "Value": "RLSE",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:95:29"
+                            }
+                          ],
+                          "Coordinates": "file://jcl/CREASTMT.JCL:95:12"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.STATEMNT.HTML",
+                          "Coordinates": "file://jcl/CREASTMT.JCL:96:12"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/CREASTMT.JCL:92:3"
+                    }
+                  ]
+                }
+              ],
+              "Children": [
+                {
+                  "Key": "file://cbl/CBSTM03A.CBL",
+                  "Context": "COBOL",
+                  "CallSite": "file://jcl/CREASTMT.JCL:79:3",
+                  "OnDiskPath": "cbl/CBSTM03A.CBL",
+                  "CallFrameType": "Invocation",
+                  "Complexity": {
+                    "NumLines": 840,
+                    "NumLinesWithComment": 1024,
+                    "NumLinesNoCopybook": 784,
+                    "NumLinesNoCopybookWithComment": 925,
+                    "CyclomaticComplexity": 85,
+                    "ComplexityContribution": 817
+                  },
+                  "CobolBindings": {
+                    "DDAssignments": [
+                      {
+                        "Variable": "STMT-FILE",
+                        "DDNames": [
+                          "STMTFILE"
+                        ],
+                        "References": [
+                          {
+                            "Key": "dsn://AWS.M2.CARDDEMO.STATEMNT.PS",
+                            "Coordinates": "file://jcl/CREASTMT.JCL:87:3"
+                          }
+                        ],
+                        "RecordVariables": [
+                          {
+                            "Name": "FD-STMTFILE-REC",
+                            "Range": "file://cbl/CBSTM03A.CBL:45:0-45:0"
+                          },
+                          {
+                            "Name": "ST-LINE12",
+                            "Range": "file://cbl/CBSTM03A.CBL:126:0-127:0"
+                          },
+                          {
+                            "Name": "ST-LINE14A",
+                            "Range": "file://cbl/CBSTM03A.CBL:138:0-142:0"
+                          },
+                          {
+                            "Name": "ST-LINE15",
+                            "Range": "file://cbl/CBSTM03A.CBL:143:0-146:0"
+                          },
+                          {
+                            "Name": "ST-LINE0",
+                            "Range": "file://cbl/CBSTM03A.CBL:86:0-89:0"
+                          },
+                          {
+                            "Name": "ST-LINE1",
+                            "Range": "file://cbl/CBSTM03A.CBL:90:0-92:0"
+                          },
+                          {
+                            "Name": "ST-LINE2",
+                            "Range": "file://cbl/CBSTM03A.CBL:93:0-95:0"
+                          },
+                          {
+                            "Name": "ST-LINE3",
+                            "Range": "file://cbl/CBSTM03A.CBL:96:0-98:0"
+                          },
+                          {
+                            "Name": "ST-LINE4",
+                            "Range": "file://cbl/CBSTM03A.CBL:99:0-100:0"
+                          },
+                          {
+                            "Name": "ST-LINE5",
+                            "Range": "file://cbl/CBSTM03A.CBL:101:0-102:0"
+                          },
+                          {
+                            "Name": "ST-LINE6",
+                            "Range": "file://cbl/CBSTM03A.CBL:103:0-106:0"
+                          },
+                          {
+                            "Name": "ST-LINE7",
+                            "Range": "file://cbl/CBSTM03A.CBL:107:0-110:0"
+                          },
+                          {
+                            "Name": "ST-LINE8",
+                            "Range": "file://cbl/CBSTM03A.CBL:111:0-115:0"
+                          },
+                          {
+                            "Name": "ST-LINE9",
+                            "Range": "file://cbl/CBSTM03A.CBL:116:0-119:0"
+                          },
+                          {
+                            "Name": "ST-LINE10",
+                            "Range": "file://cbl/CBSTM03A.CBL:120:0-121:0"
+                          },
+                          {
+                            "Name": "ST-LINE11",
+                            "Range": "file://cbl/CBSTM03A.CBL:122:0-125:0"
+                          },
+                          {
+                            "Name": "ST-LINE13",
+                            "Range": "file://cbl/CBSTM03A.CBL:128:0-131:0"
+                          },
+                          {
+                            "Name": "ST-LINE14",
+                            "Range": "file://cbl/CBSTM03A.CBL:132:0-137:0"
+                          }
+                        ],
+                        "Mode": "OUTPUT",
+                        "Coordinates": "file://cbl/CBSTM03A.CBL:39:11"
+                      },
+                      {
+                        "Variable": "HTML-FILE",
+                        "DDNames": [
+                          "HTMLFILE"
+                        ],
+                        "References": [
+                          {
+                            "Key": "dsn://AWS.M2.CARDDEMO.STATEMNT.HTML",
+                            "Coordinates": "file://jcl/CREASTMT.JCL:92:3"
+                          }
+                        ],
+                        "RecordVariables": [
+                          {
+                            "Name": "FD-HTMLFILE-REC",
+                            "Range": "file://cbl/CBSTM03A.CBL:47:0-47:0"
+                          },
+                          {
+                            "Name": "HTML-FIXED-LN",
+                            "Range": "file://cbl/CBSTM03A.CBL:149:0-211:0"
+                          },
+                          {
+                            "Name": "HTML-L11",
+                            "Range": "file://cbl/CBSTM03A.CBL:212:0-216:0"
+                          },
+                          {
+                            "Name": "HTML-ADDR-LN",
+                            "Range": "file://cbl/CBSTM03A.CBL:221:0-221:0"
+                          },
+                          {
+                            "Name": "HTML-BSIC-LN",
+                            "Range": "file://cbl/CBSTM03A.CBL:222:0-222:0"
+                          },
+                          {
+                            "Name": "HTML-TRAN-LN",
+                            "Range": "file://cbl/CBSTM03A.CBL:223:0-223:0"
+                          }
+                        ],
+                        "Mode": "OUTPUT",
+                        "Coordinates": "file://cbl/CBSTM03A.CBL:40:11"
+                      }
+                    ],
+                    "Copybooks": [
+                      {
+                        "Key": "file://cpy/COSTM01.CPY",
+                        "OnDiskPath": "cpy/COSTM01.CPY",
+                        "Context": "COBOL_COPYBOOK",
+                        "Coordinates": "file://cbl/CBSTM03A.CBL:51:7",
+                        "Division": "DATA DIVISION",
+                        "Section": "WORKING-STORAGE SECTION",
+                        "NumLines": 17,
+                        "NumLinesWithComment": 39
+                      },
+                      {
+                        "Key": "file://cpy/CVACT03Y.cpy",
+                        "OnDiskPath": "cpy/CVACT03Y.cpy",
+                        "Context": "COBOL_COPYBOOK",
+                        "Coordinates": "file://cbl/CBSTM03A.CBL:53:7",
+                        "Division": "DATA DIVISION",
+                        "Section": "WORKING-STORAGE SECTION",
+                        "NumLines": 5,
+                        "NumLinesWithComment": 12
+                      },
+                      {
+                        "Key": "file://cpy/CUSTREC.cpy",
+                        "OnDiskPath": "cpy/CUSTREC.cpy",
+                        "Context": "COBOL_COPYBOOK",
+                        "Coordinates": "file://cbl/CBSTM03A.CBL:55:7",
+                        "Division": "DATA DIVISION",
+                        "Section": "WORKING-STORAGE SECTION",
+                        "NumLines": 20,
+                        "NumLinesWithComment": 27
+                      },
+                      {
+                        "Key": "file://cpy/CVACT01Y.cpy",
+                        "OnDiskPath": "cpy/CVACT01Y.cpy",
+                        "Context": "COBOL_COPYBOOK",
+                        "Coordinates": "file://cbl/CBSTM03A.CBL:57:7",
+                        "Division": "DATA DIVISION",
+                        "Section": "WORKING-STORAGE SECTION",
+                        "NumLines": 14,
+                        "NumLinesWithComment": 21
+                      }
+                    ]
+                  },
+                  "DataFlows": [
+                    {
+                      "Type": "write",
+                      "ExecStep": "CREASTMT.STEP040",
+                      "ExecStepCoordinates": "file://jcl/CREASTMT.JCL:79:3",
+                      "Caller": "file://cbl/CBSTM03A.CBL",
+                      "CallerContext": "COBOL",
+                      "CallerCoordinates": "file://cbl/CBSTM03A.CBL:39:11",
+                      "DataReferences": [
+                        {
+                          "Key": "dsn://AWS.M2.CARDDEMO.STATEMNT.PS",
+                          "Coordinates": "file://jcl/CREASTMT.JCL:87:3"
+                        }
+                      ]
+                    },
+                    {
+                      "Type": "write",
+                      "ExecStep": "CREASTMT.STEP040",
+                      "ExecStepCoordinates": "file://jcl/CREASTMT.JCL:79:3",
+                      "Caller": "file://cbl/CBSTM03A.CBL",
+                      "CallerContext": "COBOL",
+                      "CallerCoordinates": "file://cbl/CBSTM03A.CBL:40:11",
+                      "DataReferences": [
+                        {
+                          "Key": "dsn://AWS.M2.CARDDEMO.STATEMNT.HTML",
+                          "Coordinates": "file://jcl/CREASTMT.JCL:92:3"
+                        }
+                      ]
+                    }
+                  ],
+                  "Children": [
+                    {
+                      "Key": "file://cbl/CBSTM03B.CBL",
+                      "Context": "COBOL",
+                      "CallSite": "file://cbl/CBSTM03A.CBL:351:16",
+                      "OnDiskPath": "cbl/CBSTM03B.CBL",
+                      "CallFrameType": "Invocation",
+                      "InvocationOperation": "CALL",
+                      "Complexity": {
+                        "NumLines": 162,
+                        "NumLinesWithComment": 231,
+                        "NumLinesNoCopybook": 162,
+                        "NumLinesNoCopybookWithComment": 231,
+                        "CyclomaticComplexity": 23,
+                        "ComplexityContribution": 196
+                      },
+                      "CobolBindings": {
+                        "DDAssignments": [
+                          {
+                            "Variable": "TRNX-FILE",
+                            "VSAMType": "KSDS",
+                            "DDNames": [
+                              "TRNXFILE"
+                            ],
+                            "References": [
+                              {
+                                "Key": "dsn://AWS.M2.CARDDEMO.TRXFL.VSAM.KSDS",
+                                "Coordinates": "file://jcl/CREASTMT.JCL:83:3",
+                                "VSAM": "KSDS"
+                              }
+                            ],
+                            "RecordVariables": [
+                              {
+                                "Name": "FD-TRNXFILE-REC",
+                                "Range": "file://cbl/CBSTM03B.CBL:59:0-63:0"
+                              },
+                              {
+                                "Name": "LK-M03B-FLDT",
+                                "Range": "file://cbl/CBSTM03B.CBL:112:0-112:0"
+                              }
+                            ],
+                            "Mode": "INPUT",
+                            "Coordinates": "file://cbl/CBSTM03B.CBL:31:11"
+                          },
+                          {
+                            "Variable": "XREF-FILE",
+                            "VSAMType": "KSDS",
+                            "DDNames": [
+                              "XREFFILE"
+                            ],
+                            "References": [
+                              {
+                                "Key": "dsn://AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS",
+                                "Coordinates": "file://jcl/CREASTMT.JCL:84:3",
+                                "VSAM": "KSDS"
+                              }
+                            ],
+                            "RecordVariables": [
+                              {
+                                "Name": "FD-XREFFILE-REC",
+                                "Range": "file://cbl/CBSTM03B.CBL:66:0-68:0"
+                              },
+                              {
+                                "Name": "LK-M03B-FLDT",
+                                "Range": "file://cbl/CBSTM03B.CBL:112:0-112:0"
+                              }
+                            ],
+                            "Mode": "INPUT",
+                            "Coordinates": "file://cbl/CBSTM03B.CBL:37:11"
+                          },
+                          {
+                            "Variable": "CUST-FILE",
+                            "VSAMType": "KSDS",
+                            "DDNames": [
+                              "CUSTFILE"
+                            ],
+                            "References": [
+                              {
+                                "Key": "dsn://AWS.M2.CARDDEMO.CUSTDATA.VSAM.KSDS",
+                                "Coordinates": "file://jcl/CREASTMT.JCL:86:3",
+                                "VSAM": "KSDS"
+                              }
+                            ],
+                            "RecordVariables": [
+                              {
+                                "Name": "FD-CUSTFILE-REC",
+                                "Range": "file://cbl/CBSTM03B.CBL:71:0-73:0"
+                              },
+                              {
+                                "Name": "LK-M03B-FLDT",
+                                "Range": "file://cbl/CBSTM03B.CBL:112:0-112:0"
+                              }
+                            ],
+                            "Mode": "INPUT",
+                            "Coordinates": "file://cbl/CBSTM03B.CBL:43:11"
+                          },
+                          {
+                            "Variable": "ACCT-FILE",
+                            "VSAMType": "KSDS",
+                            "DDNames": [
+                              "ACCTFILE"
+                            ],
+                            "References": [
+                              {
+                                "Key": "dsn://AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS",
+                                "Coordinates": "file://jcl/CREASTMT.JCL:85:3",
+                                "VSAM": "KSDS"
+                              }
+                            ],
+                            "RecordVariables": [
+                              {
+                                "Name": "FD-ACCTFILE-REC",
+                                "Range": "file://cbl/CBSTM03B.CBL:76:0-78:0"
+                              },
+                              {
+                                "Name": "LK-M03B-FLDT",
+                                "Range": "file://cbl/CBSTM03B.CBL:112:0-112:0"
+                              }
+                            ],
+                            "Mode": "INPUT",
+                            "Coordinates": "file://cbl/CBSTM03B.CBL:49:11"
+                          }
+                        ]
+                      },
+                      "DataFlows": [
+                        {
+                          "Type": "read",
+                          "ExecStep": "CREASTMT.STEP040",
+                          "ExecStepCoordinates": "file://jcl/CREASTMT.JCL:79:3",
+                          "Caller": "file://cbl/CBSTM03B.CBL",
+                          "CallerContext": "COBOL",
+                          "CallerCoordinates": "file://cbl/CBSTM03B.CBL:31:11",
+                          "DataReferences": [
+                            {
+                              "Key": "dsn://AWS.M2.CARDDEMO.TRXFL.VSAM.KSDS",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:83:3",
+                              "VSAM": "KSDS"
+                            }
+                          ]
+                        },
+                        {
+                          "Type": "read",
+                          "ExecStep": "CREASTMT.STEP040",
+                          "ExecStepCoordinates": "file://jcl/CREASTMT.JCL:79:3",
+                          "Caller": "file://cbl/CBSTM03B.CBL",
+                          "CallerContext": "COBOL",
+                          "CallerCoordinates": "file://cbl/CBSTM03B.CBL:37:11",
+                          "DataReferences": [
+                            {
+                              "Key": "dsn://AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:84:3",
+                              "VSAM": "KSDS"
+                            }
+                          ]
+                        },
+                        {
+                          "Type": "read",
+                          "ExecStep": "CREASTMT.STEP040",
+                          "ExecStepCoordinates": "file://jcl/CREASTMT.JCL:79:3",
+                          "Caller": "file://cbl/CBSTM03B.CBL",
+                          "CallerContext": "COBOL",
+                          "CallerCoordinates": "file://cbl/CBSTM03B.CBL:43:11",
+                          "DataReferences": [
+                            {
+                              "Key": "dsn://AWS.M2.CARDDEMO.CUSTDATA.VSAM.KSDS",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:86:3",
+                              "VSAM": "KSDS"
+                            }
+                          ]
+                        },
+                        {
+                          "Type": "read",
+                          "ExecStep": "CREASTMT.STEP040",
+                          "ExecStepCoordinates": "file://jcl/CREASTMT.JCL:79:3",
+                          "Caller": "file://cbl/CBSTM03B.CBL",
+                          "CallerContext": "COBOL",
+                          "CallerCoordinates": "file://cbl/CBSTM03B.CBL:49:11",
+                          "DataReferences": [
+                            {
+                              "Key": "dsn://AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS",
+                              "Coordinates": "file://jcl/CREASTMT.JCL:85:3",
+                              "VSAM": "KSDS"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "Warnings": [
+                    {
+                      "Message": "Unexpected token '[COBOL_TOKEN] 05 #0 7:21-7:23' in variable.  Rewinding.",
+                      "Coordinates": "file://cpy/CUSTREC.cpy:7:7"
+                    },
+                    {
+                      "Message": "Unexpected token '[COBOL_TOKEN] 05 #0 8:21-8:23' in variable.  Rewinding.",
+                      "Coordinates": "file://cpy/CUSTREC.cpy:8:7"
+                    },
+                    {
+                      "Message": "Unexpected token '[COBOL_TOKEN] 05 #0 9:21-9:23' in variable.  Rewinding.",
+                      "Coordinates": "file://cpy/CUSTREC.cpy:9:7"
+                    },
+                    {
+                      "Message": "Unexpected token '[COBOL_TOKEN] 05 #0 10:21-10:23' in variable.  Rewinding.",
+                      "Coordinates": "file://cpy/CUSTREC.cpy:10:7"
+                    },
+                    {
+                      "Message": "Unexpected token '[COBOL_TOKEN] 05 #0 11:21-11:23' in variable.  Rewinding.",
+                      "Coordinates": "file://cpy/CUSTREC.cpy:11:7"
+                    },
+                    {
+                      "Message": "Unexpected token '[COBOL_TOKEN] 05 #0 12:21-12:23' in variable.  Rewinding.",
+                      "Coordinates": "file://cpy/CUSTREC.cpy:12:7"
+                    },
+                    {
+                      "Message": "Unexpected token '[COBOL_TOKEN] 05 #0 13:21-13:23' in variable.  Rewinding.",
+                      "Coordinates": "file://cpy/CUSTREC.cpy:13:7"
+                    },
+                    {
+                      "Message": "Unexpected token '[COBOL_TOKEN] 05 #0 14:21-14:23' in variable.  Rewinding.",
+                      "Coordinates": "file://cpy/CUSTREC.cpy:14:7"
+                    },
+                    {
+                      "Message": "Unexpected token '[COBOL_TOKEN] 05 #0 15:21-15:23' in variable.  Rewinding.",
+                      "Coordinates": "file://cpy/CUSTREC.cpy:15:7"
+                    },
+                    {
+                      "Message": "Unexpected token '[COBOL_TOKEN] 05 #0 16:21-16:23' in variable.  Rewinding.",
+                      "Coordinates": "file://cpy/CUSTREC.cpy:16:7"
+                    },
+                    {
+                      "Message": "Unexpected token '[COBOL_TOKEN] 05 #0 17:21-17:23' in variable.  Rewinding.",
+                      "Coordinates": "file://cpy/CUSTREC.cpy:17:7"
+                    },
+                    {
+                      "Message": "Unexpected token '[COBOL_TOKEN] 05 #0 18:21-18:23' in variable.  Rewinding.",
+                      "Coordinates": "file://cpy/CUSTREC.cpy:18:7"
+                    },
+                    {
+                      "Message": "Unexpected token '[COBOL_TOKEN] 05 #0 19:21-19:23' in variable.  Rewinding.",
+                      "Coordinates": "file://cpy/CUSTREC.cpy:19:7"
+                    },
+                    {
+                      "Message": "Unexpected token '[COBOL_TOKEN] 05 #0 20:21-20:23' in variable.  Rewinding.",
+                      "Coordinates": "file://cpy/CUSTREC.cpy:20:7"
+                    },
+                    {
+                      "Message": "Unexpected token '[COBOL_TOKEN] 05 #0 21:21-21:23' in variable.  Rewinding.",
+                      "Coordinates": "file://cpy/CUSTREC.cpy:21:7"
+                    },
+                    {
+                      "Message": "Unexpected token '[COBOL_TOKEN] 05 #0 22:21-22:23' in variable.  Rewinding.",
+                      "Coordinates": "file://cpy/CUSTREC.cpy:22:7"
+                    },
+                    {
+                      "Message": "Unexpected token '[COBOL_TOKEN] 05 #0 23:13-23:15' in variable.  Rewinding.",
+                      "Coordinates": "file://cpy/CUSTREC.cpy:23:7"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "DynamicContent": {
+    "dd://aff89f13:CREASTMT.STEP020.SYSIN": "  REPRO INFILE(INFILE) OUTFILE(OUTFILE)\n",
+    "dd://c31e3aed:CREASTMT.DELDEF01.SYSIN": "  DELETE    AWS.M2.CARDDEMO.TRXFL.SEQ\n  DELETE    AWS.M2.CARDDEMO.TRXFL.VSAM.KSDS                     -\n            CLUSTER\n  SET       MAXCC = 0\n  DEFINE    CLUSTER  (NAME(AWS.M2.CARDDEMO.TRXFL.VSAM.KSDS)     -\n                      KEYS(32 0)                                -\n                      VOLUMES(TSU023)                           -\n                      RECORDSIZE(350 350)                       -\n                      SHAREOPTIONS(2 3)                         -\n                      ERASE                                     -\n                      INDEXED                                   -\n                      CYL(1 5))                                 -\n            DATA      (NAME(AWS.M2.CARDDEMO.TRXFL.DATA)         -\n                      CISZ(4096))                               -\n            INDEX     (NAME(AWS.M2.CARDDEMO.TRXFL.INDEX))\n",
+    "dd://d9eae3c0:CREASTMT.STEP010.SYSIN": "  SORT FIELDS=(263,16,CH,A,1,16,CH,A)\n  OUTREC FIELDS=(1:263,16,17:1,262,279:279,50)\n"
+  },
+  "DebugInformation": {
+    
+  }
+}
