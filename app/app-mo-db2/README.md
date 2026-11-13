@@ -44,6 +44,7 @@ This extension provides the following capabilities:
 | MODBBAL  | CBMOD02C | Builds daily account balances from transaction history       |
 | MODBRPT  | CBMOD03C | Produces the transaction history report                      |
 | MODBMNT  | CBMOD04C | Flags over-limit accounts and purges old transaction history |
+| MODBUNL  | DSNUTILB | Unloads both DB2 tables to delimited files                   |
 
 ### Directory Structure
 
@@ -95,6 +96,17 @@ Run the jobs after the base daily batch has rebuilt the transaction file (COMBTR
 
 TRANBKP empties the transaction file until COMBTRAN reloads it, so MODBLOAD finds no transactions if it runs between those two jobs. As with the base batch jobs, the VSAM files must be closed in CICS (CLOSEFIL). The header of each job describes its parameters and return codes. To start over, run MODBDRP and then MODBCRT.
 
+### Unloading the Tables
+
+The MODBUNL job unloads both tables to delimited files without changing them. Set `LBL` before each run. Each table gets a header dataset holding its column names and a data dataset with one record per row:
+
+- `MODB.UNL.<LBL>.TRANHIST.HDR` and `MODB.UNL.<LBL>.TRANHIST.DATA`
+- `MODB.UNL.<LBL>.ACCTDBAL.HDR` and `MODB.UNL.<LBL>.ACCTDBAL.DATA`
+
+The data is in DB2's delimited format, in EBCDIC: fields separated by commas, strings in double quotes, and NULL as an empty field. Downloading a table's header dataset and then its data dataset in text mode gives a CSV file with a header line.
+
+To keep the contents of the tables at each step of a cycle, run MODBUNL before MODBLOAD and after each of the other jobs, with a new label each time (for example `U1` to `U5`). A rerun with the same label replaces that label's datasets. The submitting user needs SELECT, or the UNLOAD privilege, on both tables.
+
 ## Technical Details
 
 ### DB2 Tables
@@ -108,7 +120,7 @@ The extension uses the following DB2 tables:
   - TH_TYPE_CD (CHAR(2)): Transaction type code
   - TH_CAT_CD (CHAR(4)): Transaction category code
   - TH_SOURCE (CHAR(10)): Transaction source
-  - TH_DESC (VARCHAR(100)): Transaction description
+  - TH_DESC (VARCHAR(100)): Transaction description, without trailing spaces or low-values
   - TH_AMT (DECIMAL(11,2)): Transaction amount
   - TH_MERCHANT_ID (DECIMAL(9,0)): Merchant ID, NULL when there is no merchant
   - TH_MERCHANT_NAME (VARCHAR(50)): Merchant name, NULL when blank
