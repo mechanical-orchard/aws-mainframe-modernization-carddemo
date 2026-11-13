@@ -341,6 +341,7 @@ Admin users can perform the following functions:
 | MODBBAL  | CBMOD02C | Build daily account balances in Db2                  | Db2: Transaction History |
 | MODBRPT  | CBMOD03C | Transaction history report from Db2                  | Db2: Transaction History |
 | MODBMNT  | CBMOD04C | Flag over-limit accounts and purge Db2 history       | Db2: Transaction History |
+| MODBUNL  | DSNUTILB | Unload Db2 transaction history tables to files       | Db2: Transaction History |
 | WAITSTEP | COBSWAIT | Wait job for given time                              |                |
 
 ### Application Screens
