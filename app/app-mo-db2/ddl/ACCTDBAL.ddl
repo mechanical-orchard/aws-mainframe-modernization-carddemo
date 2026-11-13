@@ -1,0 +1,12 @@
+CREATE TABLE CARDDEMO.ACCT_DAILY_BAL
+(   ADB_ACCT_ID                    DECIMAL(11,0) NOT NULL,
+    ADB_BAL_DATE                   DATE NOT NULL,
+    ADB_OPEN_BAL                   DECIMAL(12,2) NOT NULL,
+    ADB_CREDIT_AMT                 DECIMAL(12,2) NOT NULL,
+    ADB_DEBIT_AMT                  DECIMAL(12,2) NOT NULL,
+    ADB_CLOSE_BAL                  DECIMAL(12,2) NOT NULL,
+    ADB_TRAN_CNT                   INTEGER NOT NULL,
+    ADB_CREDIT_LIMIT               DECIMAL(12,2) NOT NULL,
+    ADB_OVERLIMIT_FLG              CHAR(1) NOT NULL WITH DEFAULT 'N',
+    ADB_FLAG_DATE                  DATE,
+    PRIMARY KEY(ADB_ACCT_ID,ADB_BAL_DATE));

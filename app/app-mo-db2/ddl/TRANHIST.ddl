@@ -1,0 +1,17 @@
+CREATE TABLE CARDDEMO.TRAN_HIST
+(   TH_TRAN_ID                     CHAR(16) NOT NULL,
+    TH_ACCT_ID                     DECIMAL(11,0) NOT NULL,
+    TH_CARD_NUM                    CHAR(16) NOT NULL,
+    TH_TYPE_CD                     CHAR(2) NOT NULL,
+    TH_CAT_CD                      CHAR(4) NOT NULL,
+    TH_SOURCE                      CHAR(10) NOT NULL,
+    TH_DESC                        VARCHAR(100) NOT NULL,
+    TH_AMT                         DECIMAL(11,2) NOT NULL,
+    TH_MERCHANT_ID                 DECIMAL(9,0),
+    TH_MERCHANT_NAME               VARCHAR(50),
+    TH_MERCHANT_CITY               VARCHAR(50),
+    TH_MERCHANT_ZIP                CHAR(10),
+    TH_TRAN_DATE                   DATE NOT NULL,
+    TH_ORIG_TS                     TIMESTAMP NOT NULL,
+    TH_PROC_TS                     TIMESTAMP,
+    PRIMARY KEY(TH_TRAN_ID));
