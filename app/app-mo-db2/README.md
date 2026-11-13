@@ -59,12 +59,12 @@ This extension provides the following capabilities:
 ### Prerequisites
 - Base CardDemo application installed and operational
 - DB2 subsystem configured and accessible
-- A user ID with CREATETS and CREATETAB (or DBADM) on database `CARDDEMO` and CREATEIN on schema `CARDDEMO`. If the `CARDDEMO` database does not exist yet, MODBCRT creates it, which also needs CREATEDBA (or SYSADM)
+- A user ID with CREATETS and CREATETAB (or DBADM) on database `CARDMODB` and CREATEIN on schema `CARDDEMO`. If the `CARDMODB` database does not exist yet, MODBCRT creates it, which also needs CREATEDBA (or SYSADM)
 
 ### Installation Steps
 
 1. **Create DB2 Objects**
-   - Execute the MODBCRT job to create the DB2 tables in the `CARDDEMO` database. It creates the database first, with storage group `SYSDEFLT`, if it does not exist yet
+   - Execute the MODBCRT job to create the DB2 tables in the `CARDMODB` database. It creates the database first, with storage group `SYSDEFLT`, if it does not exist yet
    - Each table has its own tablespace (`MOTHST01`, `MOADBL01`) that uses the default storage group of the database, and MODBDRP drops only those two tablespaces
 
 2. **Compile Programs**
@@ -150,7 +150,7 @@ This module integrates with the base CardDemo application in the following ways:
 2. **Account Data**: The MODBBAL job reads balances and credit limits from the base account file (ACCTDATA)
 3. **Reference Data**: The MODBRPT job looks up transaction type and category names in the base transaction type and category files (TRANTYPE and TRANCATG)
 4. **Read-Only Integration**: The module reads the base VSAM files but does not change any base program or file
-5. **Separate DB2 Objects**: Its own tablespaces in the shared `CARDDEMO` database, and its own package collection and plan (`CARDMODB`), so creating, dropping or rebinding it does not affect the other DB2 extensions
+5. **Separate DB2 Objects**: Its own DB2 database, package collection and plan (all `CARDMODB`), so creating, dropping or rebinding it does not affect the other DB2 extensions
 
 ## Dependencies
 
