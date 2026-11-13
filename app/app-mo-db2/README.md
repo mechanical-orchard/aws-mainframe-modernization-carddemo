@@ -120,7 +120,7 @@ The extension uses the following DB2 tables:
   - TH_TYPE_CD (CHAR(2)): Transaction type code
   - TH_CAT_CD (CHAR(4)): Transaction category code
   - TH_SOURCE (CHAR(10)): Transaction source
-  - TH_DESC (VARCHAR(100)): Transaction description
+  - TH_DESC (VARCHAR(100)): Transaction description, without trailing spaces or low-values
   - TH_AMT (DECIMAL(11,2)): Transaction amount
   - TH_MERCHANT_ID (DECIMAL(9,0)): Merchant ID, NULL when there is no merchant
   - TH_MERCHANT_NAME (VARCHAR(50)): Merchant name, NULL when blank

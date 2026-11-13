@@ -8,6 +8,8 @@
       *               - Looks up each card in CARDXREF for its account
       *               - Stores a zero merchant id, blank merchant
       *                 fields and a blank processing timestamp as NULL
+      *               - Drops trailing spaces and low-values from the
+      *                 description, merchant name and merchant city
       *               - Skips transactions that are already loaded
       *                 (SQLCODE -803), so the job can be rerun
       *               - Commits every 100 inserted rows
@@ -147,7 +149,7 @@
            05  WS-TS-SEP6                       PIC X(01).
            05  WS-TS-FRAC                       PIC X(06).
 
-      *    Trailing-space trim for VARCHAR lengths
+      *    Trailing space and low-value trim for VARCHAR lengths
        01  WS-TRIM-WORK                         PIC X(100).
        01  WS-TRIM-MAX                          PIC S9(4) COMP.
        01  WS-TRIM-LEN                          PIC S9(4) COMP.
@@ -303,7 +305,8 @@
            MOVE TRAN-SOURCE             TO DCL-TH-SOURCE
            MOVE TRAN-AMT                TO DCL-TH-AMT
 
-      *    Description: VARCHAR without trailing spaces
+      *    Description: VARCHAR without trailing spaces or low-values.
+      *    The base interest job pads its descriptions with low-values
            MOVE TRAN-DESC               TO WS-TRIM-WORK
            MOVE LENGTH OF TRAN-DESC     TO WS-TRIM-MAX
            PERFORM 2500-TRIMMED-LENGTH
@@ -446,7 +449,8 @@
            END-EVALUATE.
       *---------------------------------------------------------------*
       * Set WS-TRIM-LEN to the length of WS-TRIM-WORK(1:WS-TRIM-MAX)
-      * without trailing spaces. Zero when it is all spaces.
+      * without trailing spaces or low-values. Zero when it has
+      * nothing else.
       *---------------------------------------------------------------*
        2500-TRIMMED-LENGTH.
            MOVE WS-TRIM-MAX TO WS-TRIM-LEN
@@ -455,7 +459,7 @@
               IF WS-TRIM-LEN = 0
                  SET TRIM-DONE TO TRUE
               ELSE
-                 IF WS-TRIM-WORK(WS-TRIM-LEN:1) = SPACE
+                 IF WS-TRIM-WORK(WS-TRIM-LEN:1) = SPACE OR LOW-VALUE
                     SUBTRACT 1 FROM WS-TRIM-LEN
                  ELSE
                     SET TRIM-DONE TO TRUE
