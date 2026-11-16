@@ -31,6 +31,10 @@
         "cobol"
       ],
       [
+        "app-mo-db2/cpy-bms",
+        "cobol"
+      ],
+      [
         "app-mo-db2/ctl",
         "control"
       ],
