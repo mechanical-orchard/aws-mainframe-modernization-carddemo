@@ -274,7 +274,6 @@ The regular user can perform the following functions:
 Admin users can perform the following functions:
 - User management (list, add, update, delete)
 - Transaction type management (with DB2 optional module)
-- Daily balance list and over-limit flag maintenance (with the Transaction History DB2 optional module)
 
 ### Application Inventory
 
@@ -364,7 +363,7 @@ Admin users can perform the following functions:
 
 ![Admin Menu](./diagrams/Admin-Menu.png "Admin Menu")
 
-**Note**: Options 5 and 6 will be enabled only if you install the Transaction Type Management with DB2 optional feature (transactions CTTU and CTLI). Option 7, Account Daily Balances, will be enabled only if you install the online transactions of the Transaction History with DB2 optional feature (transactions CMDL and CMDU).
+**Note**: Options 5 and 6 will be enabled only if you install the Transaction Type Management with DB2 optional feature (transactions CTTU and CTLI).
 
 ## Technical Highlights
 
