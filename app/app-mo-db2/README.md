@@ -58,7 +58,7 @@ This extension provides the following capabilities:
 | CMDL        | COMODLI | COMODLIC | Lists the daily account balances, with paging and filters       |
 | CMDU        | COMODUP | COMODUPC | Shows one daily balance and sets or clears its over-limit flag  |
 
-Both are in CSD group `CARDMODB`, with a `DB2ENTRY` for plan `CARDMODB` and a `DB2TRAN` for each transaction. CMDL is option 7 of the CardDemo admin menu, and both can also be started by typing their transaction IDs.
+Both are in CSD group `CARDMODB`, with a `DB2ENTRY` for plan `CARDMODB` and a `DB2TRAN` for each transaction. They are not on the CardDemo menus; start them by typing their transaction IDs.
 
 ### Directory Structure
 
@@ -102,7 +102,6 @@ Both are in CSD group `CARDMODB`, with a `DB2ENTRY` for plan `CARDMODB` and a `D
    - Define group `CARDMODB` from `csd/CARDMODB.csd` with DFHCSDUP, then install it in the region (`CEDA INSTALL GROUP(CARDMODB)`) and add it to the region's group list so it survives a restart
    - The programs load from the CardDemo load library. If the region does not have the base `CARDDEMO` group installed, which defines that library, add a `LIBRARY` definition for it to group `CARDMODB`
    - `DB2ENTRY(CARDMODB)` uses `AUTHTYPE(USERID)`, so the signed-on CICS user, or the region's default user when nobody signs on, needs EXECUTE on plan `CARDMODB`
-   - To show the transactions on the admin menu, recompile the base admin menu program `COADM01C`, which copies `COADM02Y`
 
 ## Usage
 
@@ -124,7 +123,7 @@ TRANBKP empties the transaction file until COMBTRAN reloads it, so MODBLOAD find
 
 ### Online Transactions
 
-Choose option 7 on the admin menu, or type `CMDL` on a cleared CICS screen.
+Type `CMDL` (or `CMDU`) on a cleared CICS screen.
 
 - **CMDL** lists the daily balances 10 to a page, in account and date order: account, balance date, opening balance, credits, debits, closing balance, transaction count and over-limit flag (`OL`)
   - Type an account ID, a balance date (`YYYY-MM-DD`) or both and press ENTER to filter; clear them to list everything
@@ -206,8 +205,8 @@ This module integrates with the base CardDemo application in the following ways:
 1. **Transaction Data**: The MODBLOAD job reads the base transaction file (TRANSACT) after COMBTRAN, with the card cross reference (CARDXREF) for account numbers
 2. **Account Data**: The MODBBAL job reads balances and credit limits from the base account file (ACCTDATA)
 3. **Reference Data**: The MODBRPT job looks up transaction type and category names in the base transaction type and category files (TRANTYPE and TRANCATG)
-4. **Read-Only Integration**: The module reads the base VSAM files but does not change them or any base program
-5. **Admin Menu**: The base admin menu copybook `COADM02Y` lists CMDL as option 7. The CICS programs use the CardDemo COMMAREA (`COCOM01Y`), screen header and PF key conventions, and return to their caller with F3
+4. **Read-Only Integration**: The module reads the base VSAM files but does not change any base program or file
+5. **CardDemo Conventions**: The CICS programs use the CardDemo COMMAREA (`COCOM01Y`), screen header and PF key conventions, and return to their caller with F3 (the admin menu when started by transaction ID)
 6. **Separate DB2 and CICS Objects**: Its own DB2 database, package collection and plan, and its own CSD group (all `CARDMODB`), so creating, dropping or rebinding it does not affect the other DB2 extensions
 
 ## Dependencies
