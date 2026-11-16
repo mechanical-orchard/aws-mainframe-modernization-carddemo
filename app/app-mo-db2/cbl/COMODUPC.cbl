@@ -137,6 +137,7 @@
 
            EXEC SQL INCLUDE SQLCA END-EXEC.
            EXEC SQL INCLUDE DCLACDBL END-EXEC.
+           EXEC SQL INCLUDE DCLTRHST END-EXEC.
 
       *----------------------------------------------------------------*
       * COMMAREA: the CardDemo area, then this program's own state.
