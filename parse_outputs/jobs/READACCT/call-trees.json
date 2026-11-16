@@ -1,0 +1,792 @@
+{
+  "ShabakehVersion": "0.93.1",
+  "ShabakehConfig": {
+    "ClientProject": "aws-carddemo",
+    "ClientProjectSHA": "680825087c472083c9586922229b09684e746526",
+    "Targets": [
+      "job://READACCT"
+    ],
+    "Invocation": "extract -call-trees=parse_outputs/jobs/READACCT/call-trees.json -errors-and-warnings=parse_outputs/jobs/READACCT/errors-and-warnings.json --include-params job://READACCT",
+    "IncludeParams": true
+  },
+  "CallTrees": [
+    {
+      "Key": "file://jcl/READACCT.jcl",
+      "Context": "JCL",
+      "CallSite": "file://jcl/READACCT.jcl:0:0",
+      "OnDiskPath": "jcl/READACCT.jcl",
+      "CallFrameType": "Entry",
+      "EntryPointDeterminant": "jcl",
+      "Complexity": {
+        "NumLines": 51,
+        "NumLinesWithComment": 51,
+        "JCLSteps": 2,
+        "ComplexityContribution": 125
+      },
+      "Children": [
+        {
+          "Key": "file://jcl/READACCT.jcl",
+          "Context": "JCL",
+          "CallSite": "file://jcl/READACCT.jcl:1:3",
+          "OnDiskPath": "jcl/READACCT.jcl",
+          "CallFrameType": "JCLJob",
+          "JCLLabel": "READACCT",
+          "Params": [
+            {
+              "Value": "READACCT",
+              "Coordinates": "file://jcl/READACCT.jcl:1:16"
+            },
+            {
+              "Name": "REGION",
+              "Value": "8M",
+              "Coordinates": "file://jcl/READACCT.jcl:1:27"
+            },
+            {
+              "Name": "CLASS",
+              "Value": "A",
+              "Coordinates": "file://jcl/READACCT.jcl:1:37"
+            },
+            {
+              "Name": "MSGCLASS",
+              "Value": "H",
+              "Coordinates": "file://jcl/READACCT.jcl:2:9"
+            },
+            {
+              "Name": "NOTIFY",
+              "Value": "&SYSUID",
+              "Coordinates": "file://jcl/READACCT.jcl:2:20"
+            }
+          ],
+          "Children": [
+            {
+              "Key": "file://jcl/READACCT.jcl",
+              "Context": "JCL",
+              "CallSite": "file://jcl/READACCT.jcl:22:3",
+              "OnDiskPath": "jcl/READACCT.jcl",
+              "CallFrameType": "JCLExec",
+              "JCLLabel": "PREDEL",
+              "JCLExecStepContentRange": "file://jcl/READACCT.jcl:22:0-27:0",
+              "Params": [
+                {
+                  "Name": "PGM",
+                  "Value": "IEFBR14",
+                  "Coordinates": "file://jcl/READACCT.jcl:22:16"
+                }
+              ],
+              "DDGroups": [
+                {
+                  "DDName": "DD01",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.ACCTDATA.PSCOMP",
+                          "Coordinates": "file://jcl/READACCT.jcl:23:15"
+                        },
+                        {
+                          "Name": "DISP",
+                          "List": [
+                            {
+                              "Value": "MOD",
+                              "Coordinates": "file://jcl/READACCT.jcl:24:21"
+                            },
+                            {
+                              "Value": "DELETE",
+                              "Coordinates": "file://jcl/READACCT.jcl:24:25"
+                            },
+                            {
+                              "Value": "DELETE",
+                              "Coordinates": "file://jcl/READACCT.jcl:24:32"
+                            }
+                          ],
+                          "Coordinates": "file://jcl/READACCT.jcl:24:15"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/READACCT.jcl:23:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "DD02",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.ACCTDATA.ARRYPS",
+                          "Coordinates": "file://jcl/READACCT.jcl:25:15"
+                        },
+                        {
+                          "Name": "DISP",
+                          "List": [
+                            {
+                              "Value": "MOD",
+                              "Coordinates": "file://jcl/READACCT.jcl:26:21"
+                            },
+                            {
+                              "Value": "DELETE",
+                              "Coordinates": "file://jcl/READACCT.jcl:26:25"
+                            },
+                            {
+                              "Value": "DELETE",
+                              "Coordinates": "file://jcl/READACCT.jcl:26:32"
+                            }
+                          ],
+                          "Coordinates": "file://jcl/READACCT.jcl:26:15"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/READACCT.jcl:25:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "DD03",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.ACCTDATA.VBPS",
+                          "Coordinates": "file://jcl/READACCT.jcl:27:15"
+                        },
+                        {
+                          "Name": "DISP",
+                          "List": [
+                            {
+                              "Value": "MOD",
+                              "Coordinates": "file://jcl/READACCT.jcl:28:21"
+                            },
+                            {
+                              "Value": "DELETE",
+                              "Coordinates": "file://jcl/READACCT.jcl:28:25"
+                            },
+                            {
+                              "Value": "DELETE",
+                              "Coordinates": "file://jcl/READACCT.jcl:28:32"
+                            }
+                          ],
+                          "Coordinates": "file://jcl/READACCT.jcl:28:15"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/READACCT.jcl:27:3"
+                    }
+                  ]
+                }
+              ],
+              "DataFlows": [
+                {
+                  "Type": "delete",
+                  "ExecStep": "READACCT.PREDEL",
+                  "ExecStepCoordinates": "file://jcl/READACCT.jcl:22:3",
+                  "Caller": "file://jcl/READACCT.jcl",
+                  "CallerContext": "JCL",
+                  "DataReferences": [
+                    {
+                      "Key": "dsn://AWS.M2.CARDDEMO.ACCTDATA.PSCOMP",
+                      "Coordinates": "file://jcl/READACCT.jcl:23:3"
+                    },
+                    {
+                      "Key": "dsn://AWS.M2.CARDDEMO.ACCTDATA.ARRYPS",
+                      "Coordinates": "file://jcl/READACCT.jcl:25:3"
+                    },
+                    {
+                      "Key": "dsn://AWS.M2.CARDDEMO.ACCTDATA.VBPS",
+                      "Coordinates": "file://jcl/READACCT.jcl:27:3"
+                    }
+                  ]
+                }
+              ],
+              "Children": [
+                {
+                  "Key": "system://IEFBR14",
+                  "Context": "EXECUTABLE",
+                  "CallSite": "file://jcl/READACCT.jcl:22:3",
+                  "CallFrameType": "Invocation"
+                }
+              ]
+            },
+            {
+              "Key": "file://jcl/READACCT.jcl",
+              "Context": "JCL",
+              "CallSite": "file://jcl/READACCT.jcl:32:3",
+              "OnDiskPath": "jcl/READACCT.jcl",
+              "CallFrameType": "JCLExec",
+              "JCLLabel": "STEP05",
+              "JCLExecStepContentRange": "file://jcl/READACCT.jcl:32:0-50:0",
+              "Params": [
+                {
+                  "Name": "PGM",
+                  "Value": "CBACT01C",
+                  "Coordinates": "file://jcl/READACCT.jcl:32:15"
+                }
+              ],
+              "DDGroups": [
+                {
+                  "DDName": "STEPLIB",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://jcl/READACCT.jcl:33:15"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.LOADLIB",
+                          "Coordinates": "file://jcl/READACCT.jcl:34:12"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/READACCT.jcl:33:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "ACCTFILE",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://jcl/READACCT.jcl:35:15"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS",
+                          "Coordinates": "file://jcl/READACCT.jcl:36:12"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/READACCT.jcl:35:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "OUTFILE",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.ACCTDATA.PSCOMP",
+                          "Coordinates": "file://jcl/READACCT.jcl:37:15"
+                        },
+                        {
+                          "Name": "DISP",
+                          "List": [
+                            {
+                              "Value": "NEW",
+                              "Coordinates": "file://jcl/READACCT.jcl:38:21"
+                            },
+                            {
+                              "Value": "CATLG",
+                              "Coordinates": "file://jcl/READACCT.jcl:38:25"
+                            },
+                            {
+                              "Value": "DELETE",
+                              "Coordinates": "file://jcl/READACCT.jcl:38:31"
+                            }
+                          ],
+                          "Coordinates": "file://jcl/READACCT.jcl:38:15"
+                        },
+                        {
+                          "Name": "DCB",
+                          "List": [
+                            {
+                              "Name": "LRECL",
+                              "Value": "107",
+                              "Coordinates": "file://jcl/READACCT.jcl:39:20"
+                            },
+                            {
+                              "Name": "RECFM",
+                              "Value": "FB",
+                              "Coordinates": "file://jcl/READACCT.jcl:39:30"
+                            },
+                            {
+                              "Name": "DSORG",
+                              "Value": "PS",
+                              "Coordinates": "file://jcl/READACCT.jcl:39:39"
+                            },
+                            {
+                              "Name": "BLKSIZE",
+                              "Value": "0",
+                              "Coordinates": "file://jcl/READACCT.jcl:39:48"
+                            }
+                          ],
+                          "Coordinates": "file://jcl/READACCT.jcl:39:15"
+                        },
+                        {
+                          "Name": "UNIT",
+                          "Value": "SYSAD",
+                          "Coordinates": "file://jcl/READACCT.jcl:40:15"
+                        },
+                        {
+                          "Name": "SPACE",
+                          "List": [
+                            {
+                              "Value": "CYL",
+                              "Coordinates": "file://jcl/READACCT.jcl:40:33"
+                            },
+                            {
+                              "List": [
+                                {
+                                  "Value": "1",
+                                  "Coordinates": "file://jcl/READACCT.jcl:40:38"
+                                },
+                                {
+                                  "Value": "2",
+                                  "Coordinates": "file://jcl/READACCT.jcl:40:40"
+                                }
+                              ],
+                              "Coordinates": "file://jcl/READACCT.jcl:40:37"
+                            },
+                            {
+                              "Value": "RLSE",
+                              "Coordinates": "file://jcl/READACCT.jcl:40:43"
+                            }
+                          ],
+                          "Coordinates": "file://jcl/READACCT.jcl:40:26"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/READACCT.jcl:37:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "ARRYFILE",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.ACCTDATA.ARRYPS",
+                          "Coordinates": "file://jcl/READACCT.jcl:41:15"
+                        },
+                        {
+                          "Name": "DISP",
+                          "List": [
+                            {
+                              "Value": "NEW",
+                              "Coordinates": "file://jcl/READACCT.jcl:42:21"
+                            },
+                            {
+                              "Value": "CATLG",
+                              "Coordinates": "file://jcl/READACCT.jcl:42:25"
+                            },
+                            {
+                              "Value": "DELETE",
+                              "Coordinates": "file://jcl/READACCT.jcl:42:31"
+                            }
+                          ],
+                          "Coordinates": "file://jcl/READACCT.jcl:42:15"
+                        },
+                        {
+                          "Name": "DCB",
+                          "List": [
+                            {
+                              "Name": "LRECL",
+                              "Value": "110",
+                              "Coordinates": "file://jcl/READACCT.jcl:43:20"
+                            },
+                            {
+                              "Name": "RECFM",
+                              "Value": "FB",
+                              "Coordinates": "file://jcl/READACCT.jcl:43:30"
+                            },
+                            {
+                              "Name": "DSORG",
+                              "Value": "PS",
+                              "Coordinates": "file://jcl/READACCT.jcl:43:39"
+                            },
+                            {
+                              "Name": "BLKSIZE",
+                              "Value": "0",
+                              "Coordinates": "file://jcl/READACCT.jcl:43:48"
+                            }
+                          ],
+                          "Coordinates": "file://jcl/READACCT.jcl:43:15"
+                        },
+                        {
+                          "Name": "UNIT",
+                          "Value": "SYSAD",
+                          "Coordinates": "file://jcl/READACCT.jcl:44:15"
+                        },
+                        {
+                          "Name": "SPACE",
+                          "List": [
+                            {
+                              "Value": "CYL",
+                              "Coordinates": "file://jcl/READACCT.jcl:44:33"
+                            },
+                            {
+                              "List": [
+                                {
+                                  "Value": "1",
+                                  "Coordinates": "file://jcl/READACCT.jcl:44:38"
+                                },
+                                {
+                                  "Value": "2",
+                                  "Coordinates": "file://jcl/READACCT.jcl:44:40"
+                                }
+                              ],
+                              "Coordinates": "file://jcl/READACCT.jcl:44:37"
+                            },
+                            {
+                              "Value": "RLSE",
+                              "Coordinates": "file://jcl/READACCT.jcl:44:43"
+                            }
+                          ],
+                          "Coordinates": "file://jcl/READACCT.jcl:44:26"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/READACCT.jcl:41:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "VBRCFILE",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DSN",
+                          "Value": "AWS.M2.CARDDEMO.ACCTDATA.VBPS",
+                          "Coordinates": "file://jcl/READACCT.jcl:45:15"
+                        },
+                        {
+                          "Name": "DISP",
+                          "List": [
+                            {
+                              "Value": "NEW",
+                              "Coordinates": "file://jcl/READACCT.jcl:46:21"
+                            },
+                            {
+                              "Value": "CATLG",
+                              "Coordinates": "file://jcl/READACCT.jcl:46:25"
+                            },
+                            {
+                              "Value": "DELETE",
+                              "Coordinates": "file://jcl/READACCT.jcl:46:31"
+                            }
+                          ],
+                          "Coordinates": "file://jcl/READACCT.jcl:46:15"
+                        },
+                        {
+                          "Name": "DCB",
+                          "List": [
+                            {
+                              "Name": "LRECL",
+                              "Value": "84",
+                              "Coordinates": "file://jcl/READACCT.jcl:47:20"
+                            },
+                            {
+                              "Name": "RECFM",
+                              "Value": "VB",
+                              "Coordinates": "file://jcl/READACCT.jcl:47:29"
+                            },
+                            {
+                              "Name": "DSORG",
+                              "Value": "PS",
+                              "Coordinates": "file://jcl/READACCT.jcl:47:38"
+                            },
+                            {
+                              "Name": "BLKSIZE",
+                              "Value": "0",
+                              "Coordinates": "file://jcl/READACCT.jcl:47:47"
+                            }
+                          ],
+                          "Coordinates": "file://jcl/READACCT.jcl:47:15"
+                        },
+                        {
+                          "Name": "UNIT",
+                          "Value": "SYSAD",
+                          "Coordinates": "file://jcl/READACCT.jcl:48:15"
+                        },
+                        {
+                          "Name": "SPACE",
+                          "List": [
+                            {
+                              "Value": "CYL",
+                              "Coordinates": "file://jcl/READACCT.jcl:48:33"
+                            },
+                            {
+                              "List": [
+                                {
+                                  "Value": "1",
+                                  "Coordinates": "file://jcl/READACCT.jcl:48:38"
+                                },
+                                {
+                                  "Value": "2",
+                                  "Coordinates": "file://jcl/READACCT.jcl:48:40"
+                                }
+                              ],
+                              "Coordinates": "file://jcl/READACCT.jcl:48:37"
+                            },
+                            {
+                              "Value": "RLSE",
+                              "Coordinates": "file://jcl/READACCT.jcl:48:43"
+                            }
+                          ],
+                          "Coordinates": "file://jcl/READACCT.jcl:48:26"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/READACCT.jcl:45:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "SYSOUT",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "SYSOUT",
+                          "Value": "*",
+                          "Coordinates": "file://jcl/READACCT.jcl:49:15"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/READACCT.jcl:49:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "SYSPRINT",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "SYSOUT",
+                          "Value": "*",
+                          "Coordinates": "file://jcl/READACCT.jcl:50:15"
+                        }
+                      ],
+                      "Coordinates": "file://jcl/READACCT.jcl:50:3"
+                    }
+                  ]
+                }
+              ],
+              "Children": [
+                {
+                  "Key": "file://cbl/CBACT01C.cbl",
+                  "Context": "COBOL",
+                  "CallSite": "file://jcl/READACCT.jcl:32:3",
+                  "OnDiskPath": "cbl/CBACT01C.cbl",
+                  "CallFrameType": "Invocation",
+                  "Complexity": {
+                    "NumLines": 408,
+                    "NumLinesWithComment": 505,
+                    "NumLinesNoCopybook": 358,
+                    "NumLinesNoCopybookWithComment": 431,
+                    "CyclomaticComplexity": 49,
+                    "ComplexityContribution": 424
+                  },
+                  "CobolBindings": {
+                    "DDAssignments": [
+                      {
+                        "Variable": "ACCTFILE-FILE",
+                        "VSAMType": "KSDS",
+                        "DDNames": [
+                          "ACCTFILE"
+                        ],
+                        "References": [
+                          {
+                            "Key": "dsn://AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS",
+                            "Coordinates": "file://jcl/READACCT.jcl:35:3",
+                            "VSAM": "KSDS"
+                          }
+                        ],
+                        "RecordVariables": [
+                          {
+                            "Name": "FD-ACCTFILE-REC",
+                            "Range": "file://cbl/CBACT01C.cbl:53:0-55:0"
+                          },
+                          {
+                            "Name": "ACCOUNT-RECORD",
+                            "Range": "file://cpy/CVACT01Y.cpy:4:0-17:0"
+                          }
+                        ],
+                        "Mode": "INPUT",
+                        "Coordinates": "file://cbl/CBACT01C.cbl:29:11"
+                      },
+                      {
+                        "Variable": "OUT-FILE",
+                        "DDNames": [
+                          "OUTFILE"
+                        ],
+                        "References": [
+                          {
+                            "Key": "dsn://AWS.M2.CARDDEMO.ACCTDATA.PSCOMP",
+                            "Coordinates": "file://jcl/READACCT.jcl:37:3"
+                          }
+                        ],
+                        "RecordVariables": [
+                          {
+                            "Name": "OUT-ACCT-REC",
+                            "Range": "file://cbl/CBACT01C.cbl:57:0-69:0"
+                          }
+                        ],
+                        "Mode": "OUTPUT",
+                        "Coordinates": "file://cbl/CBACT01C.cbl:35:11"
+                      },
+                      {
+                        "Variable": "ARRY-FILE",
+                        "DDNames": [
+                          "ARRYFILE"
+                        ],
+                        "References": [
+                          {
+                            "Key": "dsn://AWS.M2.CARDDEMO.ACCTDATA.ARRYPS",
+                            "Coordinates": "file://jcl/READACCT.jcl:41:3"
+                          }
+                        ],
+                        "RecordVariables": [
+                          {
+                            "Name": "ARR-ARRAY-REC",
+                            "Range": "file://cbl/CBACT01C.cbl:72:0-78:0"
+                          }
+                        ],
+                        "Mode": "OUTPUT",
+                        "Coordinates": "file://cbl/CBACT01C.cbl:40:11"
+                      },
+                      {
+                        "Variable": "VBRC-FILE",
+                        "DDNames": [
+                          "VBRCFILE"
+                        ],
+                        "References": [
+                          {
+                            "Key": "dsn://AWS.M2.CARDDEMO.ACCTDATA.VBPS",
+                            "Coordinates": "file://jcl/READACCT.jcl:45:3"
+                          }
+                        ],
+                        "RecordVariables": [
+                          {
+                            "Name": "VBR-REC",
+                            "Range": "file://cbl/CBACT01C.cbl:85:0-85:0"
+                          }
+                        ],
+                        "Mode": "OUTPUT",
+                        "Coordinates": "file://cbl/CBACT01C.cbl:45:11"
+                      }
+                    ],
+                    "Copybooks": [
+                      {
+                        "Key": "file://cpy/CVACT01Y.cpy",
+                        "OnDiskPath": "cpy/CVACT01Y.cpy",
+                        "Context": "COBOL_COPYBOOK",
+                        "Coordinates": "file://cbl/CBACT01C.cbl:89:7",
+                        "Division": "DATA DIVISION",
+                        "Section": "WORKING-STORAGE SECTION",
+                        "NumLines": 14,
+                        "NumLinesWithComment": 21
+                      },
+                      {
+                        "Key": "file://cpy/CODATECN.cpy",
+                        "OnDiskPath": "cpy/CODATECN.cpy",
+                        "Context": "COBOL_COPYBOOK",
+                        "Coordinates": "file://cbl/CBACT01C.cbl:90:7",
+                        "Division": "DATA DIVISION",
+                        "Section": "WORKING-STORAGE SECTION",
+                        "NumLines": 36,
+                        "NumLinesWithComment": 53
+                      }
+                    ]
+                  },
+                  "DataFlows": [
+                    {
+                      "Type": "read",
+                      "ExecStep": "READACCT.STEP05",
+                      "ExecStepCoordinates": "file://jcl/READACCT.jcl:32:3",
+                      "Caller": "file://cbl/CBACT01C.cbl",
+                      "CallerContext": "COBOL",
+                      "CallerCoordinates": "file://cbl/CBACT01C.cbl:29:11",
+                      "DataReferences": [
+                        {
+                          "Key": "dsn://AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS",
+                          "Coordinates": "file://jcl/READACCT.jcl:35:3",
+                          "VSAM": "KSDS"
+                        }
+                      ]
+                    },
+                    {
+                      "Type": "write",
+                      "ExecStep": "READACCT.STEP05",
+                      "ExecStepCoordinates": "file://jcl/READACCT.jcl:32:3",
+                      "Caller": "file://cbl/CBACT01C.cbl",
+                      "CallerContext": "COBOL",
+                      "CallerCoordinates": "file://cbl/CBACT01C.cbl:35:11",
+                      "DataReferences": [
+                        {
+                          "Key": "dsn://AWS.M2.CARDDEMO.ACCTDATA.PSCOMP",
+                          "Coordinates": "file://jcl/READACCT.jcl:37:3"
+                        }
+                      ]
+                    },
+                    {
+                      "Type": "write",
+                      "ExecStep": "READACCT.STEP05",
+                      "ExecStepCoordinates": "file://jcl/READACCT.jcl:32:3",
+                      "Caller": "file://cbl/CBACT01C.cbl",
+                      "CallerContext": "COBOL",
+                      "CallerCoordinates": "file://cbl/CBACT01C.cbl:40:11",
+                      "DataReferences": [
+                        {
+                          "Key": "dsn://AWS.M2.CARDDEMO.ACCTDATA.ARRYPS",
+                          "Coordinates": "file://jcl/READACCT.jcl:41:3"
+                        }
+                      ]
+                    },
+                    {
+                      "Type": "write",
+                      "ExecStep": "READACCT.STEP05",
+                      "ExecStepCoordinates": "file://jcl/READACCT.jcl:32:3",
+                      "Caller": "file://cbl/CBACT01C.cbl",
+                      "CallerContext": "COBOL",
+                      "CallerCoordinates": "file://cbl/CBACT01C.cbl:45:11",
+                      "DataReferences": [
+                        {
+                          "Key": "dsn://AWS.M2.CARDDEMO.ACCTDATA.VBPS",
+                          "Coordinates": "file://jcl/READACCT.jcl:45:3"
+                        }
+                      ]
+                    }
+                  ],
+                  "Children": [
+                    {
+                      "Key": "file://asm/COBDATFT.asm",
+                      "Context": "ASSEMBLY",
+                      "CallSite": "file://cbl/CBACT01C.cbl:231:16",
+                      "OnDiskPath": "asm/COBDATFT.asm",
+                      "CallFrameType": "Invocation",
+                      "InvocationOperation": "CALL",
+                      "Complexity": {
+                        "NumLines": 85,
+                        "NumLinesWithComment": 85,
+                        "ComplexityContribution": 42
+                      },
+                      "Warnings": [
+                        {
+                          "Message": "Unresolved ASSEMBLY",
+                          "Coordinates": "file://jcl/READACCT.jcl:32:3",
+                          "UnresolvedEntity": {
+                            "Reason": "Unsupported",
+                            "Entity": "file://asm/COBDATFT.asm",
+                            "Context": "ASSEMBLY"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "DebugInformation": {
+    
+  }
+}
