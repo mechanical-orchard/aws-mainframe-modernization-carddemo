@@ -100,7 +100,7 @@ Both are in CSD group `CARDMODB`, with a `DB2ENTRY` for plan `CARDMODB` and a `D
    - Assemble the maps `COMODLI` and `COMODUP` with `samples/jcl/BMSCMP.jcl`, which also writes their copybooks to the copybook library
    - Compile `COMODLIC` and `COMODUPC` with `samples/jcl/ONLDBCMP.jcl` and procedure `samples/proc/BLDONDB2.prc`. They precompile, compile with the integrated CICS translator, link-edit with `DSNCLI` and bind into collection `CARDMODB`
    - Define group `CARDMODB` from `csd/CARDMODB.csd` with DFHCSDUP, then install it in the region (`CEDA INSTALL GROUP(CARDMODB)`) and add it to the region's group list so it survives a restart
-   - The programs load from the CardDemo load library. If the region does not have the base `CARDDEMO` group installed, which defines that library, add a `LIBRARY` definition for it to group `CARDMODB`
+   - The programs and maps load from the CardDemo load library. On this branch, group `CARDMODB` defines it as `LIBRARY(CARDMODL)` (`MO.CARDDEMO.LOADLIB`), because the target region does not have the base `CARDDEMO` group installed. Delete that definition from the group if your region already installs the base group, which defines the same library
    - `DB2ENTRY(CARDMODB)` uses `AUTHTYPE(USERID)`, so the signed-on CICS user, or the region's default user when nobody signs on, needs EXECUTE on plan `CARDMODB`
    - To show the transactions on the admin menu, recompile the base admin menu program `COADM01C`, which copies `COADM02Y`
 

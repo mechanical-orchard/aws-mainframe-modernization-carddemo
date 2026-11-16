@@ -1,4 +1,4 @@
-//ONLDBCMP JOB 'Compile CICS DB2 PGM',CLASS=A,MSGCLASS=H,
+//ONLDBCMP JOB 'Compile CICS DB2 PGM',CLASS=A,MSGCLASS=0,
 //             MSGLEVEL=(1,1),REGION=0M,NOTIFY=&SYSUID,TIME=1440
 //*********************************************************************
 //*  Compile, link and bind one CICS COBOL Db2 program.
@@ -41,15 +41,15 @@
 //*********************************************************************
 // EXPORT SYMLIST=*
 //   SET MEMNAME=COMODLIC
-//   SET HLQ=AWS.M2.CARDDEMO
-//   SET SSID=DAZ1
+//   SET HLQ=MO.CARDDEMO
+//   SET SSID=DS13
 //   SET PLAN=CARDMODB
 //   SET COLL=CARDMODB
 //   SET QUAL=CARDDEMO
 //*********************************************************************
 //*  Add proclib reference
 //*********************************************************************
-//CCLIBS  JCLLIB ORDER=&HLQ..PROC.UTIL
+//CCLIBS  JCLLIB ORDER=&HLQ..PRC.UTIL
 //*********************************************************************
 //*  compile the COBOL code:
 //*********************************************************************
