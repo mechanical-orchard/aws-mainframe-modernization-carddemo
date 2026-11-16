@@ -19,7 +19,8 @@
 001900 01 CARDDEMO-ADMIN-MENU-OPTIONS.                                  00190000
 002000*    Option added for Db2 release                                 00200000
 002100*  05 CDEMO-ADMIN-OPT-COUNT           PIC 9(02) VALUE 4.          00210000
-002200   05 CDEMO-ADMIN-OPT-COUNT           PIC 9(02) VALUE 6.          00220000
+002150*  05 CDEMO-ADMIN-OPT-COUNT           PIC 9(02) VALUE 6.          00215000
+002200   05 CDEMO-ADMIN-OPT-COUNT           PIC 9(02) VALUE 7.          00220000
 002300*Option added for Db2 release                                     00230000
 002400   05 CDEMO-ADMIN-OPTIONS-DATA.                                   00240000
 002500                                                                  00250000
@@ -51,6 +52,11 @@
 004920     10 FILLER                        PIC X(35) VALUE             00492000
 004930         'Transaction Type Maintenance (Db2) '.                   00493003
 004940     10 FILLER                        PIC X(08) VALUE 'COTRTUPC'. 00494002
+004950*    Option added for Dispute Db2 module                          00495000
+004960     10 FILLER                        PIC 9(02) VALUE 7.          00496000
+004970     10 FILLER                        PIC X(35) VALUE             00497000
+004980         'Transaction Dispute Mgmt (Db2)     '.                   00498000
+004990     10 FILLER                        PIC X(08) VALUE 'CODISLIC'. 00499000
 005000*    Option added for Db2 v1 release end                          00500002
 005100   05 CDEMO-ADMIN-OPTIONS REDEFINES CDEMO-ADMIN-OPTIONS-DATA.     00510000
 005200     10 CDEMO-ADMIN-OPT OCCURS 9 TIMES.                           00520000
