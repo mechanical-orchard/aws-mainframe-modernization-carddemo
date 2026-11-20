@@ -16,33 +16,33 @@
 //* either express or implied. See the License for the specific     
 //* language governing permissions and limitations under the License
 //******************************************************************            
-//JOBLIB JCLLIB ORDER=('AWS.M2.CARDDEMO.PROC')                                  
+//JOBLIB JCLLIB ORDER=('MO.CARDDEMO.PROC')                                  
 //*
 //DELDEF   EXEC PGM=IEFBR14
 //THEFILE  DD DISP=(MOD,DELETE),
 //         UNIT=SYSDA,
 //         SPACE=(TRK,(1,1),RLSE),
-//         DSN=AWS.M2.CARDDEMO.TCATBALF.REPT
+//         DSN=MO.CARDDEMO.TCATBALF.REPT
 //* ********************************************************`***********        
 //* Unload the processed transaction category balance file                      
 //* *******************************************************************         
 //STEP05R EXEC PROC=REPROC,                                                     
-// CNTLLIB=AWS.M2.CARDDEMO.CNTL                                                 
+// CNTLLIB=MO.CARDDEMO.CNTL                                                 
 //*                                                                             
 //PRC001.FILEIN  DD DISP=SHR,                                                   
-//        DSN=AWS.M2.CARDDEMO.TCATBALF.VSAM.KSDS                                
+//        DSN=MO.CARDDEMO.TCATBALF.VSAM.KSDS                                
 //*                                                                             
 //PRC001.FILEOUT DD DISP=(NEW,CATLG,DELETE),                                    
 //        UNIT=SYSDA,                                                           
 //        DCB=(LRECL=50,RECFM=FB,BLKSIZE=0),                                   
 //        SPACE=(CYL,(1,1),RLSE),                                               
-//        DSN=AWS.M2.CARDDEMO.TCATBALF.BKUP(+1)                                 
+//        DSN=MO.CARDDEMO.TCATBALF.BKUP(+1)                                 
 //* *******************************************************************         
 //* Filter the TCATBALFions for a the parm date and sort by card num            
 //* *******************************************************************         
 //STEP10R  EXEC PGM=SORT                                                        
 //SORTIN   DD DISP=SHR,                                                         
-//         DSN=AWS.M2.CARDDEMO.TCATBALF.BKUP(+1)                                
+//         DSN=MO.CARDDEMO.TCATBALF.BKUP(+1)                                
 //SYMNAMES DD *                                                                 
 TRANCAT-ACCT-ID,1,11,ZD                                                         
 TRANCAT-TYPE-CD,12,2,CH                                                         
@@ -60,7 +60,7 @@ TRAN-CAT-BAL,18,11,ZD
 //         UNIT=SYSDA,                                                          
 //         DCB=(LRECL=40,RECFM=FB,BLKSIZE=0),                                   
 //         SPACE=(CYL,(1,1),RLSE),                                              
-//         DSN=AWS.M2.CARDDEMO.TCATBALF.REPT                              
+//         DSN=MO.CARDDEMO.TCATBALF.REPT                              
 //*
 //* Ver: CardDemo_v1.0-15-g27d6c6f-68 Date: 2022-07-19 23:23:06 CDT
 //*

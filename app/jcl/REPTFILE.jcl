@@ -23,7 +23,7 @@
 //SYSPRINT DD   SYSOUT=*                                                        
 //SYSIN    DD   *                                                               
    DEFINE GENERATIONDATAGROUP -                                                 
-   (NAME(AWS.M2.CARDDEMO.TRANREPT) -                                            
+   (NAME(MO.CARDDEMO.TRANREPT) -                                            
     LIMIT(10) -                                                                 
    )                                                                            
 /*                                                                              

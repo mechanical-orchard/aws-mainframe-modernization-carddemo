@@ -6,7 +6,7 @@
 //**********************************************************************        
 //STEPDEL  EXEC PGM=IEFBR14                                                     
 //SYSPRINT DD SYSOUT=*                                                          
-//SYSUT1   DD DSN=AWS.M2.CARDDEMO.IMSDATA.DBPAUTP0,                             
+//SYSUT1   DD DSN=MO.CARDDEMO.IMSDATA.DBPAUTP0,                             
 //         DISP=(MOD,DELETE),UNIT=SYSDA,SPACE=(TRK,0)                           
 //*                                                                             
 //**********************************************************************        
@@ -16,13 +16,13 @@
 //         PARM=(ULU,DFSURGU0,DBPAUTP0)                                         
 //* 
 //STEPLIB  DD DSN=OEMA.IMS.IMSP.SDFSRESL,DISP=SHR                               
-//         DD DSN=AWS.M2.CARDDEMO.LOADLIB,DISP=SHR                              
+//         DD DSN=MO.CARDDEMO.LOADLIB,DISP=SHR                              
 //DFSRESLB DD DSN=OEMA.IMS.IMSP.SDFSRESL,DISP=SHR                               
 //IMS      DD DSN=OEM.IMS.IMSP.PSBLIB,DISP=SHR                                  
 //         DD DSN=OEM.IMS.IMSP.DBDLIB,DISP=SHR                                  
 //SYSPRINT DD SYSOUT=*                                                          
 //* 
-//DFSURGU1 DD DSN=AWS.M2.CARDDEMO.IMSDATA.DBPAUTP0,                             
+//DFSURGU1 DD DSN=MO.CARDDEMO.IMSDATA.DBPAUTP0,                             
 //            DISP=(,CATLG,DELETE),                                             
 //            UNIT=SYSDA,                                                       
 //            SPACE=(32274,(600,100),RLSE),                                     

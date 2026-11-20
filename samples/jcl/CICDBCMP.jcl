@@ -30,7 +30,7 @@
 //*********************************************************************
 //*  Set Parms for this compile:
 //*********************************************************************
-//   SET HLQ=AWS.M2.CARDDEMO
+//   SET HLQ=MO.CARDDEMO
 //   SET SSID=DAZ1
 //   SET MEMNAME=CICSDB2P
 //   SET SRCLIB=&HLQ..CBL

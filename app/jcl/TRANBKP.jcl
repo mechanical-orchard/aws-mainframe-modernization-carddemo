@@ -16,31 +16,31 @@
 //* either express or implied. See the License for the specific     
 //* language governing permissions and limitations under the License
 //******************************************************************
-//JOBLIB JCLLIB ORDER=('AWS.M2.CARDDEMO.PROC')                                  
+//JOBLIB JCLLIB ORDER=('MO.CARDDEMO.PROC')                                  
 //* *******************************************************************        
 //* Repro the processed transaction file                                       
 //* *******************************************************************         
 //STEP05R EXEC PROC=REPROC,                                                     
-// CNTLLIB=AWS.M2.CARDDEMO.CNTL                                                 
+// CNTLLIB=MO.CARDDEMO.CNTL                                                 
 //*                                                                             
 //PRC001.FILEIN  DD DISP=SHR,                                                   
-//        DSN=AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS                                
+//        DSN=MO.CARDDEMO.TRANSACT.VSAM.KSDS                                
 //*                                                                             
 //PRC001.FILEOUT DD DISP=(NEW,CATLG,DELETE),                                    
 //        UNIT=SYSDA,                                                           
 //        DCB=(LRECL=350,RECFM=FB,BLKSIZE=0),                                   
 //        SPACE=(CYL,(1,1),RLSE),                                               
-//        DSN=AWS.M2.CARDDEMO.TRANSACT.BKUP(+1)                                 
+//        DSN=MO.CARDDEMO.TRANSACT.BKUP(+1)                                 
 //* *******************************************************************         
 //* DELETE TRANSACATION MASTER VSAM FILE IF ONE ALREADY EXISTS                  
 //* *******************************************************************         
 //STEP05 EXEC PGM=IDCAMS                                                        
 //SYSPRINT DD   SYSOUT=*                                                        
 //SYSIN    DD   *                                                               
-   DELETE AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS -                                  
+   DELETE MO.CARDDEMO.TRANSACT.VSAM.KSDS -                                  
           CLUSTER                                                               
    IF MAXCC LE 08 THEN SET MAXCC = 0                                            
-   DELETE AWS.M2.CARDDEMO.TRANSACT.VSAM.AIX -                                   
+   DELETE MO.CARDDEMO.TRANSACT.VSAM.AIX -                                   
           ALTERNATEINDEX                                                        
    IF MAXCC LE 08 THEN SET MAXCC = 0                                            
 /*                                                                              
@@ -51,7 +51,7 @@
 //STEP10 EXEC PGM=IDCAMS,COND=(4,LT)                                            
 //SYSPRINT DD   SYSOUT=*                                                        
 //SYSIN    DD   *                                                               
-   DEFINE CLUSTER (NAME(AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS) -                   
+   DEFINE CLUSTER (NAME(MO.CARDDEMO.TRANSACT.VSAM.KSDS) -                   
           CYLINDERS(1 5) -                                                      
           VOLUMES(AWSHJ1 -                                                      
           ) -                                                                   
@@ -61,9 +61,9 @@
           ERASE -                                                               
           INDEXED -                                                             
           ) -                                                                   
-          DATA (NAME(AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS.DATA) -                 
+          DATA (NAME(MO.CARDDEMO.TRANSACT.VSAM.KSDS.DATA) -                 
           ) -                                                                   
-          INDEX (NAME(AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS.INDEX) -               
+          INDEX (NAME(MO.CARDDEMO.TRANSACT.VSAM.KSDS.INDEX) -               
           )                                                                     
 /*                                                                              
 //*
