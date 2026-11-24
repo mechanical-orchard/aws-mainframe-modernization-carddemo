@@ -89,7 +89,7 @@ CardDemo includes several optional modules that extend the base functionality:
    - Load posted transactions from VSAM into DB2 tables
    - Build daily account balance snapshots and flag accounts over their credit limit
    - Produce a transaction history report from DB2
-   - List daily balances and set or clear an account's over-limit flag online (CMDL and CMDU transactions)
+   - List daily balances and set or clear an account's over-limit flag online, through CICS programs without screens that a caller LINKs to (CMDL and CMDU transactions)
    - Demonstrates batch DB2 patterns including cursors held across commits, null indicators, joins, aggregation and positioned updates, and CICS DB2 patterns including cursor paging and guarded updates with SYNCPOINT
    - More details: [Transaction History Extension](./app/app-mo-db2)
 
@@ -303,8 +303,8 @@ Admin users can perform the following functions:
 | CU03        | COUSR03 | COUSR03C | Delete User                     |                                    |                                                           |
 | CTTU        | COTRTUP | COTRTUPC | Tran Type add/edit              | Db2: Transaction Type Mgmt         | Update and insert on Db2                                  |
 | CTLI        | COTRTLI | COTRTLIC | Tran Type list/update/delete    | Db2: Transaction Type Mgmt         | Demonstrates cursor and delete in Db2                     |
-| CMDL        | COMODLI | COMODLIC | Daily balance list              | Db2: Transaction History           | Demonstrates cursor paging forward and back in Db2        |
-| CMDU        | COMODUP | COMODUPC | Daily balance flag update       | Db2: Transaction History           | Guarded update with SYNCPOINT and ROLLBACK in Db2         |
+| CMDL        |         | COMODLIC | Daily balance list              | Db2: Transaction History           | Cursor paging in Db2, request and response in a COMMAREA  |
+| CMDU        |         | COMODUPC | Daily balance flag update       | Db2: Transaction History           | Guarded update with SYNCPOINT and ROLLBACK, no screen     |
 | CDRD        |         | CODATE01 | Inquire System Date via MQ      | MQ Integration                     | Demonstrates MQ request/response pattern                  |
 | CDRA        |         | COACCT01 | Inquire account details via MQ  | MQ Integration                     | Demonstrates MQ request/response pattern                  |
 
