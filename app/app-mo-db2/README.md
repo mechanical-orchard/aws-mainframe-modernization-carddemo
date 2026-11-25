@@ -5,7 +5,7 @@
 
 ## Overview
 
-The Transaction History module is an optional extension for the CardDemo application that demonstrates DB2 integration patterns in batch and CICS COBOL programs using embedded static SQL. This module loads posted transactions from the VSAM-based transaction processing system into DB2 tables, builds daily account balances from them, and reports on and maintains that history, working alongside the existing VSAM files without changing them. A CICS transaction applies queued account requests: it posts adjustments and sets or clears an account's over-limit flag.
+The Transaction History module is an optional extension for the CardDemo application that demonstrates DB2 integration patterns in batch and CICS COBOL programs using embedded static SQL. This module loads posted transactions from the VSAM-based transaction processing system into DB2 tables, builds daily account balances from them, and reports on and maintains that history, working alongside the existing VSAM files without changing them. A CICS transaction posts pending online transactions to the daily balances and keeps each account's over-limit flag in step.
 
 ## Table of Contents
 - [Features](#features)
@@ -24,7 +24,7 @@ This extension provides the following capabilities:
 - **Daily Balances**: Build daily account balance snapshots and flag accounts that are over their credit limit
 - **Reporting**: Produce a transaction history report from DB2, with each account's closing balance and credit limit
 - **Batch Maintenance**: Purge transaction history older than a retention period
-- **Online Request Processing**: A CICS transaction, without a screen, that works through queued requests in a DB2 table: it posts adjustments to the transaction history and the daily balances, and sets or clears an account's over-limit flag
+- **Online Posting**: A CICS transaction, without a screen, that posts the pending online transactions in the transaction history to the daily balances and sets each account's over-limit flag from its closing balance
 - **DB2 Integration**: Demonstrates various DB2 integration patterns in batch, including:
   - Static embedded SQL with host variables and null indicators
   - Cursor processing across commits and positioned updates
@@ -32,10 +32,10 @@ This extension provides the following capabilities:
   - Insert, update and delete operations, including insert-or-update on duplicate keys
   - DB2 precompiler integration in a batch (TSO attach) environment
   - Proper error handling with SQLCA and DSNTIAR
-- **CICS DB2 Integration**: Demonstrates DB2 in a CICS transaction started with `EXEC CICS START`, whose input is a DB2 work queue, including:
-  - One unit of work per request, ended with SYNCPOINT, and SYNCPOINT ROLLBACK and an abend on a DB2 error
-  - Every outcome, including a rejected request, recorded in DB2 with a reason code
-  - Business dates and keys taken from the request instead of the system clock, so the same requests on the same rows always give the same result
+- **CICS DB2 Integration**: Demonstrates DB2 in a CICS transaction started with `EXEC CICS START`, whose work is the pending rows of a DB2 table, including:
+  - One unit of work per row, ended with SYNCPOINT, and SYNCPOINT ROLLBACK and an abend on a DB2 error
+  - Every outcome, including a rejected row, recorded in DB2
+  - Dates taken from the row instead of the system clock, so the same pending rows on the same balances always give the same result
 
 ## Components
 
@@ -50,15 +50,15 @@ This extension provides the following capabilities:
 | MODBRPT  | CBMOD03C | Produces the transaction history report                      |
 | MODBMNT  | CBMOD04C | Flags over-limit accounts and purges old transaction history |
 | MODBUNL  | DSNUTILB | Unloads the DB2 tables to delimited files                    |
-| MODBREQ  | DSNTIAD  | Adds requests for the CMDR transaction                       |
+| MODBREQ  | DSNTIAD  | Adds pending online transactions for the CMDR transaction    |
 
 ### Online Components
 
 | Transaction | Program  | Function                                                                  |
 |:------------|:---------|:--------------------------------------------------------------------------|
-| CMDR        | COMODRQC | Applies the pending requests in `ACCT_REQUEST`: adjustments and flag updates |
+| CMDR        | COMODRQC | Posts the pending online transactions in `TRAN_HIST` to the daily balances |
 
-CMDR has no screen and takes no COMMAREA: its input is the pending rows of `CARDDEMO.ACCT_REQUEST`, and everything it does is written to DB2. It is in CSD group `CARDMODB`, with a `DB2ENTRY` for plan `CARDMODB` and a `DB2TRAN` for CMDR, so its work runs under plan `CARDMODB`. CICS picks the plan from the transaction a task runs under, so start CMDR as its own transaction (`START TRANSID(CMDR)`) rather than linking to COMODRQC from another one.
+CMDR has no screen and takes no COMMAREA: its input is the pending rows of `CARDDEMO.TRAN_HIST`, and everything it does is written to DB2. It is in CSD group `CARDMODB`, with a `DB2ENTRY` for plan `CARDMODB` and a `DB2TRAN` for CMDR, so its work runs under plan `CARDMODB`. CICS picks the plan from the transaction a task runs under, so start CMDR as its own transaction (`START TRANSID(CMDR)`) rather than linking to COMODRQC from another one.
 
 ### Directory Structure
 
@@ -81,7 +81,7 @@ CMDR has no screen and takes no COMMAREA: its input is the pending rows of `CARD
 
 1. **Create DB2 Objects**
    - Execute the MODBCRT job to create the DB2 tables in the `CARDMODB` database. It creates the database first, with storage group `SYSDEFLT`, if it does not exist yet
-   - Each table has its own tablespace (`MOTHST01`, `MOADBL01`, `MOAREQ01`) that uses the default storage group of the database, and MODBDRP drops only those tablespaces
+   - Each table has its own tablespace (`MOTHST01`, `MOADBL01`) that uses the default storage group of the database, and MODBDRP drops only those two tablespaces
 
 2. **Compile Programs**
    - Compile the COBOL programs with DB2 precompiler support
@@ -118,30 +118,22 @@ Run the jobs after the base daily batch has rebuilt the transaction file (COMBTR
 
 TRANBKP empties the transaction file until COMBTRAN reloads it, so MODBLOAD finds no transactions if it runs between those two jobs. As with the base batch jobs, the VSAM files must be closed in CICS (CLOSEFIL). The header of each job describes its parameters and return codes. To start over, run MODBDRP and then MODBCRT.
 
-### Online Request Processing
+### Online Posting
 
-A request is a row in `CARDDEMO.ACCT_REQUEST` with status `P` (pending). The MODBREQ job adds requests; any program or job with INSERT on the table can. Then start CMDR, for example with `CECI START TRANSID(CMDR)`. CMDR has no terminal: it applies the pending requests one at a time, in `REQ_ID` order, until none is left, and ends.
+An online transaction waits for CMDR in `CARDDEMO.TRAN_HIST`: a row with source (`TH_SOURCE`) `CICS` and no processing timestamp (`TH_PROC_TS` NULL). The MODBREQ job adds such rows; any program or job with INSERT on the table can. Then start CMDR, for example with `CECI START TRANSID(CMDR)`. CMDR has no terminal: it posts the pending rows one at a time, in `TH_TRAN_ID` order, until none is left, and ends.
 
-Each request names an account and a business date (`REQ_BAL_DATE`), the date of the daily balance it applies to:
+Posting a row adds its amount (`TH_AMT`) to the daily balance of its account for its transaction date (`TH_TRAN_DATE`): to the credits when it is positive and to the debits when it is negative, and to the closing balance and the transaction count. The over-limit flag then says whether the closing balance is above the credit limit: a newly set flag is dated with the transaction date, and a cleared one has no date.
 
-- **`A`** posts an adjustment of `REQ_AMT` (positive for a credit, negative for a debit) to card `REQ_CARD_NUM`:
-  - A `TRAN_HIST` row with ID `ADJ` followed by the request ID, type `07` (Adjustment), category `0001`, source `CICS`, the request's description (or `Adjustment`), and the business date as its date and both timestamps
-  - The daily balance's credits or debits, closing balance and transaction count. If the closing balance goes above the credit limit, the over-limit flag is set, dated with the business date
-- **`S`** sets the over-limit flag, dated with the business date, and **`C`** clears it
+A row CMDR cannot post is rejected, and nothing else changes. Its category code (`TH_CAT_CD`) says why:
 
-CMDR marks each request `D` (done), with `REQ_TRAN_ID` naming the row an adjustment posted, or `R` (rejected) with a reason in `REQ_REASON`, and changes nothing else for a rejected request:
+| Category | Why the row is rejected                                   |
+|:---------|:----------------------------------------------------------|
+| `9901`   | There is no daily balance for the account and date        |
+| `9902`   | The amount is zero                                        |
 
-| Reason    | Why the request is rejected                               |
-|:----------|:----------------------------------------------------------|
-| `BADACT`  | The action is not `A`, `S` or `C`                         |
-| `BADAMT`  | `A` without an amount, or with an amount of zero          |
-| `NOCARD`  | `A` without a card number                                 |
-| `NOROW`   | There is no daily balance for the account and date        |
-| `ALREADY` | `S` on a flag that is already set, or `C` on one already clear |
+Either way, CMDR sets the row's processing timestamp to the start of its transaction date, so it is not posted again. Each row is one unit of work. A DB2 error rolls back the row it was posting, leaves it pending, and abends the task with code `MDRQ`; the message is in the region's log. Rows before it stay posted.
 
-Each request is one unit of work. A DB2 error rolls back the request it was applying, leaves it pending, and abends the task with code `MDRQ`; the message is in the region's log. Requests before it stay applied.
-
-Every value CMDR writes comes from the request or the existing rows, never from the system clock, so the same pending requests applied to the same rows always give the same result. The next MODBMNT run recomputes the flags for its as-of date, so it can overwrite a flag CMDR set or cleared for that date.
+Every value CMDR writes comes from the row or the existing balance, never from the system clock, so the same pending rows posted to the same balances always give the same result. MODBBAL rebuilds a date's balances from `TRAN_HIST`, so a rebuild includes the rows CMDR posted; the next MODBMNT run recomputes the flags for its as-of date.
 
 ### Unloading the Tables
 
@@ -190,18 +182,6 @@ The extension uses the following DB2 tables:
   - ADB_OVERLIMIT_FLG (CHAR(1)): Y when the closing balance is above the credit limit
   - ADB_FLAG_DATE (DATE): Date the account was flagged, NULL when not flagged
 
-- **CARDDEMO.ACCT_REQUEST**: Stores requests for the CMDR transaction
-  - REQ_ID (CHAR(12)): Request ID (Primary Key); CMDR applies requests in this order
-  - REQ_ACTION (CHAR(1)): `A` adjustment, `S` set the over-limit flag, `C` clear it
-  - REQ_ACCT_ID (DECIMAL(11,0)): Account ID
-  - REQ_BAL_DATE (DATE): Business date: the daily balance the request applies to, and every date it writes
-  - REQ_CARD_NUM (CHAR(16)): Card number of an adjustment
-  - REQ_AMT (DECIMAL(11,2)): Amount of an adjustment
-  - REQ_DESC (VARCHAR(100)): Description of an adjustment, NULL for the default
-  - REQ_STATUS (CHAR(1)): `P` pending (the default), `D` done, `R` rejected
-  - REQ_REASON (CHAR(8)): Why a request was rejected, NULL otherwise
-  - REQ_TRAN_ID (CHAR(16)): The TRAN_HIST row an adjustment posted, NULL otherwise
-
 ### Integration Patterns
 
 This extension demonstrates several DB2 integration patterns:
@@ -213,8 +193,8 @@ This extension demonstrates several DB2 integration patterns:
 5. **DB2 Precompiler Integration**: Programs are precompiled with DSNHPC. The batch programs are link-edited with DSNELI and run under the TSO attach (IKJEFT01 and DSN RUN); the CICS programs are link-edited with DSNCLI and run under the CICS DB2 attach
 6. **Error Handling**: Each SQL statement checks SQLCODE. In the batch programs, unexpected errors are reported with DSNTIAR, rolled back and abended
 7. **Deterministic Processing**: Business dates come from the PARMFILE instead of the system clock, and every cursor whose rows are written out has an ORDER BY, so a rerun with the same input gives the same output
-8. **CICS Work Queue**: CMDR is started with no data and reads its work from DB2: each time, the pending request with the lowest ID. It reads each request afresh after the previous one's SYNCPOINT, so no cursor is held across units of work
-9. **CICS Units of Work**: Each request is one unit of work, ended with SYNCPOINT. Every check comes before the first write, so a rejected request changes only its own status
+8. **CICS Work Queue**: CMDR is started with no data and reads its work from DB2: each time, the pending row with the lowest ID. It reads each row afresh after the previous one's SYNCPOINT, so no cursor is held across units of work
+9. **CICS Units of Work**: Each row is one unit of work, ended with SYNCPOINT. Every check comes before the first write, so a rejected row changes only itself
 10. **CICS Error Handling**: A Db2 error writes the action, SQLCODE and message tokens to the region's log, without calling DSNTIAC, then rolls back with SYNCPOINT ROLLBACK and abends (`MDRQ`)
 
 ## Integration with Base Application

@@ -89,7 +89,7 @@ CardDemo includes several optional modules that extend the base functionality:
    - Load posted transactions from VSAM into DB2 tables
    - Build daily account balance snapshots and flag accounts over their credit limit
    - Produce a transaction history report from DB2
-   - Apply queued account requests online, posting adjustments and setting or clearing an account's over-limit flag, through a CICS transaction without a screen that reads its work from a DB2 table (CMDR transaction)
+   - Post pending online transactions to the daily balances, keeping each account's over-limit flag in step, through a CICS transaction without a screen that reads its work from a DB2 table (CMDR transaction)
    - Demonstrates batch DB2 patterns including cursors held across commits, null indicators, joins, aggregation and positioned updates, and CICS DB2 patterns including cursor paging and guarded updates with SYNCPOINT
    - More details: [Transaction History Extension](./app/app-mo-db2)
 
@@ -303,7 +303,7 @@ Admin users can perform the following functions:
 | CU03        | COUSR03 | COUSR03C | Delete User                     |                                    |                                                           |
 | CTTU        | COTRTUP | COTRTUPC | Tran Type add/edit              | Db2: Transaction Type Mgmt         | Update and insert on Db2                                  |
 | CTLI        | COTRTLI | COTRTLIC | Tran Type list/update/delete    | Db2: Transaction Type Mgmt         | Demonstrates cursor and delete in Db2                     |
-| CMDR        |         | COMODRQC | Account request processing      | Db2: Transaction History           | Db2 work queue, one unit of work per request, no screen   |
+| CMDR        |         | COMODRQC | Online transaction posting      | Db2: Transaction History           | Db2 work queue, one unit of work per row, no screen       |
 | CDRD        |         | CODATE01 | Inquire System Date via MQ      | MQ Integration                     | Demonstrates MQ request/response pattern                  |
 | CDRA        |         | COACCT01 | Inquire account details via MQ  | MQ Integration                     | Demonstrates MQ request/response pattern                  |
 
