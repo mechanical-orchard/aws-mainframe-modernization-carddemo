@@ -1,0 +1,41 @@
+{
+  "ShabakehVersion": "0.94.66",
+  "ShabakehConfig": {
+    "ClientProject": "aws-carddemo",
+    "ClientProjectSHA": "8c77ccd4a21d2a0c4878972c0e49cd58e0faf65c",
+    "CorpusHash": "sha256:d431c02eeba940d8ffd54749566d25dd00ba09f931a1912185913cf034e82d59",
+    "Targets": [
+      "job://MODBBAL"
+    ],
+    "Invocation": "extract -call-trees=parse_outputs/jobs/MODBBAL/call-trees.json -errors-and-warnings=parse_outputs/jobs/MODBBAL/errors-and-warnings.json --include-params job://MODBBAL",
+    "IncludeParams": true
+  },
+  "ErrorsAndWarnings": {
+    "EntryPointCounts": {
+      "OK": 0,
+      "Warnings": 0,
+      "Errors": 1
+    },
+    "PrefixCounts": {
+      "MODBBAL": {
+      "OK": 0,
+      "Warnings": 0,
+      "Errors": 1
+    }
+    },
+    "UniqueErrors": {
+      "Unhandled operation: EXPORT": 1
+    },
+    "Errors": [
+      {
+        "Message": "Unhandled operation: EXPORT",
+        "Coordinates": "file://app-mo-db2/jcl/MODBBAL.jcl:44:4",
+        "EntryPoint": "MODBBAL",
+        "EntryPointContext": "JCL"
+      }
+    ]
+  },
+  "DebugInformation": {
+    
+  }
+}
