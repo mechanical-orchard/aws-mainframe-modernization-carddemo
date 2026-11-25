@@ -21,7 +21,7 @@
 //****  You can run the SQLs linked here through SPUFI           ****** 00041019
 //****  If you prefer JCL, you can run them from this job        ****** 00041220
 //****  You may need to bind the utilities used first though     ****** 00041320
-//****  See AWS.M2.CARDDEMO.JCL.UTIL(BINDTIAD) to see how        ****** 00042017
+//****  See MO.CARDDEMO.JCL.UTIL(BINDTIAD) to see how        ******     00042017
 //********************************************************************* 00050002
 //*  SET PARMS FOR THIS JOB:                                            00070021
 //********************************************************************* 00071021

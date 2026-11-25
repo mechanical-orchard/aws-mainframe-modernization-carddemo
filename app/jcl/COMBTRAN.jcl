@@ -21,9 +21,9 @@
 //* *******************************************************************         
 //STEP05R  EXEC PGM=SORT                                                        
 //SORTIN   DD DISP=SHR,                                                         
-//         DSN=AWS.M2.CARDDEMO.TRANSACT.BKUP(0)                                
+//         DSN=MO.CARDDEMO.TRANSACT.BKUP(0)                                
 //         DD DISP=SHR,
-//         DSN=AWS.M2.CARDDEMO.SYSTRAN(0)                                
+//         DSN=MO.CARDDEMO.SYSTRAN(0)                                
 //SYMNAMES DD *                                                                 
 TRAN-ID,1,16,CH                                                         
 //SYSIN    DD *                                                                 
@@ -34,16 +34,16 @@ TRAN-ID,1,16,CH
 //         UNIT=SYSDA,                                                          
 //         DCB=(*.SORTIN),                                                      
 //         SPACE=(CYL,(1,1),RLSE),                                              
-//         DSN=AWS.M2.CARDDEMO.TRANSACT.COMBINED(+1)                            
+//         DSN=MO.CARDDEMO.TRANSACT.COMBINED(+1)                            
 //* *******************************************************************         
 //* Load combined file to transaction master
 //* *******************************************************************         
 //STEP10 EXEC PGM=IDCAMS                                                        
 //SYSPRINT DD   SYSOUT=*                                                        
 //TRANSACT DD DISP=SHR,                                                         
-//         DSN=AWS.M2.CARDDEMO.TRANSACT.COMBINED(+1)                            
+//         DSN=MO.CARDDEMO.TRANSACT.COMBINED(+1)                            
 //TRANVSAM DD DISP=SHR,                                                         
-//         DSN=AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS                               
+//         DSN=MO.CARDDEMO.TRANSACT.VSAM.KSDS                               
 //SYSIN    DD   *                                                               
    REPRO INFILE(TRANSACT) OUTFILE(TRANVSAM)                                     
 /*                                                                              

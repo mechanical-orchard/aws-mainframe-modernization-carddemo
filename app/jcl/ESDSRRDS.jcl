@@ -23,7 +23,7 @@
 //*
 //PREDEL  EXEC PGM=IEFBR14
 //*
-//DD01     DD DSN=AWS.M2.CARDDEMO.ESDSRRDS.PS,
+//DD01     DD DSN=MO.CARDDEMO.ESDSRRDS.PS,
 //            DISP=(MOD,DELETE,DELETE)
 //*
 //*-------------------------------------------------------------------*
@@ -44,7 +44,7 @@ USER0003LAURITZ             ALME                PASSWORDU
 USER0004AVERARDO            MAZZI               PASSWORDU
 USER0005LEE                 TING                PASSWORDU
 /*
-//SYSUT2   DD DSN=AWS.M2.CARDDEMO.ESDSRRDS.PS,
+//SYSUT2   DD DSN=MO.CARDDEMO.ESDSRRDS.PS,
 //            DISP=(NEW,CATLG,DELETE),
 //            DCB=(LRECL=80,RECFM=FB,DSORG=PS,BLKSIZE=0),
 //            UNIT=SYSAD,SPACE=(TRK,(10,5),RLSE)
@@ -60,16 +60,16 @@ USER0005LEE                 TING                PASSWORDU
 //*
 //SYSPRINT DD  SYSOUT=*
 //SYSIN    DD  *
- DELETE                  AWS.M2.CARDDEMO.USRSEC.VSAM.ESDS
+ DELETE                  MO.CARDDEMO.USRSEC.VSAM.ESDS
  SET       MAXCC = 0
- DEFINE    CLUSTER (NAME(AWS.M2.CARDDEMO.USRSEC.VSAM.ESDS)    -
+ DEFINE    CLUSTER (NAME(MO.CARDDEMO.USRSEC.VSAM.ESDS)    -
                     RECORDSIZE(80,80)                         -
                     REUSE                                     -
                     NONINDEXED                                -
                     TRACKS(45,15)                             -
                     FREESPACE(10,15)                          -
                     CISZ(8192))                               -
-           DATA    (NAME(AWS.M2.CARDDEMO.USRSEC.VSAM.ESDS.DAT))
+           DATA    (NAME(MO.CARDDEMO.USRSEC.VSAM.ESDS.DAT))
 /*
 //*
 //*-------------------------------------------------------------------*
@@ -78,8 +78,8 @@ USER0005LEE                 TING                PASSWORDU
 //*
 //STEP03  EXEC PGM=IDCAMS
 //*
-//IN       DD  DSN=AWS.M2.CARDDEMO.ESDSRRDS.PS,DISP=SHR
-//OUT      DD  DSN=AWS.M2.CARDDEMO.USRSEC.VSAM.ESDS,DISP=SHR
+//IN       DD  DSN=MO.CARDDEMO.ESDSRRDS.PS,DISP=SHR
+//OUT      DD  DSN=MO.CARDDEMO.USRSEC.VSAM.ESDS,DISP=SHR
 //SYSOUT   DD  SYSOUT=*
 //SYSPRINT DD  SYSOUT=*
 //SYSIN    DD  *
@@ -94,16 +94,16 @@ USER0005LEE                 TING                PASSWORDU
 //*
 //SYSPRINT DD  SYSOUT=*
 //SYSIN    DD  *
- DELETE                  AWS.M2.CARDDEMO.USRSEC.VSAM.RRDS
+ DELETE                  MO.CARDDEMO.USRSEC.VSAM.RRDS
  SET       MAXCC = 0
- DEFINE    CLUSTER (NAME(AWS.M2.CARDDEMO.USRSEC.VSAM.RRDS)    -
+ DEFINE    CLUSTER (NAME(MO.CARDDEMO.USRSEC.VSAM.RRDS)    -
                     RECORDSIZE(80,80)                         -
                     REUSE                                     -
                     NUMBERED                                  -
                     TRACKS(45,15)                             -
                     FREESPACE(10,15)                          -
                     CISZ(8192))                               -
-           DATA    (NAME(AWS.M2.CARDDEMO.USRSEC.VSAM.RRDS.DAT))
+           DATA    (NAME(MO.CARDDEMO.USRSEC.VSAM.RRDS.DAT))
 /*
 //*
 //*-------------------------------------------------------------------*
@@ -112,8 +112,8 @@ USER0005LEE                 TING                PASSWORDU
 //*
 //STEP05  EXEC PGM=IDCAMS
 //*
-//IN       DD  DSN=AWS.M2.CARDDEMO.ESDSRRDS.PS,DISP=SHR
-//OUT      DD  DSN=AWS.M2.CARDDEMO.USRSEC.VSAM.RRDS,DISP=SHR
+//IN       DD  DSN=MO.CARDDEMO.ESDSRRDS.PS,DISP=SHR
+//OUT      DD  DSN=MO.CARDDEMO.USRSEC.VSAM.RRDS,DISP=SHR
 //SYSOUT   DD  SYSOUT=*
 //SYSPRINT DD  SYSOUT=*
 //SYSIN    DD  *

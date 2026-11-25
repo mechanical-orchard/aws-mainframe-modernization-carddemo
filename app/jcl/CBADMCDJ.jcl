@@ -22,7 +22,7 @@
 //*  ---------------------------
 //*  SET PARMS FOR THIS JOB:
 //*  ---------------------------
-//   SET HLQ=AWS.M2.CARDDEMO
+//   SET HLQ=MO.CARDDEMO
 //*
 //STEP1   EXEC PGM=DFHCSDUP,REGION=0M,
 //          PARM='CSD(READWRITE),PAGESIZE(60),NOCOMPAT'
