@@ -3,9 +3,8 @@
 //*********************************************************************
 //*  Compile, link and bind one CICS COBOL Db2 program.
 //*  Set MEMNAME to the program to build and submit once per
-//*  program. The app-mo-db2 CICS programs are:
-//*     COMODLIC  COMODUPC
-//*  Compile their maps COMODLI and COMODUP with BMSCMP first.
+//*  program. The app-mo-db2 CICS program is:
+//*     COMODRQC
 //*  set    HLQ  to your high level qualifier
 //*  set    SSID to your DB2 SSID  !!!
 //*********************************************************************
@@ -40,7 +39,7 @@
 //*  it into the in-stream SYSTSIN data of the PROC
 //*********************************************************************
 // EXPORT SYMLIST=*
-//   SET MEMNAME=COMODLIC
+//   SET MEMNAME=COMODRQC
 //   SET HLQ=MO.CARDDEMO
 //   SET SSID=DS13
 //   SET PLAN=CARDMODB
@@ -57,5 +56,5 @@
 //             PLAN=&PLAN,COLL=&COLL,QUAL=&QUAL
 //*********************************************************************
 //*  After the build, refresh the program in the CICS region, for
-//*  example from SDSF:  /F <region>,'CEMT SET PROG(COMODLIC) NEWCOPY'
+//*  example from SDSF:  /F <region>,'CEMT SET PROG(COMODRQC) NEWCOPY'
 //*********************************************************************
