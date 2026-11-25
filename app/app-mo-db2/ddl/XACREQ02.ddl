@@ -1,5 +1,0 @@
-CREATE INDEX CARDDEMO.XACREQ02
-    ON CARDDEMO.ACCT_REQUEST
-        (REQ_STATUS ASC,
-         REQ_ID     ASC)
-                    CLOSE NO;
