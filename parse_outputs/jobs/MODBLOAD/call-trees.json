@@ -1,0 +1,1211 @@
+{
+  "ShabakehVersion": "0.94.66",
+  "ShabakehConfig": {
+    "ClientProject": "aws-carddemo",
+    "ClientProjectSHA": "768bd0ed0c69599bf0e28b6d99c8909cb7edd38b",
+    "CorpusHash": "sha256:d431c02eeba940d8ffd54749566d25dd00ba09f931a1912185913cf034e82d59",
+    "Targets": [
+      "job://MODBLOAD"
+    ],
+    "Invocation": "extract -call-trees=parse_outputs/jobs/MODBLOAD/call-trees.json -errors-and-warnings=parse_outputs/jobs/MODBLOAD/errors-and-warnings.json --include-params job://MODBLOAD",
+    "IncludeParams": true
+  },
+  "CallTrees": [
+    {
+      "ArtifactKind": "BATCH_JOB",
+      "ShortName": "MODBLOAD",
+      "Language": "JCL",
+      "Key": "file://app-mo-db2/jcl/MODBLOAD.jcl",
+      "Context": "JCL",
+      "CallSite": "file://app-mo-db2/jcl/MODBLOAD.jcl:0:0",
+      "OnDiskPath": "app-mo-db2/jcl/MODBLOAD.jcl",
+      "ContentHash": "sha256:ceeb958fafd1da473c7cb1109aa5a7946c06fc5282c16e7641ad0aab78bfb24c",
+      "Charset": "UTF-8",
+      "CallFrameType": "Entry",
+      "EntryPointDeterminant": "jcl",
+      "Complexity": {
+        "NumLines": 87,
+        "NumLinesWithComment": 87,
+        "JCLSteps": 2,
+        "ComplexityContribution": 143
+      },
+      "Children": [
+        {
+          "ShortName": "MODBLOAD",
+          "Language": "JCL",
+          "Key": "file://app-mo-db2/jcl/MODBLOAD.jcl",
+          "Context": "JCL",
+          "CallSite": "file://app-mo-db2/jcl/MODBLOAD.jcl:1:3",
+          "OnDiskPath": "app-mo-db2/jcl/MODBLOAD.jcl",
+          "ContentHash": "sha256:ceeb958fafd1da473c7cb1109aa5a7946c06fc5282c16e7641ad0aab78bfb24c",
+          "Charset": "UTF-8",
+          "CallFrameType": "JCLJob",
+          "JCLLabel": "MODBLOAD",
+          "Params": [
+            {
+              "List": [
+                {
+                  "Value": "COBOL",
+                  "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:1:17"
+                }
+              ],
+              "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:1:16"
+            },
+            {
+              "Value": "MO DB2 LOAD",
+              "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:1:24"
+            },
+            {
+              "Name": "CLASS",
+              "Value": "A",
+              "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:1:38"
+            },
+            {
+              "Name": "MSGCLASS",
+              "Value": "0",
+              "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:1:46"
+            },
+            {
+              "Name": "MSGLEVEL",
+              "List": [
+                {
+                  "Value": "1",
+                  "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:2:22"
+                },
+                {
+                  "Value": "1",
+                  "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:2:24"
+                }
+              ],
+              "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:2:12"
+            },
+            {
+              "Name": "NOTIFY",
+              "Value": "&SYSUID",
+              "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:2:27"
+            },
+            {
+              "Name": "TIME",
+              "Value": "1440",
+              "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:2:42"
+            }
+          ],
+          "Children": [
+            {
+              "ShortName": "STEP05",
+              "Language": "JCL",
+              "Key": "file://app-mo-db2/jcl/MODBLOAD.jcl",
+              "Context": "JCL",
+              "CallSite": "file://app-mo-db2/jcl/MODBLOAD.jcl:60:3",
+              "OnDiskPath": "app-mo-db2/jcl/MODBLOAD.jcl",
+              "ContentHash": "sha256:ceeb958fafd1da473c7cb1109aa5a7946c06fc5282c16e7641ad0aab78bfb24c",
+              "Charset": "UTF-8",
+              "CallFrameType": "JCLExec",
+              "JCLLabel": "STEP05",
+              "JCLExecStepContentRange": "file://app-mo-db2/jcl/MODBLOAD.jcl:60:0-61:0",
+              "Params": [
+                {
+                  "Name": "PGM",
+                  "Value": "IEFBR14",
+                  "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:60:17"
+                }
+              ],
+              "DDGroups": [
+                {
+                  "DDName": "REJFILE",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "List": [
+                            {
+                              "Value": "MOD",
+                              "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:61:21"
+                            },
+                            {
+                              "Value": "DELETE",
+                              "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:61:25"
+                            },
+                            {
+                              "Value": "DELETE",
+                              "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:61:32"
+                            }
+                          ],
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:61:15"
+                        },
+                        {
+                          "Name": "UNIT",
+                          "Value": "SYSDA",
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:61:40"
+                        },
+                        {
+                          "Name": "SPACE",
+                          "List": [
+                            {
+                              "Value": "TRK",
+                              "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:62:22"
+                            },
+                            {
+                              "List": [
+                                {
+                                  "Value": "1",
+                                  "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:62:27"
+                                },
+                                {
+                                  "Value": "1",
+                                  "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:62:29"
+                                }
+                              ],
+                              "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:62:26"
+                            }
+                          ],
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:62:15"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "MO.CARDDEMO.MODB.LOADREJS",
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:63:15"
+                        }
+                      ],
+                      "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:61:3"
+                    }
+                  ]
+                }
+              ],
+              "EffectiveDDGroups": [
+                {
+                  "DDName": "REJFILE",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "List": [
+                            {
+                              "Value": "MOD",
+                              "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:61:21"
+                            },
+                            {
+                              "Value": "DELETE",
+                              "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:61:25"
+                            },
+                            {
+                              "Value": "DELETE",
+                              "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:61:32"
+                            }
+                          ],
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:61:15"
+                        },
+                        {
+                          "Name": "UNIT",
+                          "Value": "SYSDA",
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:61:40"
+                        },
+                        {
+                          "Name": "SPACE",
+                          "List": [
+                            {
+                              "Value": "TRK",
+                              "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:62:22"
+                            },
+                            {
+                              "List": [
+                                {
+                                  "Value": "1",
+                                  "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:62:27"
+                                },
+                                {
+                                  "Value": "1",
+                                  "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:62:29"
+                                }
+                              ],
+                              "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:62:26"
+                            }
+                          ],
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:62:15"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "MO.CARDDEMO.MODB.LOADREJS",
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:63:15"
+                        }
+                      ],
+                      "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:61:3"
+                    }
+                  ]
+                }
+              ],
+              "DataFlows": [
+                {
+                  "Type": "delete",
+                  "ExecStep": "MODBLOAD.STEP05",
+                  "ExecStepCoordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:60:3",
+                  "Caller": "file://app-mo-db2/jcl/MODBLOAD.jcl",
+                  "CallerContext": "JCL",
+                  "DataReferences": [
+                    {
+                      "ArtifactKind": "DATASET",
+                      "ShortName": "MO.CARDDEMO.MODB.LOADREJS",
+                      "Key": "dsn://MO.CARDDEMO.MODB.LOADREJS",
+                      "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:61:3"
+                    }
+                  ]
+                }
+              ],
+              "Children": [
+                {
+                  "ArtifactKind": "PROGRAM",
+                  "ShortName": "IEFBR14",
+                  "Language": "NONE",
+                  "Key": "system://IEFBR14",
+                  "Context": "EXECUTABLE",
+                  "CallSite": "file://app-mo-db2/jcl/MODBLOAD.jcl:60:3",
+                  "CallFrameType": "Invocation"
+                }
+              ]
+            },
+            {
+              "ShortName": "STEP10",
+              "Language": "JCL",
+              "Key": "file://app-mo-db2/jcl/MODBLOAD.jcl",
+              "Context": "JCL",
+              "CallSite": "file://app-mo-db2/jcl/MODBLOAD.jcl:67:3",
+              "OnDiskPath": "app-mo-db2/jcl/MODBLOAD.jcl",
+              "ContentHash": "sha256:ceeb958fafd1da473c7cb1109aa5a7946c06fc5282c16e7641ad0aab78bfb24c",
+              "Charset": "UTF-8",
+              "CallFrameType": "JCLExec",
+              "JCLLabel": "STEP10",
+              "JCLExecStepContentRange": "file://app-mo-db2/jcl/MODBLOAD.jcl:67:0-83:0",
+              "Params": [
+                {
+                  "Name": "PGM",
+                  "Value": "IKJEFT01",
+                  "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:67:17"
+                },
+                {
+                  "Name": "DYNAMNBR",
+                  "Value": "20",
+                  "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:67:30"
+                }
+              ],
+              "DDGroups": [
+                {
+                  "DDName": "STEPLIB",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:68:15"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "DSNV13.SDSNEXIT",
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:68:24"
+                        }
+                      ],
+                      "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:68:3"
+                    },
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:69:15"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "DSNV13.SDSNLOAD",
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:69:24"
+                        }
+                      ],
+                      "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:69:12"
+                    },
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:70:15"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "MO.CARDDEMO.LOADLIB",
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:70:24"
+                        }
+                      ],
+                      "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:70:12"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "SYSTSPRT",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "SYSOUT",
+                          "Value": "*",
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:71:15"
+                        }
+                      ],
+                      "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:71:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "SYSPRINT",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "SYSOUT",
+                          "Value": "*",
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:72:15"
+                        }
+                      ],
+                      "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:72:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "SYSOUT",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "SYSOUT",
+                          "Value": "*",
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:73:15"
+                        }
+                      ],
+                      "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:73:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "SYSUDUMP",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "SYSOUT",
+                          "Value": "*",
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:74:15"
+                        }
+                      ],
+                      "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:74:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "TRANFILE",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:75:15"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "MO.CARDDEMO.TRANSACT.VSAM.KSDS",
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:76:15"
+                        }
+                      ],
+                      "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:75:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "XREFFILE",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:77:15"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "MO.CARDDEMO.CARDXREF.VSAM.KSDS",
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:78:15"
+                        }
+                      ],
+                      "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:77:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "REJFILE",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "List": [
+                            {
+                              "Value": "NEW",
+                              "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:79:21"
+                            },
+                            {
+                              "Value": "CATLG",
+                              "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:79:25"
+                            },
+                            {
+                              "Value": "DELETE",
+                              "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:79:31"
+                            }
+                          ],
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:79:15"
+                        },
+                        {
+                          "Name": "UNIT",
+                          "Value": "SYSDA",
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:79:39"
+                        },
+                        {
+                          "Name": "DCB",
+                          "List": [
+                            {
+                              "Name": "RECFM",
+                              "Value": "FB",
+                              "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:80:20"
+                            },
+                            {
+                              "Name": "LRECL",
+                              "Value": "430",
+                              "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:80:29"
+                            },
+                            {
+                              "Name": "BLKSIZE",
+                              "Value": "0",
+                              "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:80:39"
+                            }
+                          ],
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:80:15"
+                        },
+                        {
+                          "Name": "SPACE",
+                          "List": [
+                            {
+                              "Value": "CYL",
+                              "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:81:22"
+                            },
+                            {
+                              "List": [
+                                {
+                                  "Value": "1",
+                                  "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:81:27"
+                                },
+                                {
+                                  "Value": "1",
+                                  "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:81:29"
+                                }
+                              ],
+                              "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:81:26"
+                            },
+                            {
+                              "Value": "RLSE",
+                              "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:81:32"
+                            }
+                          ],
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:81:15"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "MO.CARDDEMO.MODB.LOADREJS",
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:82:15"
+                        }
+                      ],
+                      "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:79:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "SYSTSIN",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Value": "*",
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:83:15"
+                        },
+                        {
+                          "Name": "SYMBOLS",
+                          "Value": "JCLONLY",
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:83:17"
+                        }
+                      ],
+                      "InlineData": "  DSN SYSTEM(DS13)\n  RUN PROGRAM(CBMOD01C) PLAN(CARDMODB)\n  END\n",
+                      "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:83:3"
+                    }
+                  ]
+                }
+              ],
+              "EffectiveDDGroups": [
+                {
+                  "DDName": "STEPLIB",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:68:15"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "DSNV13.SDSNEXIT",
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:68:24"
+                        }
+                      ],
+                      "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:68:3"
+                    },
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:69:15"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "DSNV13.SDSNLOAD",
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:69:24"
+                        }
+                      ],
+                      "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:69:12"
+                    },
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:70:15"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "MO.CARDDEMO.LOADLIB",
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:70:24"
+                        }
+                      ],
+                      "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:70:12"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "SYSTSPRT",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "SYSOUT",
+                          "Value": "*",
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:71:15"
+                        }
+                      ],
+                      "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:71:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "SYSPRINT",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "SYSOUT",
+                          "Value": "*",
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:72:15"
+                        }
+                      ],
+                      "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:72:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "SYSOUT",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "SYSOUT",
+                          "Value": "*",
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:73:15"
+                        }
+                      ],
+                      "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:73:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "SYSUDUMP",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "SYSOUT",
+                          "Value": "*",
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:74:15"
+                        }
+                      ],
+                      "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:74:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "TRANFILE",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:75:15"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "MO.CARDDEMO.TRANSACT.VSAM.KSDS",
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:76:15"
+                        }
+                      ],
+                      "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:75:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "XREFFILE",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "Value": "SHR",
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:77:15"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "MO.CARDDEMO.CARDXREF.VSAM.KSDS",
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:78:15"
+                        }
+                      ],
+                      "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:77:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "REJFILE",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Name": "DISP",
+                          "List": [
+                            {
+                              "Value": "NEW",
+                              "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:79:21"
+                            },
+                            {
+                              "Value": "CATLG",
+                              "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:79:25"
+                            },
+                            {
+                              "Value": "DELETE",
+                              "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:79:31"
+                            }
+                          ],
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:79:15"
+                        },
+                        {
+                          "Name": "UNIT",
+                          "Value": "SYSDA",
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:79:39"
+                        },
+                        {
+                          "Name": "DCB",
+                          "List": [
+                            {
+                              "Name": "RECFM",
+                              "Value": "FB",
+                              "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:80:20"
+                            },
+                            {
+                              "Name": "LRECL",
+                              "Value": "430",
+                              "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:80:29"
+                            },
+                            {
+                              "Name": "BLKSIZE",
+                              "Value": "0",
+                              "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:80:39"
+                            }
+                          ],
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:80:15"
+                        },
+                        {
+                          "Name": "SPACE",
+                          "List": [
+                            {
+                              "Value": "CYL",
+                              "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:81:22"
+                            },
+                            {
+                              "List": [
+                                {
+                                  "Value": "1",
+                                  "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:81:27"
+                                },
+                                {
+                                  "Value": "1",
+                                  "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:81:29"
+                                }
+                              ],
+                              "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:81:26"
+                            },
+                            {
+                              "Value": "RLSE",
+                              "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:81:32"
+                            }
+                          ],
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:81:15"
+                        },
+                        {
+                          "Name": "DSN",
+                          "Value": "MO.CARDDEMO.MODB.LOADREJS",
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:82:15"
+                        }
+                      ],
+                      "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:79:3"
+                    }
+                  ]
+                },
+                {
+                  "DDName": "SYSTSIN",
+                  "DDs": [
+                    {
+                      "Params": [
+                        {
+                          "Value": "*",
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:83:15"
+                        },
+                        {
+                          "Name": "SYMBOLS",
+                          "Value": "JCLONLY",
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:83:17"
+                        }
+                      ],
+                      "InlineData": "  DSN SYSTEM(DS13)\n  RUN PROGRAM(CBMOD01C) PLAN(CARDMODB)\n  END\n",
+                      "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:83:3"
+                    }
+                  ]
+                }
+              ],
+              "Children": [
+                {
+                  "ArtifactKind": "PROGRAM",
+                  "ShortName": "IKJEFT01",
+                  "Language": "NONE",
+                  "Key": "system://IKJEFT01",
+                  "Context": "EXECUTABLE",
+                  "CallSite": "file://app-mo-db2/jcl/MODBLOAD.jcl:67:3",
+                  "CallFrameType": "Invocation",
+                  "DataFlows": [
+                    {
+                      "Type": "read",
+                      "ExecStep": "MODBLOAD.STEP10",
+                      "ExecStepCoordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:67:3",
+                      "Caller": "system://IKJEFT01",
+                      "CallerContext": "EXECUTABLE",
+                      "IsReadForControlCard": true,
+                      "DataReferences": [
+                        {
+                          "ArtifactKind": "CONTROL_CARD",
+                          "ShortName": "MODBLOAD.STEP10.SYSTSIN",
+                          "Language": "CONTROL_STATEMENTS",
+                          "Key": "dd://1a4e18b1:MODBLOAD.STEP10.SYSTSIN",
+                          "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:83:3",
+                          "IsNoise": true
+                        }
+                      ]
+                    }
+                  ],
+                  "Children": [
+                    {
+                      "ArtifactKind": "CONTROL_CARD",
+                      "ShortName": "MODBLOAD.STEP10.SYSTSIN",
+                      "Language": "CONTROL_STATEMENTS",
+                      "Key": "dd://1a4e18b1:MODBLOAD.STEP10.SYSTSIN",
+                      "Context": "TSO",
+                      "CallSite": "file://app-mo-db2/jcl/MODBLOAD.jcl:67:3",
+                      "CallFrameType": "Invocation",
+                      "Complexity": {
+                        "NumLines": 3,
+                        "NumLinesWithComment": 3,
+                        "ComplexityContribution": 1
+                      },
+                      "DataFlows": [
+                        {
+                          "Type": "write",
+                          "ExecStep": "MODBLOAD.STEP10",
+                          "ExecStepCoordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:67:3",
+                          "Caller": "dd://1a4e18b1:MODBLOAD.STEP10.SYSTSIN",
+                          "CallerContext": "TSO",
+                          "DataReferences": [
+                            {
+                              "ArtifactKind": "SYSOUT",
+                              "ShortName": "(0)",
+                              "Key": "sysout://(0)",
+                              "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:71:3"
+                            }
+                          ]
+                        }
+                      ],
+                      "Children": [
+                        {
+                          "ArtifactKind": "PROGRAM",
+                          "ShortName": "CBMOD01C",
+                          "Language": "COBOL",
+                          "Key": "file://app-mo-db2/cbl/CBMOD01C.cbl",
+                          "Context": "COBOL",
+                          "CallSite": "file://app-mo-db2/jcl/MODBLOAD.jcl:67:3",
+                          "OnDiskPath": "app-mo-db2/cbl/CBMOD01C.cbl",
+                          "ContentHash": "sha256:5828036d99b493602413307f5710a2e75beb487ca0faadbf524da695ac30808e",
+                          "Charset": "UTF-8",
+                          "CallFrameType": "Invocation",
+                          "Params": [
+                            {
+                              "Name": "TSO-DB2",
+                              "Value": "true"
+                            },
+                            {
+                              "Name": "SYSTEM",
+                              "Value": "DS13",
+                              "Coordinates": "dd://1a4e18b1:MODBLOAD.STEP10.SYSTSIN:1:7"
+                            },
+                            {
+                              "Name": "PROGRAM",
+                              "Value": "CBMOD01C",
+                              "Coordinates": "dd://1a4e18b1:MODBLOAD.STEP10.SYSTSIN:2:7"
+                            },
+                            {
+                              "Name": "PLAN",
+                              "Value": "CARDMODB",
+                              "Coordinates": "dd://1a4e18b1:MODBLOAD.STEP10.SYSTSIN:2:25"
+                            }
+                          ],
+                          "Complexity": {
+                            "NumLines": 577,
+                            "NumLinesWithComment": 875,
+                            "NumLinesNoCopybook": 382,
+                            "NumLinesNoCopybookWithComment": 498,
+                            "CyclomaticComplexity": 63,
+                            "ComplexityContribution": 506
+                          },
+                          "CobolBindings": {
+                            "ProgramID": "CBMOD01C",
+                            "DDAssignments": [
+                              {
+                                "Variable": "TRANSACT-FILE",
+                                "VSAMType": "KSDS",
+                                "DDNames": [
+                                  "TRANFILE"
+                                ],
+                                "References": [
+                                  {
+                                    "ArtifactKind": "DATASET",
+                                    "ShortName": "MO.CARDDEMO.TRANSACT.VSAM.KSDS",
+                                    "Key": "dsn://MO.CARDDEMO.TRANSACT.VSAM.KSDS",
+                                    "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:75:3",
+                                    "VSAM": "KSDS"
+                                  }
+                                ],
+                                "RecordVariables": [
+                                  {
+                                    "Name": "FD-TRANFILE-REC",
+                                    "Range": "file://app-mo-db2/cbl/CBMOD01C.cbl:62:0-64:0"
+                                  },
+                                  {
+                                    "Name": "TRAN-RECORD",
+                                    "Range": "file://cpy/CVTRA05Y.cpy:4:0-18:0"
+                                  }
+                                ],
+                                "Mode": "INPUT",
+                                "Coordinates": "file://app-mo-db2/cbl/CBMOD01C.cbl:42:11"
+                              },
+                              {
+                                "Variable": "XREF-FILE",
+                                "VSAMType": "KSDS",
+                                "DDNames": [
+                                  "XREFFILE"
+                                ],
+                                "References": [
+                                  {
+                                    "ArtifactKind": "DATASET",
+                                    "ShortName": "MO.CARDDEMO.CARDXREF.VSAM.KSDS",
+                                    "Key": "dsn://MO.CARDDEMO.CARDXREF.VSAM.KSDS",
+                                    "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:77:3",
+                                    "VSAM": "KSDS"
+                                  }
+                                ],
+                                "RecordVariables": [
+                                  {
+                                    "Name": "FD-XREFFILE-REC",
+                                    "Range": "file://app-mo-db2/cbl/CBMOD01C.cbl:67:0-69:0"
+                                  },
+                                  {
+                                    "Name": "CARD-XREF-RECORD",
+                                    "Range": "file://cpy/CVACT03Y.cpy:4:0-8:0"
+                                  }
+                                ],
+                                "Mode": "INPUT",
+                                "Coordinates": "file://app-mo-db2/cbl/CBMOD01C.cbl:48:11"
+                              },
+                              {
+                                "Variable": "REJECT-FILE",
+                                "DDNames": [
+                                  "REJFILE"
+                                ],
+                                "References": [
+                                  {
+                                    "ArtifactKind": "DATASET",
+                                    "ShortName": "MO.CARDDEMO.MODB.LOADREJS",
+                                    "Key": "dsn://MO.CARDDEMO.MODB.LOADREJS",
+                                    "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:79:3"
+                                  }
+                                ],
+                                "RecordVariables": [
+                                  {
+                                    "Name": "FD-REJECT-REC",
+                                    "Range": "file://app-mo-db2/cbl/CBMOD01C.cbl:72:0-72:0"
+                                  },
+                                  {
+                                    "Name": "MODB-REJECT-RECORD",
+                                    "Range": "file://app-mo-db2/cpy/CVMOD02Y.cpy:31:0-37:0"
+                                  }
+                                ],
+                                "Mode": "OUTPUT",
+                                "Coordinates": "file://app-mo-db2/cbl/CBMOD01C.cbl:54:11"
+                              }
+                            ],
+                            "Copybooks": [
+                              {
+                                "ArtifactKind": "COPYBOOK",
+                                "ShortName": "CVTRA05Y",
+                                "Language": "COBOL",
+                                "Key": "file://cpy/CVTRA05Y.cpy",
+                                "OnDiskPath": "cpy/CVTRA05Y.cpy",
+                                "ContentHash": "sha256:d7bde0e78ff608497087b9909c889ed39e347269f964bda767b92b547fbb5fec",
+                                "Charset": "UTF-8",
+                                "Context": "COBOL_COPYBOOK",
+                                "Coordinates": "file://app-mo-db2/cbl/CBMOD01C.cbl:77:7",
+                                "Division": "DATA DIVISION",
+                                "Section": "WORKING-STORAGE SECTION",
+                                "NumLines": 15,
+                                "NumLinesWithComment": 22
+                              },
+                              {
+                                "ArtifactKind": "COPYBOOK",
+                                "ShortName": "CVACT03Y",
+                                "Language": "COBOL",
+                                "Key": "file://cpy/CVACT03Y.cpy",
+                                "OnDiskPath": "cpy/CVACT03Y.cpy",
+                                "ContentHash": "sha256:ffc6079e09b28739e154bf6c1e1c36d408209faa91f6cf7008078dc596a1c370",
+                                "Charset": "UTF-8",
+                                "Context": "COBOL_COPYBOOK",
+                                "Coordinates": "file://app-mo-db2/cbl/CBMOD01C.cbl:82:7",
+                                "Division": "DATA DIVISION",
+                                "Section": "WORKING-STORAGE SECTION",
+                                "NumLines": 5,
+                                "NumLinesWithComment": 12
+                              },
+                              {
+                                "ArtifactKind": "COPYBOOK",
+                                "ShortName": "CVMOD02Y",
+                                "Language": "COBOL",
+                                "Key": "file://app-mo-db2/cpy/CVMOD02Y.cpy",
+                                "OnDiskPath": "app-mo-db2/cpy/CVMOD02Y.cpy",
+                                "ContentHash": "sha256:cf3cb6b7393a7ec12b1bb434fe350922767d7a201e355dd3faa4351416446302",
+                                "Charset": "UTF-8",
+                                "Context": "COBOL_COPYBOOK",
+                                "Coordinates": "file://app-mo-db2/cbl/CBMOD01C.cbl:87:7",
+                                "Division": "DATA DIVISION",
+                                "Section": "WORKING-STORAGE SECTION",
+                                "NumLines": 7,
+                                "NumLinesWithComment": 38
+                              },
+                              {
+                                "ArtifactKind": "COPYBOOK",
+                                "ShortName": "CSMODBWY",
+                                "Language": "COBOL",
+                                "Key": "file://app-mo-db2/cpy/CSMODBWY.cpy",
+                                "OnDiskPath": "app-mo-db2/cpy/CSMODBWY.cpy",
+                                "ContentHash": "sha256:fc64b8bc5c9a88136080285737b633bb5ca9f7d1642eb3ceacfd628554e5f408",
+                                "Charset": "UTF-8",
+                                "Context": "COBOL_COPYBOOK",
+                                "Coordinates": "file://app-mo-db2/cbl/CBMOD01C.cbl:92:7",
+                                "Division": "DATA DIVISION",
+                                "Section": "WORKING-STORAGE SECTION",
+                                "NumLines": 25,
+                                "NumLinesWithComment": 58
+                              },
+                              {
+                                "ArtifactKind": "COPYBOOK",
+                                "ShortName": "SQLCA",
+                                "Language": "COBOL",
+                                "Key": "file://SQLCA",
+                                "Context": "COBOL_COPYBOOK",
+                                "Coordinates": "file://app-mo-db2/cbl/CBMOD01C.cbl:97:7",
+                                "Division": "DATA DIVISION",
+                                "Section": "WORKING-STORAGE SECTION",
+                                "NumLines": 24,
+                                "NumLinesWithComment": 25
+                              },
+                              {
+                                "ArtifactKind": "COPYBOOK",
+                                "ShortName": "DCLTRHST",
+                                "Language": "COBOL",
+                                "Key": "file://app-mo-db2/dcl/DCLTRHST.dcl",
+                                "OnDiskPath": "app-mo-db2/dcl/DCLTRHST.dcl",
+                                "ContentHash": "sha256:e9c88f4bc7ec18999636c72d22ce5de04c470f0a8d2daeffa6617ba421007414",
+                                "Charset": "UTF-8",
+                                "Context": "COBOL_COPYBOOK",
+                                "Coordinates": "file://app-mo-db2/cbl/CBMOD01C.cbl:99:7",
+                                "Division": "DATA DIVISION",
+                                "Section": "WORKING-STORAGE SECTION",
+                                "NumLines": 45,
+                                "NumLinesWithComment": 113
+                              },
+                              {
+                                "ArtifactKind": "COPYBOOK",
+                                "ShortName": "CSMODBPY",
+                                "Language": "COBOL",
+                                "Key": "file://app-mo-db2/cpy/CSMODBPY.cpy",
+                                "OnDiskPath": "app-mo-db2/cpy/CSMODBPY.cpy",
+                                "ContentHash": "sha256:7cd6d0b21d223aefc012152062b77138cf10f24cec350923f289f723d2ceca0a",
+                                "Charset": "UTF-8",
+                                "Context": "COBOL_COPYBOOK",
+                                "Coordinates": "file://app-mo-db2/cbl/CBMOD01C.cbl:536:7",
+                                "Division": "PROCEDURE DIVISION",
+                                "NumLines": 35,
+                                "NumLinesWithComment": 70
+                              }
+                            ]
+                          },
+                          "DataFlows": [
+                            {
+                              "Type": "read",
+                              "ExecStep": "MODBLOAD.STEP10",
+                              "ExecStepCoordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:67:3",
+                              "Caller": "file://app-mo-db2/cbl/CBMOD01C.cbl",
+                              "CallerContext": "COBOL",
+                              "CallerCoordinates": "file://app-mo-db2/cbl/CBMOD01C.cbl:42:11",
+                              "DataReferences": [
+                                {
+                                  "ArtifactKind": "DATASET",
+                                  "ShortName": "MO.CARDDEMO.TRANSACT.VSAM.KSDS",
+                                  "Key": "dsn://MO.CARDDEMO.TRANSACT.VSAM.KSDS",
+                                  "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:75:3",
+                                  "VSAM": "KSDS"
+                                }
+                              ]
+                            },
+                            {
+                              "Type": "read",
+                              "ExecStep": "MODBLOAD.STEP10",
+                              "ExecStepCoordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:67:3",
+                              "Caller": "file://app-mo-db2/cbl/CBMOD01C.cbl",
+                              "CallerContext": "COBOL",
+                              "CallerCoordinates": "file://app-mo-db2/cbl/CBMOD01C.cbl:48:11",
+                              "DataReferences": [
+                                {
+                                  "ArtifactKind": "DATASET",
+                                  "ShortName": "MO.CARDDEMO.CARDXREF.VSAM.KSDS",
+                                  "Key": "dsn://MO.CARDDEMO.CARDXREF.VSAM.KSDS",
+                                  "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:77:3",
+                                  "VSAM": "KSDS"
+                                }
+                              ]
+                            },
+                            {
+                              "Type": "write",
+                              "ExecStep": "MODBLOAD.STEP10",
+                              "ExecStepCoordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:67:3",
+                              "Caller": "file://app-mo-db2/cbl/CBMOD01C.cbl",
+                              "CallerContext": "COBOL",
+                              "CallerCoordinates": "file://app-mo-db2/cbl/CBMOD01C.cbl:54:11",
+                              "DataReferences": [
+                                {
+                                  "ArtifactKind": "DATASET",
+                                  "ShortName": "MO.CARDDEMO.MODB.LOADREJS",
+                                  "Key": "dsn://MO.CARDDEMO.MODB.LOADREJS",
+                                  "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:79:3"
+                                }
+                              ]
+                            }
+                          ],
+                          "Children": [
+                            {
+                              "ArtifactKind": "EMBEDDED_SQL",
+                              "ShortName": "CBMOD01C",
+                              "Language": "SQL",
+                              "Key": "subset://SQL(file://app-mo-db2/cbl/CBMOD01C.cbl)",
+                              "Context": "DB2",
+                              "CallSite": "file://app-mo-db2/jcl/MODBLOAD.jcl:67:3",
+                              "CallFrameType": "Invocation",
+                              "Complexity": {
+                                "NumLines": 55,
+                                "NumLinesWithComment": 55,
+                                "NumLinesNoCopybook": 38,
+                                "NumLinesNoCopybookWithComment": 38,
+                                "ComplexityContribution": 19
+                              },
+                              "DataFlows": [
+                                {
+                                  "Type": "table.insert.into",
+                                  "ExecStep": "MODBLOAD.STEP10",
+                                  "ExecStepCoordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:67:3",
+                                  "Caller": "subset://SQL(file://app-mo-db2/cbl/CBMOD01C.cbl)",
+                                  "CallerContext": "DB2",
+                                  "TableReferences": [
+                                    {
+                                      "ArtifactKind": "DB2_TABLE",
+                                      "ShortName": "DS13/CARDDEMO.TRAN_HIST",
+                                      "Key": "table-db2://DS13/CARDDEMO.TRAN_HIST",
+                                      "Coordinates": "file://app-mo-db2/cbl/CBMOD01C.cbl:392:20"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "Errors": [
+            {
+              "Message": "Unhandled operation: EXPORT",
+              "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:51:4"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "DynamicContent": {
+    "dd://1a4e18b1:MODBLOAD.STEP10.SYSTSIN": "  DSN SYSTEM(DS13)\n  RUN PROGRAM(CBMOD01C) PLAN(CARDMODB)\n  END\n",
+    "subset://SQL(file://app-mo-db2/cbl/CBMOD01C.cbl)": "SQLCA\nDCLTRHST\nDECLARE CARDDEMO.TRAN_HIST TABLE\n( TH_TRAN_ID                     CHAR(16) NOT NULL,\nTH_ACCT_ID                     DECIMAL(11, 0) NOT NULL,\nTH_CARD_NUM                    CHAR(16) NOT NULL,\nTH_TYPE_CD                     CHAR(2) NOT NULL,\nTH_CAT_CD                      CHAR(4) NOT NULL,\nTH_SOURCE                      CHAR(10) NOT NULL,\nTH_DESC                        VARCHAR(100) NOT NULL,\nTH_AMT                         DECIMAL(11, 2) NOT NULL,\nTH_MERCHANT_ID                 DECIMAL(9, 0),\nTH_MERCHANT_NAME               VARCHAR(50),\nTH_MERCHANT_CITY               VARCHAR(50),\nTH_MERCHANT_ZIP                CHAR(10),\nTH_TRAN_DATE                   DATE NOT NULL,\nTH_ORIG_TS                     TIMESTAMP NOT NULL,\nTH_PROC_TS                     TIMESTAMP\n)\nINSERT INTO CARDDEMO.TRAN_HIST\n( TH_TRAN_ID\n, TH_ACCT_ID\n, TH_CARD_NUM\n, TH_TYPE_CD\n, TH_CAT_CD\n, TH_SOURCE\n, TH_DESC\n, TH_AMT\n, TH_MERCHANT_ID\n, TH_MERCHANT_NAME\n, TH_MERCHANT_CITY\n, TH_MERCHANT_ZIP\n, TH_TRAN_DATE\n, TH_ORIG_TS\n, TH_PROC_TS\n)\nVALUES\n( :DCL-TH-TRAN-ID\n, :DCL-TH-ACCT-ID\n, :DCL-TH-CARD-NUM\n, :DCL-TH-TYPE-CD\n, :DCL-TH-CAT-CD\n, :DCL-TH-SOURCE\n, :DCL-TH-DESC\n, :DCL-TH-AMT\n, :DCL-TH-MERCHANT-ID   :WS-IND-MERCHANT-ID\n, :DCL-TH-MERCHANT-NAME :WS-IND-MERCHANT-NAME\n, :DCL-TH-MERCHANT-CITY :WS-IND-MERCHANT-CITY\n, :DCL-TH-MERCHANT-ZIP  :WS-IND-MERCHANT-ZIP\n, :DCL-TH-TRAN-DATE\n, :DCL-TH-ORIG-TS\n, :DCL-TH-PROC-TS       :WS-IND-PROC-TS\n)\nCOMMIT\nROLLBACK"
+  },
+  "DebugInformation": {
+    
+  }
+}

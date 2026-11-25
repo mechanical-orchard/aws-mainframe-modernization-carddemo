@@ -1,0 +1,41 @@
+{
+  "ShabakehVersion": "0.94.66",
+  "ShabakehConfig": {
+    "ClientProject": "aws-carddemo",
+    "ClientProjectSHA": "768bd0ed0c69599bf0e28b6d99c8909cb7edd38b",
+    "CorpusHash": "sha256:d431c02eeba940d8ffd54749566d25dd00ba09f931a1912185913cf034e82d59",
+    "Targets": [
+      "job://MODBLOAD"
+    ],
+    "Invocation": "extract -call-trees=parse_outputs/jobs/MODBLOAD/call-trees.json -errors-and-warnings=parse_outputs/jobs/MODBLOAD/errors-and-warnings.json --include-params job://MODBLOAD",
+    "IncludeParams": true
+  },
+  "ErrorsAndWarnings": {
+    "EntryPointCounts": {
+      "OK": 0,
+      "Warnings": 0,
+      "Errors": 1
+    },
+    "PrefixCounts": {
+      "MODBLOAD": {
+      "OK": 0,
+      "Warnings": 0,
+      "Errors": 1
+    }
+    },
+    "UniqueErrors": {
+      "Unhandled operation: EXPORT": 1
+    },
+    "Errors": [
+      {
+        "Message": "Unhandled operation: EXPORT",
+        "Coordinates": "file://app-mo-db2/jcl/MODBLOAD.jcl:51:4",
+        "EntryPoint": "MODBLOAD",
+        "EntryPointContext": "JCL"
+      }
+    ]
+  },
+  "DebugInformation": {
+    
+  }
+}
