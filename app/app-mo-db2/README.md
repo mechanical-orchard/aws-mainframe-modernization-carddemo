@@ -5,7 +5,7 @@
 
 ## Overview
 
-The Transaction History module is an optional extension for the CardDemo application that demonstrates DB2 integration patterns in batch and CICS COBOL programs using embedded static SQL. This module loads posted transactions from the VSAM-based transaction processing system into DB2 tables, builds daily account balances from them, and reports on and maintains that history, working alongside the existing VSAM files without changing them. Two CICS transactions list the daily balances and let an administrator set or clear an account's over-limit flag.
+The Transaction History module is an optional extension for the CardDemo application that demonstrates DB2 integration patterns in batch and CICS COBOL programs using embedded static SQL. This module loads posted transactions from the VSAM-based transaction processing system into DB2 tables, builds daily account balances from them, and reports on and maintains that history, working alongside the existing VSAM files without changing them. A CICS transaction applies queued account requests: it posts adjustments and sets or clears an account's over-limit flag.
 
 ## Table of Contents
 - [Features](#features)
@@ -24,7 +24,7 @@ This extension provides the following capabilities:
 - **Daily Balances**: Build daily account balance snapshots and flag accounts that are over their credit limit
 - **Reporting**: Produce a transaction history report from DB2, with each account's closing balance and credit limit
 - **Batch Maintenance**: Purge transaction history older than a retention period
-- **Online Inquiry and Maintenance**: CICS programs, without screens, that page through the daily balances, read one with that day's transaction totals, and set or clear its over-limit flag
+- **Online Request Processing**: A CICS transaction, without a screen, that works through queued requests in a DB2 table: it posts adjustments to the transaction history and the daily balances, and sets or clears an account's over-limit flag
 - **DB2 Integration**: Demonstrates various DB2 integration patterns in batch, including:
   - Static embedded SQL with host variables and null indicators
   - Cursor processing across commits and positioned updates
@@ -32,10 +32,10 @@ This extension provides the following capabilities:
   - Insert, update and delete operations, including insert-or-update on duplicate keys
   - DB2 precompiler integration in a batch (TSO attach) environment
   - Proper error handling with SQLCA and DSNTIAR
-- **CICS DB2 Integration**: Demonstrates DB2 in CICS programs that a caller LINKs to with a request in the COMMAREA, including:
-  - Paging forward and back with two cursors over a two-column key
-  - A guarded update that applies only if the row is unchanged since the caller read it, with SYNCPOINT and SYNCPOINT ROLLBACK
-  - Optional filters passed to static SQL as host variables
+- **CICS DB2 Integration**: Demonstrates DB2 in a CICS transaction started with `EXEC CICS START`, whose input is a DB2 work queue, including:
+  - One unit of work per request, ended with SYNCPOINT, and SYNCPOINT ROLLBACK and an abend on a DB2 error
+  - Every outcome, including a rejected request, recorded in DB2 with a reason code
+  - Business dates and keys taken from the request instead of the system clock, so the same requests on the same rows always give the same result
 
 ## Components
 
@@ -49,16 +49,16 @@ This extension provides the following capabilities:
 | MODBBAL  | CBMOD02C | Builds daily account balances from transaction history       |
 | MODBRPT  | CBMOD03C | Produces the transaction history report                      |
 | MODBMNT  | CBMOD04C | Flags over-limit accounts and purges old transaction history |
-| MODBUNL  | DSNUTILB | Unloads both DB2 tables to delimited files                   |
+| MODBUNL  | DSNUTILB | Unloads the DB2 tables to delimited files                    |
+| MODBREQ  | DSNTIAD  | Adds requests for the CMDR transaction                       |
 
 ### Online Components
 
-| Transaction | Program  | COMMAREA | Function                                                       |
-|:------------|:---------|:---------|:---------------------------------------------------------------|
-| CMDL        | COMODLIC | COMOD01Y | Lists the daily account balances, with paging and filters      |
-| CMDU        | COMODUPC | COMOD02Y | Reads one daily balance and sets or clears its over-limit flag |
+| Transaction | Program  | Function                                                                  |
+|:------------|:---------|:--------------------------------------------------------------------------|
+| CMDR        | COMODRQC | Applies the pending requests in `ACCT_REQUEST`: adjustments and flag updates |
 
-The programs have no screens. A caller LINKs to one with a request in the COMMAREA and gets the response back in the same COMMAREA; the copybook in the table defines both. Both are in CSD group `CARDMODB`, with a `DB2ENTRY` for plan `CARDMODB` and a `DB2TRAN` for each transaction, and each program names its transaction, so the work runs under plan `CARDMODB`.
+CMDR has no screen and takes no COMMAREA: its input is the pending rows of `CARDDEMO.ACCT_REQUEST`, and everything it does is written to DB2. It is in CSD group `CARDMODB`, with a `DB2ENTRY` for plan `CARDMODB` and a `DB2TRAN` for CMDR, so its work runs under plan `CARDMODB`. CICS picks the plan from the transaction a task runs under, so start CMDR as its own transaction (`START TRANSID(CMDR)`) rather than linking to COMODRQC from another one.
 
 ### Directory Structure
 
@@ -81,7 +81,7 @@ The programs have no screens. A caller LINKs to one with a request in the COMMAR
 
 1. **Create DB2 Objects**
    - Execute the MODBCRT job to create the DB2 tables in the `CARDMODB` database. It creates the database first, with storage group `SYSDEFLT`, if it does not exist yet
-   - Each table has its own tablespace (`MOTHST01`, `MOADBL01`) that uses the default storage group of the database, and MODBDRP drops only those two tablespaces
+   - Each table has its own tablespace (`MOTHST01`, `MOADBL01`, `MOAREQ01`) that uses the default storage group of the database, and MODBDRP drops only those tablespaces
 
 2. **Compile Programs**
    - Compile the COBOL programs with DB2 precompiler support
@@ -93,12 +93,12 @@ The programs have no screens. A caller LINKs to one with a request in the COMMAR
 4. **Load Initial Data**
    - Run the base daily batch through COMBTRAN, then execute the MODBLOAD job to load the posted transactions into DB2
 
-5. **Install the CICS Transactions** (optional)
+5. **Install the CICS Transaction** (optional)
    - The CICS region needs a working DB2 connection (`DB2CONN`) to the subsystem that holds the tables
-   - Compile `COMODLIC` and `COMODUPC` with `samples/jcl/ONLDBCMP.jcl` and procedure `samples/proc/BLDONDB2.prc`. They precompile, compile with the integrated CICS translator, link-edit with `DSNCLI` and bind into collection `CARDMODB`
+   - Compile `COMODRQC` with `samples/jcl/ONLDBCMP.jcl` and procedure `samples/proc/BLDONDB2.prc`. They precompile, compile with the integrated CICS translator, link-edit with `DSNCLI` and bind into collection `CARDMODB`
    - Define group `CARDMODB` from `csd/CARDMODB.csd` with DFHCSDUP, then install it in the region (`CEDA INSTALL GROUP(CARDMODB)`) and add it to the region's group list so it survives a restart
-   - The programs load from the CardDemo load library. If the region does not have the base `CARDDEMO` group installed, which defines that library, add a `LIBRARY` definition for it to group `CARDMODB`
-   - `DB2ENTRY(CARDMODB)` uses `AUTHTYPE(USERID)`, so the signed-on CICS user, or the region's default user when nobody signs on, needs EXECUTE on plan `CARDMODB`
+   - The program loads from the CardDemo load library. If the region does not have the base `CARDDEMO` group installed, which defines that library, add a `LIBRARY` definition for it to group `CARDMODB`
+   - `DB2ENTRY(CARDMODB)` uses `AUTHTYPE(USERID)`, so the user CMDR runs under needs EXECUTE on plan `CARDMODB`: the user who started it, or the region's default user
 
 ## Usage
 
@@ -118,33 +118,42 @@ Run the jobs after the base daily batch has rebuilt the transaction file (COMBTR
 
 TRANBKP empties the transaction file until COMBTRAN reloads it, so MODBLOAD finds no transactions if it runs between those two jobs. As with the base batch jobs, the VSAM files must be closed in CICS (CLOSEFIL). The header of each job describes its parameters and return codes. To start over, run MODBDRP and then MODBCRT.
 
-### Online Transactions
+### Online Request Processing
 
-LINK to `COMODLIC` or `COMODUPC` with the request in the COMMAREA, for example from a program or with `CECI LINK PROGRAM(COMODUPC) COMMAREA(...)`. Every COMMAREA field is text, so a request can be typed and a response read as is. A program that gets no COMMAREA, or one too short for its copybook, abends (`MDLC` or `MDUC`): there is nowhere to put a response.
+A request is a row in `CARDDEMO.ACCT_REQUEST` with status `P` (pending). The MODBREQ job adds requests; any program or job with INSERT on the table can. Then start CMDR, for example with `CECI START TRANSID(CMDR)`. CMDR has no terminal: it applies the pending requests one at a time, in `REQ_ID` order, until none is left, and ends.
 
-Each response starts with a status: `00` for a result, `04` for a result with a notice in the message, `08` for a request that is not valid (the error field names the field) and `12` for a Db2 error (the message has the action, SQLCODE and message tokens).
+Each request names an account and a business date (`REQ_BAL_DATE`), the date of the daily balance it applies to:
 
-- **CMDL** (`COMOD01Y`) returns up to 10 daily balances, in account and date order: account, balance date, opening balance, credits, debits, closing balance, transaction count and over-limit flag
-  - Action `F` reads the first page, `N` the next, `P` the previous and `C` the same page again. For `N`, `P` and `C`, pass the page number and first and last keys of the previous response
-  - Optional filters: an account ID, a balance date (`YYYY-MM-DD`) or both; spaces list everything
-  - The response says whether another page follows; asking for the page before the first or after the last returns that page with a notice
-- **CMDU** (`COMOD02Y`) reads one daily balance with that account's transaction count and totals in `TRAN_HIST` for the same date, and its over-limit flag
-  - Action `R` reads the row for an account ID and balance date
-  - Action `S` sets the flag and `C` clears it. Pass the row as an `R` response returned it: the update applies only if the row is unchanged; otherwise CMDU returns the current row with a notice and saves nothing
-  - Setting the flag records today's date in `ADB_FLAG_DATE`; clearing it sets that column to NULL
+- **`A`** posts an adjustment of `REQ_AMT` (positive for a credit, negative for a debit) to card `REQ_CARD_NUM`:
+  - A `TRAN_HIST` row with ID `ADJ` followed by the request ID, type `07` (Adjustment), category `0001`, source `CICS`, the request's description (or `Adjustment`), and the business date as its date and both timestamps
+  - The daily balance's credits or debits, closing balance and transaction count. If the closing balance goes above the credit limit, the over-limit flag is set, dated with the business date
+- **`S`** sets the over-limit flag, dated with the business date, and **`C`** clears it
 
-CMDU writes only `ADB_OVERLIMIT_FLG` and `ADB_FLAG_DATE`. The next MODBMNT run recomputes the flags for its as-of date, so it can overwrite a flag set or cleared by hand for that date.
+CMDR marks each request `D` (done), with `REQ_TRAN_ID` naming the row an adjustment posted, or `R` (rejected) with a reason in `REQ_REASON`, and changes nothing else for a rejected request:
+
+| Reason    | Why the request is rejected                               |
+|:----------|:----------------------------------------------------------|
+| `BADACT`  | The action is not `A`, `S` or `C`                         |
+| `BADAMT`  | `A` without an amount, or with an amount of zero          |
+| `NOCARD`  | `A` without a card number                                 |
+| `NOROW`   | There is no daily balance for the account and date        |
+| `ALREADY` | `S` on a flag that is already set, or `C` on one already clear |
+
+Each request is one unit of work. A DB2 error rolls back the request it was applying, leaves it pending, and abends the task with code `MDRQ`; the message is in the region's log. Requests before it stay applied.
+
+Every value CMDR writes comes from the request or the existing rows, never from the system clock, so the same pending requests applied to the same rows always give the same result. The next MODBMNT run recomputes the flags for its as-of date, so it can overwrite a flag CMDR set or cleared for that date.
 
 ### Unloading the Tables
 
-The MODBUNL job unloads both tables to delimited files without changing them. Set `LBL` before each run. Each table gets a header dataset holding its column names and a data dataset with one record per row:
+The MODBUNL job unloads the tables to delimited files without changing them. Set `LBL` before each run. Each table gets a header dataset holding its column names and a data dataset with one record per row:
 
 - `MODB.UNL.<LBL>.TRANHIST.HDR` and `MODB.UNL.<LBL>.TRANHIST.DATA`
 - `MODB.UNL.<LBL>.ACCTDBAL.HDR` and `MODB.UNL.<LBL>.ACCTDBAL.DATA`
+- `MODB.UNL.<LBL>.ACCTREQ.HDR` and `MODB.UNL.<LBL>.ACCTREQ.DATA`
 
 The data is in DB2's delimited format, in EBCDIC: fields separated by commas, strings in double quotes, and NULL as an empty field. Downloading a table's header dataset and then its data dataset in text mode gives a CSV file with a header line.
 
-To keep the contents of the tables at each step of a cycle, run MODBUNL before MODBLOAD and after each of the other jobs, with a new label each time (for example `U1` to `U5`). A rerun with the same label replaces that label's datasets. The submitting user needs SELECT, or the UNLOAD privilege, on both tables.
+To keep the contents of the tables at each step of a cycle, run MODBUNL before MODBLOAD and after each of the other jobs, with a new label each time (for example `U1` to `U5`). A rerun with the same label replaces that label's datasets. The submitting user needs SELECT, or the UNLOAD privilege, on the tables.
 
 ## Technical Details
 
@@ -181,6 +190,18 @@ The extension uses the following DB2 tables:
   - ADB_OVERLIMIT_FLG (CHAR(1)): Y when the closing balance is above the credit limit
   - ADB_FLAG_DATE (DATE): Date the account was flagged, NULL when not flagged
 
+- **CARDDEMO.ACCT_REQUEST**: Stores requests for the CMDR transaction
+  - REQ_ID (CHAR(12)): Request ID (Primary Key); CMDR applies requests in this order
+  - REQ_ACTION (CHAR(1)): `A` adjustment, `S` set the over-limit flag, `C` clear it
+  - REQ_ACCT_ID (DECIMAL(11,0)): Account ID
+  - REQ_BAL_DATE (DATE): Business date: the daily balance the request applies to, and every date it writes
+  - REQ_CARD_NUM (CHAR(16)): Card number of an adjustment
+  - REQ_AMT (DECIMAL(11,2)): Amount of an adjustment
+  - REQ_DESC (VARCHAR(100)): Description of an adjustment, NULL for the default
+  - REQ_STATUS (CHAR(1)): `P` pending (the default), `D` done, `R` rejected
+  - REQ_REASON (CHAR(8)): Why a request was rejected, NULL otherwise
+  - REQ_TRAN_ID (CHAR(16)): The TRAN_HIST row an adjustment posted, NULL otherwise
+
 ### Integration Patterns
 
 This extension demonstrates several DB2 integration patterns:
@@ -192,9 +213,9 @@ This extension demonstrates several DB2 integration patterns:
 5. **DB2 Precompiler Integration**: Programs are precompiled with DSNHPC. The batch programs are link-edited with DSNELI and run under the TSO attach (IKJEFT01 and DSN RUN); the CICS programs are link-edited with DSNCLI and run under the CICS DB2 attach
 6. **Error Handling**: Each SQL statement checks SQLCODE. In the batch programs, unexpected errors are reported with DSNTIAR, rolled back and abended
 7. **Deterministic Processing**: Business dates come from the PARMFILE instead of the system clock, and every cursor whose rows are written out has an ORDER BY, so a rerun with the same input gives the same output
-8. **CICS Paging**: CMDL reads each page with a forward cursor from a start key and fetches one extra row to know whether another page follows; a request for the previous page uses a backward cursor to find where it starts. Each request re-reads its page, so the rows returned are always current
-9. **CICS Units of Work**: CMDU's update names every column of the row the caller read in its WHERE clause, so it changes nothing if another user or job changed the row first. It ends the unit of work with SYNCPOINT, or SYNCPOINT ROLLBACK on any failure. CMDU's flag date is the only value the module writes from the system clock
-10. **CICS Error Handling**: Db2 errors in the CICS programs return the action, SQLCODE and message tokens in the response message, without calling DSNTIAC
+8. **CICS Work Queue**: CMDR is started with no data and reads its work from DB2: each time, the pending request with the lowest ID. It reads each request afresh after the previous one's SYNCPOINT, so no cursor is held across units of work
+9. **CICS Units of Work**: Each request is one unit of work, ended with SYNCPOINT. Every check comes before the first write, so a rejected request changes only its own status
+10. **CICS Error Handling**: A Db2 error writes the action, SQLCODE and message tokens to the region's log, without calling DSNTIAC, then rolls back with SYNCPOINT ROLLBACK and abends (`MDRQ`)
 
 ## Integration with Base Application
 
@@ -204,11 +225,11 @@ This module integrates with the base CardDemo application in the following ways:
 2. **Account Data**: The MODBBAL job reads balances and credit limits from the base account file (ACCTDATA)
 3. **Reference Data**: The MODBRPT job looks up transaction type and category names in the base transaction type and category files (TRANTYPE and TRANCATG)
 4. **Read-Only Integration**: The module reads the base VSAM files but does not change any base program or file
-5. **No Screens**: The CICS programs have no BMS maps and do not use the CardDemo COMMAREA (`COCOM01Y`) or menus; a caller LINKs to them with their own request and response COMMAREA
+5. **No Screens**: The CICS transaction has no BMS maps, no COMMAREA and no terminal, and does not use the CardDemo menus; its input and output are DB2 tables
 6. **Separate DB2 and CICS Objects**: Its own DB2 database, package collection and plan, and its own CSD group (all `CARDMODB`), so creating, dropping or rebinding it does not affect the other DB2 extensions
 
 ## Dependencies
 
 - Base CardDemo application
 - DB2 subsystem
-- For the online transactions: a CICS region connected to that DB2 subsystem
+- For the online transaction: a CICS region connected to that DB2 subsystem
