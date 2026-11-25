@@ -1,0 +1,5707 @@
+{
+  "ShabakehVersion": "0.94.66",
+  "ShabakehConfig": {
+    "ClientProject": "aws-carddemo",
+    "ClientProjectSHA": "",
+    "CorpusHash": "sha256:d431c02eeba940d8ffd54749566d25dd00ba09f931a1912185913cf034e82d59",
+    "Targets": [
+      "cobol://CBMOD02C"
+    ]
+  },
+  "Entries": [
+    {
+      "ArtifactKind": "PROGRAM",
+      "ShortName": "CBMOD02C",
+      "Language": "COBOL",
+      "Key": "file://app-mo-db2/cbl/CBMOD02C.cbl",
+      "ProgramID": "CBMOD02C",
+      "CompilerOptions": {
+        "LP": 32,
+        "TRUNC": "STD",
+        "NSYMBOL": "NATIONAL"
+      },
+      "IsCICS": false,
+      "Complexity": {
+        "NumLines": 539,
+        "NumLinesWithComment": 880,
+        "NumLinesNoCopybook": 278,
+        "NumLinesNoCopybookWithComment": 386,
+        "CyclomaticComplexity": 44
+      },
+      "Lines": [
+        "      ******************************************************************",
+        "      * Program     : CBMOD02C.CBL",
+        "      * Application : CardDemo - app-mo-db2",
+        "      * Type        : BATCH COBOL Db2 Program (TSO attach)",
+        "      * Function    : Build the daily balance snapshot in Db2 table",
+        "      *               CARDDEMO.ACCT_DAILY_BAL for the balance date in",
+        "      *               DD PARMFILE (cols 1-10, YYYY-MM-DD).",
+        "      *               - Totals each account's TRAN_HIST credits",
+        "      *                 (amount >= 0), debits (amount < 0) and count",
+        "      *                 for the date, in account order",
+        "      *               - Opening balance is the closing balance of the",
+        "      *                 account's latest earlier snapshot. With no",
+        "      *                 earlier snapshot it is seeded from the ACCTDATA",
+        "      *                 current balance less every TRAN_HIST amount",
+        "      *                 dated on or after the balance date",
+        "      *               - Credit limit comes from ACCTDATA",
+        "      *               - Inserts the snapshot; when one already exists",
+        "      *                 for the date (rerun) it is replaced and its",
+        "      *                 over-limit flag cleared for CBMOD04C to redo",
+        "      *               - Commits every 100 accounts (cursor WITH HOLD)",
+        "      *               Sets RC 4 when an account is not in ACCTDATA.",
+        "      ******************************************************************",
+        "      * Copyright (c) 2026 Mechanical Orchard, Inc.                    *",
+        "      * All Rights Reserved.                                           *",
+        "      *                                                                *",
+        "      * Licensed under the Apache License, Version 2.0 (the \"License\").*",
+        "      * You may not use this file except in compliance with the        *",
+        "      * License. You may obtain a copy of the License at               *",
+        "      *                                                                *",
+        "      *    http://www.apache.org/licenses/LICENSE-2.0                  *",
+        "      *                                                                *",
+        "      * Unless required by applicable law or agreed to in writing,     *",
+        "      * software distributed under the License is distributed on an    *",
+        "      * \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,   *",
+        "      * either express or implied. See the License for the specific    *",
+        "      * language governing permissions and limitations under the       *",
+        "      * License.                                                       *",
+        "      ******************************************************************",
+        "       IDENTIFICATION DIVISION.",
+        "       PROGRAM-ID.    CBMOD02C.",
+        "       AUTHOR.        MECHANICAL ORCHARD.",
+        "",
+        "       ENVIRONMENT DIVISION.",
+        "       INPUT-OUTPUT SECTION.",
+        "       FILE-CONTROL.",
+        "           SELECT PARM-FILE ASSIGN TO PARMFILE",
+        "                  ORGANIZATION IS SEQUENTIAL",
+        "                  ACCESS MODE  IS SEQUENTIAL",
+        "                  FILE STATUS  IS PARMFILE-STATUS.",
+        "",
+        "           SELECT ACCOUNT-FILE ASSIGN TO ACCTFILE",
+        "                  ORGANIZATION IS INDEXED",
+        "                  ACCESS MODE  IS RANDOM",
+        "                  RECORD KEY   IS FD-ACCT-ID",
+        "                  FILE STATUS  IS ACCTFILE-STATUS.",
+        "      *",
+        "       DATA DIVISION.",
+        "       FILE SECTION.",
+        "       FD  PARM-FILE.",
+        "       01  FD-PARM-REC                          PIC X(80).",
+        "",
+        "       FD  ACCOUNT-FILE.",
+        "       01  FD-ACCTFILE-REC.",
+        "           05 FD-ACCT-ID                        PIC 9(11).",
+        "           05 FD-ACCT-DATA                      PIC X(289).",
+        "",
+        "       WORKING-STORAGE SECTION.",
+        "",
+        "      *****************************************************************",
+        "******* MO-PARSE: INLINED COBOL_COPYBOOK CVMOD01Y",
+        "      ******************************************************************",
+        "      * Copybook    : CVMOD01Y",
+        "      * Application : CardDemo - app-mo-db2",
+        "      * Function    : Run parameter record read from DD PARMFILE",
+        "      *               (LRECL 80) by the app-mo-db2 batch programs.",
+        "      *",
+        "      *   Cols  1-10  START-DATE  YYYY-MM-DD",
+        "      *               CBMOD02C - balance date",
+        "      *               CBMOD03C - first date of the report range",
+        "      *               CBMOD04C - as-of date",
+        "      *   Cols 12-21  END-DATE    YYYY-MM-DD",
+        "      *               CBMOD03C - last date of the report range",
+        "      *   Cols 23-26  RETAIN-DAYS NNNN",
+        "      *               CBMOD04C - days of TRAN_HIST history to keep",
+        "      *",
+        "      * The layout of cols 1-21 matches the base DATEPARM record.",
+        "      ******************************************************************",
+        "      * Copyright (c) 2026 Mechanical Orchard, Inc.                    *",
+        "      * All Rights Reserved.                                           *",
+        "      *                                                                *",
+        "      * Licensed under the Apache License, Version 2.0 (the \"License\").*",
+        "      * You may not use this file except in compliance with the        *",
+        "      * License. You may obtain a copy of the License at               *",
+        "      *                                                                *",
+        "      *    http://www.apache.org/licenses/LICENSE-2.0                  *",
+        "      *                                                                *",
+        "      * Unless required by applicable law or agreed to in writing,     *",
+        "      * software distributed under the License is distributed on an    *",
+        "      * \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,   *",
+        "      * either express or implied. See the License for the specific    *",
+        "      * language governing permissions and limitations under the       *",
+        "      * License.                                                       *",
+        "      ******************************************************************",
+        "       01  MODB-PARM-RECORD.",
+        "           05  MODB-PARM-START-DATE             PIC X(10).",
+        "           05  FILLER                           PIC X(01).",
+        "           05  MODB-PARM-END-DATE               PIC X(10).",
+        "           05  FILLER                           PIC X(01).",
+        "           05  MODB-PARM-RETAIN-DAYS            PIC X(04).",
+        "           05  FILLER                           PIC X(54).",
+        "",
+        "       01  PARMFILE-STATUS.",
+        "           05  PARMFILE-STAT1                   PIC X.",
+        "           05  PARMFILE-STAT2                   PIC X.",
+        "",
+        "******* MO-PARSE: INLINED COBOL_COPYBOOK CVACT01Y",
+        "      *****************************************************************",
+        "      *    Data-structure for  account entity (RECLN 300)",
+        "      *****************************************************************",
+        "       01  ACCOUNT-RECORD.",
+        "           05  ACCT-ID                           PIC 9(11).",
+        "           05  ACCT-ACTIVE-STATUS                PIC X(01).",
+        "           05  ACCT-CURR-BAL                     PIC S9(10)V99.",
+        "           05  ACCT-CREDIT-LIMIT                 PIC S9(10)V99.",
+        "           05  ACCT-CASH-CREDIT-LIMIT            PIC S9(10)V99.",
+        "           05  ACCT-OPEN-DATE                    PIC X(10).",
+        "           05  ACCT-EXPIRAION-DATE               PIC X(10). ",
+        "           05  ACCT-REISSUE-DATE                 PIC X(10).",
+        "           05  ACCT-CURR-CYC-CREDIT              PIC S9(10)V99.",
+        "           05  ACCT-CURR-CYC-DEBIT               PIC S9(10)V99.",
+        "           05  ACCT-ADDR-ZIP                     PIC X(10).",
+        "           05  ACCT-GROUP-ID                     PIC X(10).",
+        "           05  FILLER                            PIC X(178).      ",
+        "      *",
+        "      * Ver: CardDemo_v1.0-15-g27d6c6f-68 Date: 2022-07-19 23:15:59 CDT",
+        "      *",
+        "",
+        "       01  ACCTFILE-STATUS.",
+        "           05  ACCTFILE-STAT1                   PIC X.",
+        "           05  ACCTFILE-STAT2                   PIC X.",
+        "",
+        "******* MO-PARSE: INLINED COBOL_COPYBOOK CSMODBWY",
+        "      ******************************************************************",
+        "      * Copybook    : CSMODBWY",
+        "      * Application : CardDemo - app-mo-db2",
+        "      * Function    : Common working storage for the app-mo-db2 batch",
+        "      *               programs: file status display, abend, and Db2",
+        "      *               error message formatting with DSNTIAR.",
+        "      *               Used with procedure copybook CSMODBPY.",
+        "      *",
+        "      *   Abend codes set in ABCODE before 9999-ABEND-PROGRAM:",
+        "      *     997  Invalid run parameters",
+        "      *     998  Unexpected SQLCODE",
+        "      *     999  File I/O error",
+        "      ******************************************************************",
+        "      * Copyright (c) 2026 Mechanical Orchard, Inc.                    *",
+        "      * All Rights Reserved.                                           *",
+        "      *                                                                *",
+        "      * Licensed under the Apache License, Version 2.0 (the \"License\").*",
+        "      * You may not use this file except in compliance with the        *",
+        "      * License. You may obtain a copy of the License at               *",
+        "      *                                                                *",
+        "      *    http://www.apache.org/licenses/LICENSE-2.0                  *",
+        "      *                                                                *",
+        "      * Unless required by applicable law or agreed to in writing,     *",
+        "      * software distributed under the License is distributed on an    *",
+        "      * \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,   *",
+        "      * either express or implied. See the License for the specific    *",
+        "      * language governing permissions and limitations under the       *",
+        "      * License.                                                       *",
+        "      ******************************************************************",
+        "       01  IO-STATUS.",
+        "           05  IO-STAT1                         PIC X.",
+        "           05  IO-STAT2                         PIC X.",
+        "       01  TWO-BYTES-BINARY                     PIC 9(4) BINARY.",
+        "       01  TWO-BYTES-ALPHA                      REDEFINES",
+        "           TWO-BYTES-BINARY.",
+        "           05  TWO-BYTES-LEFT                   PIC X.",
+        "           05  TWO-BYTES-RIGHT                  PIC X.",
+        "       01  IO-STATUS-04.",
+        "           05  IO-STATUS-0401                   PIC 9   VALUE 0.",
+        "           05  IO-STATUS-0403                   PIC 999 VALUE 0.",
+        "",
+        "       01  ABCODE                               PIC S9(9) BINARY.",
+        "       01  TIMING                               PIC S9(9) BINARY.",
+        "",
+        "       01  WS-SQL-ERROR-INFO.",
+        "           05  WS-SQL-ACTION                    PIC X(40) VALUE SPACES.",
+        "           05  WS-SQL-DISP-CODE                 PIC -(9)9.",
+        "",
+        "       01  WS-DSNTIAR-MSG.",
+        "           05  WS-DSNTIAR-LEN                   PIC S9(4) COMP",
+        "                                                VALUE +720.",
+        "           05  WS-DSNTIAR-TEXT                  PIC X(72)",
+        "                                                OCCURS 10 TIMES",
+        "                                                INDEXED BY",
+        "                                                WS-DSNTIAR-IX.",
+        "       01  WS-DSNTIAR-LRECL                     PIC S9(9) COMP",
+        "                                                VALUE +72.",
+        "",
+        "",
+        "      *****************************************************************",
+        "      *    Db2 communication area and table declarations",
+        "      *****************************************************************",
+        "******* MO-PARSE: INLINED COBOL_COPYBOOK SQLCA",
+        "",
+        "        01 SQLCA.",
+        "          05 SQLCAID      PIC X(8).",
+        "          05 SQLCABC      PIC S9(9) COMP-5.",
+        "          05 SQLCODE      PIC S9(9) COMP-5.",
+        "          05 SQLERRM.",
+        "             49 SQLERRML  PIC S9(4) COMP-5.",
+        "             49 SQLERRMC  PIC X(70).",
+        "          05 SQLERRP  PIC X(8).",
+        "          05 SQLERRD  OCCURS 6 TIMES PIC S9(9) COMP-5.",
+        "          05 SQLWARN.",
+        "             10 SQLWARN0  PIC X.",
+        "             10 SQLWARN1  PIC X.",
+        "             10 SQLWARN2  PIC X.",
+        "             10 SQLWARN3  PIC X.",
+        "             10 SQLWARN4  PIC X.",
+        "             10 SQLWARN5  PIC X.",
+        "             10 SQLWARN6  PIC X.",
+        "             10 SQLWARN7  PIC X.",
+        "          05 SQLEXT.",
+        "             10 SQLWARN8  PIC X.",
+        "             10 SQLWARN9  PIC X.",
+        "             10 SQLWARNA  PIC X.",
+        "             10 SQLSTATE  PIC X(5).",
+        "          05 SQL-HCONN    PIC S9(9) COMP-5.",
+        "",
+        "******* MO-PARSE: INLINED COBOL_COPYBOOK DCLTRHST",
+        "      ******************************************************************",
+        "      * Copyright (c) 2026 Mechanical Orchard, Inc.                    *",
+        "      * All Rights Reserved.                                           *",
+        "      *                                                                *",
+        "      * Licensed under the Apache License, Version 2.0 (the \"License\").*",
+        "      * You may not use this file except in compliance with the        *",
+        "      * License. You may obtain a copy of the License at               *",
+        "      *                                                                *",
+        "      *    http://www.apache.org/licenses/LICENSE-2.0                  *",
+        "      *                                                                *",
+        "      * Unless required by applicable law or agreed to in writing,     *",
+        "      * software distributed under the License is distributed on an    *",
+        "      * \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,   *",
+        "      * either express or implied. See the License for the specific    *",
+        "      * language governing permissions and limitations under the       *",
+        "      * License.                                                       *",
+        "      ******************************************************************",
+        "      ******************************************************************",
+        "      * DCLGEN TABLE(CARDDEMO.TRAN_HIST)                               *",
+        "      *        LIBRARY(MO.CARDDEMO.DCL(DCLTRHST))                      *",
+        "      *        ACTION(REPLACE)                                         *",
+        "      *        LANGUAGE(COBOL)                                         *",
+        "      *        NAMES(DCL-)                                             *",
+        "      *        QUOTE                                                   *",
+        "      *        LABEL(YES)                                              *",
+        "      *        COLSUFFIX(YES)                                          *",
+        "      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *",
+        "      ******************************************************************",
+        "           EXEC SQL DECLARE CARDDEMO.TRAN_HIST TABLE",
+        "           ( TH_TRAN_ID                     CHAR(16) NOT NULL,",
+        "             TH_ACCT_ID                     DECIMAL(11, 0) NOT NULL,",
+        "             TH_CARD_NUM                    CHAR(16) NOT NULL,",
+        "             TH_TYPE_CD                     CHAR(2) NOT NULL,",
+        "             TH_CAT_CD                      CHAR(4) NOT NULL,",
+        "             TH_SOURCE                      CHAR(10) NOT NULL,",
+        "             TH_DESC                        VARCHAR(100) NOT NULL,",
+        "             TH_AMT                         DECIMAL(11, 2) NOT NULL,",
+        "             TH_MERCHANT_ID                 DECIMAL(9, 0),",
+        "             TH_MERCHANT_NAME               VARCHAR(50),",
+        "             TH_MERCHANT_CITY               VARCHAR(50),",
+        "             TH_MERCHANT_ZIP                CHAR(10),",
+        "             TH_TRAN_DATE                   DATE NOT NULL,",
+        "             TH_ORIG_TS                     TIMESTAMP NOT NULL,",
+        "             TH_PROC_TS                     TIMESTAMP",
+        "           ) END-EXEC.",
+        "      ******************************************************************",
+        "      * COBOL DECLARATION FOR TABLE CARDDEMO.TRAN_HIST                 *",
+        "      ******************************************************************",
+        "       01  DCLTRAN-HIST.",
+        "      *    *************************************************************",
+        "      *                       TH_TRAN_ID",
+        "           10 DCL-TH-TRAN-ID       PIC X(16).",
+        "      *    *************************************************************",
+        "      *                       TH_ACCT_ID",
+        "           10 DCL-TH-ACCT-ID       PIC S9(11)V USAGE COMP-3.",
+        "      *    *************************************************************",
+        "      *                       TH_CARD_NUM",
+        "           10 DCL-TH-CARD-NUM      PIC X(16).",
+        "      *    *************************************************************",
+        "      *                       TH_TYPE_CD",
+        "           10 DCL-TH-TYPE-CD       PIC X(2).",
+        "      *    *************************************************************",
+        "      *                       TH_CAT_CD",
+        "           10 DCL-TH-CAT-CD        PIC X(4).",
+        "      *    *************************************************************",
+        "      *                       TH_SOURCE",
+        "           10 DCL-TH-SOURCE        PIC X(10).",
+        "      *    *************************************************************",
+        "           10 DCL-TH-DESC.",
+        "      *                       TH_DESC LENGTH",
+        "              49 DCL-TH-DESC-LEN",
+        "                 PIC S9(4) USAGE COMP.",
+        "      *                       TH_DESC",
+        "              49 DCL-TH-DESC-TEXT",
+        "                 PIC X(100).",
+        "      *    *************************************************************",
+        "      *                       TH_AMT",
+        "           10 DCL-TH-AMT           PIC S9(9)V9(2) USAGE COMP-3.",
+        "      *    *************************************************************",
+        "      *                       TH_MERCHANT_ID",
+        "           10 DCL-TH-MERCHANT-ID   PIC S9(9)V USAGE COMP-3.",
+        "      *    *************************************************************",
+        "           10 DCL-TH-MERCHANT-NAME.",
+        "      *                       TH_MERCHANT_NAME LENGTH",
+        "              49 DCL-TH-MERCHANT-NAME-LEN",
+        "                 PIC S9(4) USAGE COMP.",
+        "      *                       TH_MERCHANT_NAME",
+        "              49 DCL-TH-MERCHANT-NAME-TEXT",
+        "                 PIC X(50).",
+        "      *    *************************************************************",
+        "           10 DCL-TH-MERCHANT-CITY.",
+        "      *                       TH_MERCHANT_CITY LENGTH",
+        "              49 DCL-TH-MERCHANT-CITY-LEN",
+        "                 PIC S9(4) USAGE COMP.",
+        "      *                       TH_MERCHANT_CITY",
+        "              49 DCL-TH-MERCHANT-CITY-TEXT",
+        "                 PIC X(50).",
+        "      *    *************************************************************",
+        "      *                       TH_MERCHANT_ZIP",
+        "           10 DCL-TH-MERCHANT-ZIP  PIC X(10).",
+        "      *    *************************************************************",
+        "      *                       TH_TRAN_DATE",
+        "           10 DCL-TH-TRAN-DATE     PIC X(10).",
+        "      *    *************************************************************",
+        "      *                       TH_ORIG_TS",
+        "           10 DCL-TH-ORIG-TS       PIC X(26).",
+        "      *    *************************************************************",
+        "      *                       TH_PROC_TS",
+        "           10 DCL-TH-PROC-TS       PIC X(26).",
+        "      ******************************************************************",
+        "      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 15      *",
+        "      ******************************************************************",
+        "",
+        "",
+        "******* MO-PARSE: INLINED COBOL_COPYBOOK DCLACDBL",
+        "      ******************************************************************",
+        "      * Copyright (c) 2026 Mechanical Orchard, Inc.                    *",
+        "      * All Rights Reserved.                                           *",
+        "      *                                                                *",
+        "      * Licensed under the Apache License, Version 2.0 (the \"License\").*",
+        "      * You may not use this file except in compliance with the        *",
+        "      * License. You may obtain a copy of the License at               *",
+        "      *                                                                *",
+        "      *    http://www.apache.org/licenses/LICENSE-2.0                  *",
+        "      *                                                                *",
+        "      * Unless required by applicable law or agreed to in writing,     *",
+        "      * software distributed under the License is distributed on an    *",
+        "      * \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,   *",
+        "      * either express or implied. See the License for the specific    *",
+        "      * language governing permissions and limitations under the       *",
+        "      * License.                                                       *",
+        "      ******************************************************************",
+        "      ******************************************************************",
+        "      * DCLGEN TABLE(CARDDEMO.ACCT_DAILY_BAL)                          *",
+        "      *        LIBRARY(MO.CARDDEMO.DCL(DCLACDBL))                      *",
+        "      *        ACTION(REPLACE)                                         *",
+        "      *        LANGUAGE(COBOL)                                         *",
+        "      *        NAMES(DCL-)                                             *",
+        "      *        QUOTE                                                   *",
+        "      *        LABEL(YES)                                              *",
+        "      *        COLSUFFIX(YES)                                          *",
+        "      * ... IS THE DCLGEN COMMAND THAT MADE THE FOLLOWING STATEMENTS   *",
+        "      ******************************************************************",
+        "           EXEC SQL DECLARE CARDDEMO.ACCT_DAILY_BAL TABLE",
+        "           ( ADB_ACCT_ID                    DECIMAL(11, 0) NOT NULL,",
+        "             ADB_BAL_DATE                   DATE NOT NULL,",
+        "             ADB_OPEN_BAL                   DECIMAL(12, 2) NOT NULL,",
+        "             ADB_CREDIT_AMT                 DECIMAL(12, 2) NOT NULL,",
+        "             ADB_DEBIT_AMT                  DECIMAL(12, 2) NOT NULL,",
+        "             ADB_CLOSE_BAL                  DECIMAL(12, 2) NOT NULL,",
+        "             ADB_TRAN_CNT                   INTEGER NOT NULL,",
+        "             ADB_CREDIT_LIMIT               DECIMAL(12, 2) NOT NULL,",
+        "             ADB_OVERLIMIT_FLG              CHAR(1) NOT NULL,",
+        "             ADB_FLAG_DATE                  DATE",
+        "           ) END-EXEC.",
+        "      ******************************************************************",
+        "      * COBOL DECLARATION FOR TABLE CARDDEMO.ACCT_DAILY_BAL            *",
+        "      ******************************************************************",
+        "       01  DCLACCT-DAILY-BAL.",
+        "      *    *************************************************************",
+        "      *                       ADB_ACCT_ID",
+        "           10 DCL-ADB-ACCT-ID      PIC S9(11)V USAGE COMP-3.",
+        "      *    *************************************************************",
+        "      *                       ADB_BAL_DATE",
+        "           10 DCL-ADB-BAL-DATE     PIC X(10).",
+        "      *    *************************************************************",
+        "      *                       ADB_OPEN_BAL",
+        "           10 DCL-ADB-OPEN-BAL     PIC S9(10)V9(2) USAGE COMP-3.",
+        "      *    *************************************************************",
+        "      *                       ADB_CREDIT_AMT",
+        "           10 DCL-ADB-CREDIT-AMT   PIC S9(10)V9(2) USAGE COMP-3.",
+        "      *    *************************************************************",
+        "      *                       ADB_DEBIT_AMT",
+        "           10 DCL-ADB-DEBIT-AMT    PIC S9(10)V9(2) USAGE COMP-3.",
+        "      *    *************************************************************",
+        "      *                       ADB_CLOSE_BAL",
+        "           10 DCL-ADB-CLOSE-BAL    PIC S9(10)V9(2) USAGE COMP-3.",
+        "      *    *************************************************************",
+        "      *                       ADB_TRAN_CNT",
+        "           10 DCL-ADB-TRAN-CNT     PIC S9(9) USAGE COMP.",
+        "      *    *************************************************************",
+        "      *                       ADB_CREDIT_LIMIT",
+        "           10 DCL-ADB-CREDIT-LIMIT PIC S9(10)V9(2) USAGE COMP-3.",
+        "      *    *************************************************************",
+        "      *                       ADB_OVERLIMIT_FLG",
+        "           10 DCL-ADB-OVERLIMIT-FLG",
+        "              PIC X(1).",
+        "      *    *************************************************************",
+        "      *                       ADB_FLAG_DATE",
+        "           10 DCL-ADB-FLAG-DATE    PIC X(10).",
+        "      ******************************************************************",
+        "      * THE NUMBER OF COLUMNS DESCRIBED BY THIS DECLARATION IS 10      *",
+        "      ******************************************************************",
+        "",
+        "",
+        "      *    Host variables",
+        "       01  WS-HOST-VARIABLES.",
+        "           05  WS-PARM-DATE                     PIC X(10).",
+        "           05  WS-BAL-DATE                      PIC X(10).",
+        "           05  WS-DAY-CREDITS                   PIC S9(10)V9(2) COMP-3.",
+        "           05  WS-DAY-DEBITS                    PIC S9(10)V9(2) COMP-3.",
+        "           05  WS-DAY-NET                       PIC S9(10)V9(2) COMP-3.",
+        "           05  WS-DAY-COUNT                     PIC S9(9) COMP.",
+        "           05  WS-PREV-BAL-DATE                 PIC X(10).",
+        "           05  WS-IND-PREV-BAL-DATE             PIC S9(4) COMP.",
+        "           05  WS-PREV-CLOSE-BAL                PIC S9(10)V9(2) COMP-3.",
+        "           05  WS-LATER-NET                     PIC S9(10)V9(2) COMP-3.",
+        "           05  WS-IND-LATER-NET                 PIC S9(4) COMP.",
+        "",
+        "      *****************************************************************",
+        "      *    Accounts with activity on the balance date, in account",
+        "      *    order. WITH HOLD keeps the cursor open across COMMIT.",
+        "      *****************************************************************",
+        "           EXEC SQL",
+        "                DECLARE C-DAY-ACTIVITY CURSOR WITH HOLD FOR",
+        "                SELECT TH_ACCT_ID",
+        "                     , SUM(CASE WHEN TH_AMT >= 0",
+        "                                THEN TH_AMT ELSE 0 END)",
+        "                     , SUM(CASE WHEN TH_AMT < 0",
+        "                                THEN TH_AMT ELSE 0 END)",
+        "                     , SUM(TH_AMT)",
+        "                     , COUNT(*)",
+        "                  FROM CARDDEMO.TRAN_HIST",
+        "                 WHERE TH_TRAN_DATE = :WS-BAL-DATE",
+        "                 GROUP BY TH_ACCT_ID",
+        "                 ORDER BY TH_ACCT_ID",
+        "           END-EXEC.",
+        "",
+        "      *****************************************************************",
+        "       01  WS-FLAGS.",
+        "           05  WS-END-OF-CURSOR                 PIC X(01) VALUE 'N'.",
+        "               88  END-OF-CURSOR                          VALUE 'Y'.",
+        "           05  WS-ACCOUNT-STATE                 PIC X(01) VALUE 'N'.",
+        "               88  ACCOUNT-FOUND                          VALUE 'Y'.",
+        "               88  ACCOUNT-NOT-FOUND                      VALUE 'N'.",
+        "",
+        "       01  WS-COUNTERS.",
+        "           05  WS-ACCOUNT-COUNT                 PIC 9(09) VALUE 0.",
+        "           05  WS-INSERT-COUNT                  PIC 9(09) VALUE 0.",
+        "           05  WS-UPDATE-COUNT                  PIC 9(09) VALUE 0.",
+        "           05  WS-SEEDED-COUNT                  PIC 9(09) VALUE 0.",
+        "           05  WS-NOT-FOUND-COUNT               PIC 9(09) VALUE 0.",
+        "           05  WS-UNCOMMITTED-COUNT             PIC 9(09) VALUE 0.",
+        "           05  WS-COMMIT-COUNT                  PIC 9(09) VALUE 0.",
+        "",
+        "       01  WS-COMMIT-FREQUENCY                  PIC 9(09) VALUE 100.",
+        "",
+        "       01  WS-ACCT-ID-DISPLAY                   PIC 9(11).",
+        "",
+        "      *****************************************************************",
+        "       PROCEDURE DIVISION.",
+        "           DISPLAY 'START OF EXECUTION OF PROGRAM CBMOD02C'.",
+        "           PERFORM 0100-READ-PARMS.",
+        "           PERFORM 0200-VALIDATE-BAL-DATE.",
+        "           PERFORM 0300-ACCTFILE-OPEN.",
+        "",
+        "           PERFORM 1000-OPEN-CURSOR.",
+        "           PERFORM 1100-FETCH-ACTIVITY.",
+        "           PERFORM UNTIL END-OF-CURSOR",
+        "               ADD 1 TO WS-ACCOUNT-COUNT",
+        "               PERFORM 2000-BUILD-DAILY-BALANCE",
+        "               PERFORM 2500-SAVE-DAILY-BALANCE",
+        "               PERFORM 1100-FETCH-ACTIVITY",
+        "           END-PERFORM.",
+        "           PERFORM 1200-CLOSE-CURSOR.",
+        "",
+        "           PERFORM 3000-COMMIT-WORK.",
+        "           PERFORM 9300-ACCTFILE-CLOSE.",
+        "",
+        "           DISPLAY 'BALANCE DATE             :' WS-BAL-DATE.",
+        "           DISPLAY 'ACCOUNTS WITH ACTIVITY   :' WS-ACCOUNT-COUNT.",
+        "           DISPLAY 'SNAPSHOTS INSERTED       :' WS-INSERT-COUNT.",
+        "           DISPLAY 'SNAPSHOTS REPLACED       :' WS-UPDATE-COUNT.",
+        "           DISPLAY 'SEEDED FROM ACCTDATA     :' WS-SEEDED-COUNT.",
+        "           DISPLAY 'ACCOUNTS NOT IN ACCTDATA :' WS-NOT-FOUND-COUNT.",
+        "           DISPLAY 'COMMITS ISSUED           :' WS-COMMIT-COUNT.",
+        "           IF WS-NOT-FOUND-COUNT > 0",
+        "              MOVE 4 TO RETURN-CODE",
+        "           END-IF.",
+        "           DISPLAY 'END OF EXECUTION OF PROGRAM CBMOD02C'.",
+        "",
+        "           GOBACK.",
+        "",
+        "      *---------------------------------------------------------------*",
+        "       0100-READ-PARMS.",
+        "           OPEN INPUT PARM-FILE",
+        "           IF PARMFILE-STATUS NOT = '00'",
+        "              DISPLAY 'ERROR OPENING PARAMETER FILE'",
+        "              MOVE PARMFILE-STATUS TO IO-STATUS",
+        "              PERFORM 9910-DISPLAY-IO-STATUS",
+        "              MOVE 999 TO ABCODE",
+        "              PERFORM 9999-ABEND-PROGRAM",
+        "           END-IF",
+        "           READ PARM-FILE INTO MODB-PARM-RECORD",
+        "           EVALUATE PARMFILE-STATUS",
+        "              WHEN '00'",
+        "                 CONTINUE",
+        "              WHEN '10'",
+        "                 DISPLAY 'PARAMETER FILE IS EMPTY'",
+        "                 MOVE 997 TO ABCODE",
+        "                 PERFORM 9999-ABEND-PROGRAM",
+        "              WHEN OTHER",
+        "                 DISPLAY 'ERROR READING PARAMETER FILE'",
+        "                 MOVE PARMFILE-STATUS TO IO-STATUS",
+        "                 PERFORM 9910-DISPLAY-IO-STATUS",
+        "                 MOVE 999 TO ABCODE",
+        "                 PERFORM 9999-ABEND-PROGRAM",
+        "           END-EVALUATE",
+        "           CLOSE PARM-FILE",
+        "           MOVE MODB-PARM-START-DATE TO WS-PARM-DATE.",
+        "      *---------------------------------------------------------------*",
+        "      * Let Db2 check the date and return it in ISO form.",
+        "      *---------------------------------------------------------------*",
+        "       0200-VALIDATE-BAL-DATE.",
+        "           EXEC SQL",
+        "                SELECT CHAR(DATE(:WS-PARM-DATE), ISO)",
+        "                  INTO :WS-BAL-DATE",
+        "                  FROM SYSIBM.SYSDUMMY1",
+        "           END-EXEC",
+        "           EVALUATE TRUE",
+        "              WHEN SQLCODE = ZERO",
+        "                 CONTINUE",
+        "              WHEN SQLCODE = -180",
+        "              WHEN SQLCODE = -181",
+        "                 DISPLAY 'INVALID BALANCE DATE IN PARMFILE: '",
+        "                         WS-PARM-DATE",
+        "                 MOVE 997 TO ABCODE",
+        "                 PERFORM 9999-ABEND-PROGRAM",
+        "              WHEN OTHER",
+        "                 MOVE 'VALIDATE BALANCE DATE' TO WS-SQL-ACTION",
+        "                 PERFORM 9800-SQL-ERROR",
+        "           END-EVALUATE.",
+        "      *---------------------------------------------------------------*",
+        "       0300-ACCTFILE-OPEN.",
+        "           OPEN INPUT ACCOUNT-FILE",
+        "           IF ACCTFILE-STATUS NOT = '00'",
+        "              DISPLAY 'ERROR OPENING ACCOUNT FILE'",
+        "              MOVE ACCTFILE-STATUS TO IO-STATUS",
+        "              PERFORM 9910-DISPLAY-IO-STATUS",
+        "              MOVE 999 TO ABCODE",
+        "              PERFORM 9999-ABEND-PROGRAM",
+        "           END-IF.",
+        "      *---------------------------------------------------------------*",
+        "       1000-OPEN-CURSOR.",
+        "           EXEC SQL",
+        "                OPEN C-DAY-ACTIVITY",
+        "           END-EXEC",
+        "           IF SQLCODE NOT = ZERO",
+        "              MOVE 'OPEN CURSOR C-DAY-ACTIVITY' TO WS-SQL-ACTION",
+        "              PERFORM 9800-SQL-ERROR",
+        "           END-IF.",
+        "      *---------------------------------------------------------------*",
+        "       1100-FETCH-ACTIVITY.",
+        "           EXEC SQL",
+        "                FETCH C-DAY-ACTIVITY",
+        "                 INTO :DCL-TH-ACCT-ID",
+        "                    , :WS-DAY-CREDITS",
+        "                    , :WS-DAY-DEBITS",
+        "                    , :WS-DAY-NET",
+        "                    , :WS-DAY-COUNT",
+        "           END-EXEC",
+        "           EVALUATE TRUE",
+        "              WHEN SQLCODE = ZERO",
+        "                 CONTINUE",
+        "              WHEN SQLCODE = +100",
+        "                 SET END-OF-CURSOR TO TRUE",
+        "              WHEN OTHER",
+        "                 MOVE 'FETCH CURSOR C-DAY-ACTIVITY' TO WS-SQL-ACTION",
+        "                 PERFORM 9800-SQL-ERROR",
+        "           END-EVALUATE.",
+        "      *---------------------------------------------------------------*",
+        "       1200-CLOSE-CURSOR.",
+        "           EXEC SQL",
+        "                CLOSE C-DAY-ACTIVITY",
+        "           END-EXEC",
+        "           IF SQLCODE NOT = ZERO",
+        "              MOVE 'CLOSE CURSOR C-DAY-ACTIVITY' TO WS-SQL-ACTION",
+        "              PERFORM 9800-SQL-ERROR",
+        "           END-IF.",
+        "      *---------------------------------------------------------------*",
+        "       2000-BUILD-DAILY-BALANCE.",
+        "      *    Credit limit, and the seed balance, come from ACCTDATA",
+        "           MOVE DCL-TH-ACCT-ID TO FD-ACCT-ID",
+        "           READ ACCOUNT-FILE INTO ACCOUNT-RECORD",
+        "              INVALID KEY",
+        "                 CONTINUE",
+        "           END-READ",
+        "           EVALUATE ACCTFILE-STATUS",
+        "              WHEN '00'",
+        "                 SET ACCOUNT-FOUND TO TRUE",
+        "              WHEN '23'",
+        "                 SET ACCOUNT-NOT-FOUND TO TRUE",
+        "                 ADD 1 TO WS-NOT-FOUND-COUNT",
+        "                 MOVE DCL-TH-ACCT-ID TO WS-ACCT-ID-DISPLAY",
+        "                 DISPLAY 'ACCOUNT NOT FOUND IN ACCTDATA: '",
+        "                         WS-ACCT-ID-DISPLAY",
+        "              WHEN OTHER",
+        "                 DISPLAY 'ERROR READING ACCOUNT FILE'",
+        "                 MOVE ACCTFILE-STATUS TO IO-STATUS",
+        "                 PERFORM 9910-DISPLAY-IO-STATUS",
+        "                 MOVE 999 TO ABCODE",
+        "                 PERFORM 9999-ABEND-PROGRAM",
+        "           END-EVALUATE",
+        "",
+        "      *    Date of the latest earlier snapshot. MAX returns NULL",
+        "      *    when there is none.",
+        "           EXEC SQL",
+        "                SELECT MAX(ADB_BAL_DATE)",
+        "                  INTO :WS-PREV-BAL-DATE :WS-IND-PREV-BAL-DATE",
+        "                  FROM CARDDEMO.ACCT_DAILY_BAL",
+        "                 WHERE ADB_ACCT_ID  = :DCL-TH-ACCT-ID",
+        "                   AND ADB_BAL_DATE < :WS-BAL-DATE",
+        "           END-EXEC",
+        "           IF SQLCODE NOT = ZERO",
+        "              MOVE 'SELECT MAX(ADB_BAL_DATE)' TO WS-SQL-ACTION",
+        "              PERFORM 9800-SQL-ERROR",
+        "           END-IF",
+        "",
+        "           IF WS-IND-PREV-BAL-DATE < 0",
+        "      *       No earlier snapshot. The ACCTDATA current balance",
+        "      *       already includes every loaded transaction: the day's",
+        "      *       postings, and interest from INTCALC, which is dated",
+        "      *       when INTCALC ran. Back out everything dated on or after",
+        "      *       the balance date.",
+        "              IF ACCOUNT-FOUND",
+        "                 PERFORM 2100-SUM-LATER-ACTIVITY",
+        "                 COMPUTE DCL-ADB-OPEN-BAL =",
+        "                         ACCT-CURR-BAL - WS-LATER-NET",
+        "              ELSE",
+        "                 MOVE ZERO TO DCL-ADB-OPEN-BAL",
+        "              END-IF",
+        "              ADD 1 TO WS-SEEDED-COUNT",
+        "           ELSE",
+        "              EXEC SQL",
+        "                   SELECT ADB_CLOSE_BAL",
+        "                     INTO :WS-PREV-CLOSE-BAL",
+        "                     FROM CARDDEMO.ACCT_DAILY_BAL",
+        "                    WHERE ADB_ACCT_ID  = :DCL-TH-ACCT-ID",
+        "                      AND ADB_BAL_DATE = :WS-PREV-BAL-DATE",
+        "              END-EXEC",
+        "              IF SQLCODE NOT = ZERO",
+        "                 MOVE 'SELECT PREVIOUS ADB_CLOSE_BAL' TO WS-SQL-ACTION",
+        "                 PERFORM 9800-SQL-ERROR",
+        "              END-IF",
+        "              MOVE WS-PREV-CLOSE-BAL TO DCL-ADB-OPEN-BAL",
+        "           END-IF",
+        "",
+        "           MOVE DCL-TH-ACCT-ID          TO DCL-ADB-ACCT-ID",
+        "           MOVE WS-BAL-DATE             TO DCL-ADB-BAL-DATE",
+        "           MOVE WS-DAY-CREDITS          TO DCL-ADB-CREDIT-AMT",
+        "           MOVE WS-DAY-DEBITS           TO DCL-ADB-DEBIT-AMT",
+        "           COMPUTE DCL-ADB-CLOSE-BAL = DCL-ADB-OPEN-BAL + WS-DAY-NET",
+        "           MOVE WS-DAY-COUNT            TO DCL-ADB-TRAN-CNT",
+        "           IF ACCOUNT-FOUND",
+        "              MOVE ACCT-CREDIT-LIMIT    TO DCL-ADB-CREDIT-LIMIT",
+        "           ELSE",
+        "              MOVE ZERO                 TO DCL-ADB-CREDIT-LIMIT",
+        "           END-IF.",
+        "      *---------------------------------------------------------------*",
+        "      * Net of the account's TRAN_HIST amounts dated on or after the",
+        "      * balance date. SUM returns NULL when there are no rows.",
+        "      *---------------------------------------------------------------*",
+        "       2100-SUM-LATER-ACTIVITY.",
+        "           EXEC SQL",
+        "                SELECT SUM(TH_AMT)",
+        "                  INTO :WS-LATER-NET :WS-IND-LATER-NET",
+        "                  FROM CARDDEMO.TRAN_HIST",
+        "                 WHERE TH_ACCT_ID    = :DCL-TH-ACCT-ID",
+        "                   AND TH_TRAN_DATE >= :WS-BAL-DATE",
+        "           END-EXEC",
+        "           IF SQLCODE NOT = ZERO",
+        "              MOVE 'SELECT SUM(TH_AMT) ON OR AFTER DATE'",
+        "                TO WS-SQL-ACTION",
+        "              PERFORM 9800-SQL-ERROR",
+        "           END-IF",
+        "           IF WS-IND-LATER-NET < 0",
+        "              MOVE ZERO TO WS-LATER-NET",
+        "           END-IF.",
+        "      *---------------------------------------------------------------*",
+        "       2500-SAVE-DAILY-BALANCE.",
+        "           EXEC SQL",
+        "                INSERT INTO CARDDEMO.ACCT_DAILY_BAL",
+        "                     ( ADB_ACCT_ID",
+        "                     , ADB_BAL_DATE",
+        "                     , ADB_OPEN_BAL",
+        "                     , ADB_CREDIT_AMT",
+        "                     , ADB_DEBIT_AMT",
+        "                     , ADB_CLOSE_BAL",
+        "                     , ADB_TRAN_CNT",
+        "                     , ADB_CREDIT_LIMIT",
+        "                     , ADB_OVERLIMIT_FLG",
+        "                     , ADB_FLAG_DATE",
+        "                     )",
+        "                VALUES",
+        "                     ( :DCL-ADB-ACCT-ID",
+        "                     , :DCL-ADB-BAL-DATE",
+        "                     , :DCL-ADB-OPEN-BAL",
+        "                     , :DCL-ADB-CREDIT-AMT",
+        "                     , :DCL-ADB-DEBIT-AMT",
+        "                     , :DCL-ADB-CLOSE-BAL",
+        "                     , :DCL-ADB-TRAN-CNT",
+        "                     , :DCL-ADB-CREDIT-LIMIT",
+        "                     , 'N'",
+        "                     , NULL",
+        "                     )",
+        "           END-EXEC",
+        "",
+        "           EVALUATE TRUE",
+        "              WHEN SQLCODE = ZERO",
+        "                 ADD 1 TO WS-INSERT-COUNT",
+        "              WHEN SQLCODE = -803",
+        "      *          Rerun for the same date: replace the snapshot",
+        "                 PERFORM 2600-REPLACE-DAILY-BALANCE",
+        "              WHEN OTHER",
+        "                 MOVE 'INSERT INTO CARDDEMO.ACCT_DAILY_BAL'",
+        "                   TO WS-SQL-ACTION",
+        "                 PERFORM 9800-SQL-ERROR",
+        "           END-EVALUATE",
+        "",
+        "           ADD 1 TO WS-UNCOMMITTED-COUNT",
+        "           IF WS-UNCOMMITTED-COUNT >= WS-COMMIT-FREQUENCY",
+        "              PERFORM 3000-COMMIT-WORK",
+        "           END-IF.",
+        "      *---------------------------------------------------------------*",
+        "       2600-REPLACE-DAILY-BALANCE.",
+        "           EXEC SQL",
+        "                UPDATE CARDDEMO.ACCT_DAILY_BAL",
+        "                   SET ADB_OPEN_BAL      = :DCL-ADB-OPEN-BAL",
+        "                     , ADB_CREDIT_AMT    = :DCL-ADB-CREDIT-AMT",
+        "                     , ADB_DEBIT_AMT     = :DCL-ADB-DEBIT-AMT",
+        "                     , ADB_CLOSE_BAL     = :DCL-ADB-CLOSE-BAL",
+        "                     , ADB_TRAN_CNT      = :DCL-ADB-TRAN-CNT",
+        "                     , ADB_CREDIT_LIMIT  = :DCL-ADB-CREDIT-LIMIT",
+        "                     , ADB_OVERLIMIT_FLG = 'N'",
+        "                     , ADB_FLAG_DATE     = NULL",
+        "                 WHERE ADB_ACCT_ID  = :DCL-ADB-ACCT-ID",
+        "                   AND ADB_BAL_DATE = :DCL-ADB-BAL-DATE",
+        "           END-EXEC",
+        "           IF SQLCODE = ZERO",
+        "              ADD 1 TO WS-UPDATE-COUNT",
+        "           ELSE",
+        "              MOVE 'UPDATE CARDDEMO.ACCT_DAILY_BAL' TO WS-SQL-ACTION",
+        "              PERFORM 9800-SQL-ERROR",
+        "           END-IF.",
+        "      *---------------------------------------------------------------*",
+        "       3000-COMMIT-WORK.",
+        "           EXEC SQL",
+        "                COMMIT",
+        "           END-EXEC",
+        "           IF SQLCODE NOT = ZERO",
+        "              MOVE 'COMMIT' TO WS-SQL-ACTION",
+        "              PERFORM 9800-SQL-ERROR",
+        "           END-IF",
+        "           ADD 1 TO WS-COMMIT-COUNT",
+        "           MOVE 0 TO WS-UNCOMMITTED-COUNT.",
+        "      *---------------------------------------------------------------*",
+        "       9300-ACCTFILE-CLOSE.",
+        "           CLOSE ACCOUNT-FILE",
+        "           IF ACCTFILE-STATUS NOT = '00'",
+        "              DISPLAY 'ERROR CLOSING ACCOUNT FILE'",
+        "              MOVE ACCTFILE-STATUS TO IO-STATUS",
+        "              PERFORM 9910-DISPLAY-IO-STATUS",
+        "              MOVE 999 TO ABCODE",
+        "              PERFORM 9999-ABEND-PROGRAM",
+        "           END-IF.",
+        "      *---------------------------------------------------------------*",
+        "      * Report the SQL error, back out uncommitted work and abend.",
+        "      *---------------------------------------------------------------*",
+        "       9800-SQL-ERROR.",
+        "           PERFORM 9810-DISPLAY-SQL-ERROR",
+        "           EXEC SQL",
+        "                ROLLBACK",
+        "           END-EXEC",
+        "           MOVE 998 TO ABCODE",
+        "           PERFORM 9999-ABEND-PROGRAM.",
+        "",
+        "******* MO-PARSE: INLINED COBOL_COPYBOOK CSMODBPY",
+        "      ******************************************************************",
+        "      * Copybook    : CSMODBPY",
+        "      * Application : CardDemo - app-mo-db2",
+        "      * Function    : Common procedures for the app-mo-db2 batch",
+        "      *               programs. COPY at the end of the PROCEDURE",
+        "      *               DIVISION, with CSMODBWY in WORKING-STORAGE and",
+        "      *               the SQLCA included.",
+        "      *               Contains no SQL, so the Db2 precompiler does not",
+        "      *               need to see it.",
+        "      ******************************************************************",
+        "      * Copyright (c) 2026 Mechanical Orchard, Inc.                    *",
+        "      * All Rights Reserved.                                           *",
+        "      *                                                                *",
+        "      * Licensed under the Apache License, Version 2.0 (the \"License\").*",
+        "      * You may not use this file except in compliance with the        *",
+        "      * License. You may obtain a copy of the License at               *",
+        "      *                                                                *",
+        "      *    http://www.apache.org/licenses/LICENSE-2.0                  *",
+        "      *                                                                *",
+        "      * Unless required by applicable law or agreed to in writing,     *",
+        "      * software distributed under the License is distributed on an    *",
+        "      * \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,   *",
+        "      * either express or implied. See the License for the specific    *",
+        "      * language governing permissions and limitations under the       *",
+        "      * License.                                                       *",
+        "      ******************************************************************",
+        "      *---------------------------------------------------------------*",
+        "      * Display the failing SQLCODE and the DSNTIAR formatted message.",
+        "      * Run before ROLLBACK, which resets the SQLCA.",
+        "      *---------------------------------------------------------------*",
+        "       9810-DISPLAY-SQL-ERROR.",
+        "           MOVE SQLCODE TO WS-SQL-DISP-CODE",
+        "           DISPLAY 'DB2 ERROR DURING: ' WS-SQL-ACTION",
+        "           DISPLAY 'SQLCODE : ' WS-SQL-DISP-CODE",
+        "           DISPLAY 'SQLSTATE: ' SQLSTATE",
+        "           CALL 'DSNTIAR' USING SQLCA",
+        "                                WS-DSNTIAR-MSG",
+        "                                WS-DSNTIAR-LRECL",
+        "           IF RETURN-CODE = ZERO",
+        "              PERFORM VARYING WS-DSNTIAR-IX FROM 1 BY 1",
+        "                        UNTIL WS-DSNTIAR-IX > 10",
+        "                 IF WS-DSNTIAR-TEXT(WS-DSNTIAR-IX) NOT = SPACES",
+        "                    DISPLAY WS-DSNTIAR-TEXT(WS-DSNTIAR-IX)",
+        "                 END-IF",
+        "              END-PERFORM",
+        "           ELSE",
+        "              DISPLAY 'DSNTIAR RETURN CODE: ' RETURN-CODE",
+        "           END-IF.",
+        "      *---------------------------------------------------------------*",
+        "       9910-DISPLAY-IO-STATUS.",
+        "           IF  IO-STATUS NOT NUMERIC",
+        "           OR  IO-STAT1 = '9'",
+        "               MOVE IO-STAT1 TO IO-STATUS-04(1:1)",
+        "               MOVE 0        TO TWO-BYTES-BINARY",
+        "               MOVE IO-STAT2 TO TWO-BYTES-RIGHT",
+        "               MOVE TWO-BYTES-BINARY TO IO-STATUS-0403",
+        "               DISPLAY 'FILE STATUS IS: NNNN' IO-STATUS-04",
+        "           ELSE",
+        "               MOVE '0000' TO IO-STATUS-04",
+        "               MOVE IO-STATUS TO IO-STATUS-04(3:2)",
+        "               DISPLAY 'FILE STATUS IS: NNNN' IO-STATUS-04",
+        "           END-IF.",
+        "      *---------------------------------------------------------------*",
+        "      * Set ABCODE before performing this paragraph.",
+        "      *---------------------------------------------------------------*",
+        "       9999-ABEND-PROGRAM.",
+        "           DISPLAY 'ABENDING PROGRAM WITH CODE ' ABCODE",
+        "           MOVE 0 TO TIMING",
+        "           CALL 'CEE3ABD' USING ABCODE, TIMING.",
+        "",
+        ""
+      ],
+      "Variables": [
+        {
+          "Level": 1,
+          "Name": "FD-PARM-REC",
+          "Division": "DATA DIVISION",
+          "Section": "FILE SECTION",
+          "Pic": "X(80)",
+          "ParsedPic": [
+            "X"
+          ],
+          "ParsedPicCounts": [
+            80
+          ],
+          "InferredUsage": "DISPLAY",
+          "InferredType": "string",
+          "ComputedSize": 80,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:60:7"
+        },
+        {
+          "Level": 1,
+          "Name": "FD-ACCTFILE-REC",
+          "Division": "DATA DIVISION",
+          "Section": "FILE SECTION",
+          "ComputedSize": 300,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:63:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "FD-ACCT-ID",
+              "Division": "DATA DIVISION",
+              "Section": "FILE SECTION",
+              "Pic": "9(11)",
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                11
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 11,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:64:11"
+            },
+            {
+              "Level": 5,
+              "Name": "FD-ACCT-DATA",
+              "Division": "DATA DIVISION",
+              "Section": "FILE SECTION",
+              "Pic": "X(289)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                289
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 289,
+              "Offset": [
+                11
+              ],
+              "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:65:11"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "MODB-PARM-RECORD",
+          "Division": "DATA DIVISION",
+          "Section": "WORKING-STORAGE SECTION",
+          "ComputedSize": 80,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://app-mo-db2/cpy/CVMOD01Y.cpy:34:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "MODB-PARM-START-DATE",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "X(10)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                10
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 10,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://app-mo-db2/cpy/CVMOD01Y.cpy:35:11"
+            },
+            {
+              "Level": 5,
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "X(01)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                10
+              ],
+              "Coordinates": "file://app-mo-db2/cpy/CVMOD01Y.cpy:36:11"
+            },
+            {
+              "Level": 5,
+              "Name": "MODB-PARM-END-DATE",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "X(10)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                10
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 10,
+              "Offset": [
+                11
+              ],
+              "Coordinates": "file://app-mo-db2/cpy/CVMOD01Y.cpy:37:11"
+            },
+            {
+              "Level": 5,
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "X(01)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                21
+              ],
+              "Coordinates": "file://app-mo-db2/cpy/CVMOD01Y.cpy:38:11"
+            },
+            {
+              "Level": 5,
+              "Name": "MODB-PARM-RETAIN-DAYS",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "X(04)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                4
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 4,
+              "Offset": [
+                22
+              ],
+              "Coordinates": "file://app-mo-db2/cpy/CVMOD01Y.cpy:39:11"
+            },
+            {
+              "Level": 5,
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "X(54)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                54
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 54,
+              "Offset": [
+                26
+              ],
+              "Coordinates": "file://app-mo-db2/cpy/CVMOD01Y.cpy:40:11"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "PARMFILE-STATUS",
+          "Division": "DATA DIVISION",
+          "Section": "WORKING-STORAGE SECTION",
+          "ComputedSize": 2,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:71:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "PARMFILE-STAT1",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "X",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:72:11"
+            },
+            {
+              "Level": 5,
+              "Name": "PARMFILE-STAT2",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "X",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                1
+              ],
+              "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:73:11"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "ACCOUNT-RECORD",
+          "Division": "DATA DIVISION",
+          "Section": "WORKING-STORAGE SECTION",
+          "ComputedSize": 300,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://cpy/CVACT01Y.cpy:4:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "ACCT-ID",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "9(11)",
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                11
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 11,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://cpy/CVACT01Y.cpy:5:11"
+            },
+            {
+              "Level": 5,
+              "Name": "ACCT-ACTIVE-STATUS",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "X(01)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                11
+              ],
+              "Coordinates": "file://cpy/CVACT01Y.cpy:6:11"
+            },
+            {
+              "Level": 5,
+              "Name": "ACCT-CURR-BAL",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "S9(10)V99",
+              "ParsedPic": [
+                "S",
+                "9",
+                "V",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1,
+                10,
+                1,
+                2
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-float",
+              "ComputedSize": 12,
+              "Offset": [
+                12
+              ],
+              "Coordinates": "file://cpy/CVACT01Y.cpy:7:11"
+            },
+            {
+              "Level": 5,
+              "Name": "ACCT-CREDIT-LIMIT",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "S9(10)V99",
+              "ParsedPic": [
+                "S",
+                "9",
+                "V",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1,
+                10,
+                1,
+                2
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-float",
+              "ComputedSize": 12,
+              "Offset": [
+                24
+              ],
+              "Coordinates": "file://cpy/CVACT01Y.cpy:8:11"
+            },
+            {
+              "Level": 5,
+              "Name": "ACCT-CASH-CREDIT-LIMIT",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "S9(10)V99",
+              "ParsedPic": [
+                "S",
+                "9",
+                "V",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1,
+                10,
+                1,
+                2
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-float",
+              "ComputedSize": 12,
+              "Offset": [
+                36
+              ],
+              "Coordinates": "file://cpy/CVACT01Y.cpy:9:11"
+            },
+            {
+              "Level": 5,
+              "Name": "ACCT-OPEN-DATE",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "X(10)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                10
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 10,
+              "Offset": [
+                48
+              ],
+              "Coordinates": "file://cpy/CVACT01Y.cpy:10:11"
+            },
+            {
+              "Level": 5,
+              "Name": "ACCT-EXPIRAION-DATE",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "X(10)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                10
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 10,
+              "Offset": [
+                58
+              ],
+              "Coordinates": "file://cpy/CVACT01Y.cpy:11:11"
+            },
+            {
+              "Level": 5,
+              "Name": "ACCT-REISSUE-DATE",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "X(10)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                10
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 10,
+              "Offset": [
+                68
+              ],
+              "Coordinates": "file://cpy/CVACT01Y.cpy:12:11"
+            },
+            {
+              "Level": 5,
+              "Name": "ACCT-CURR-CYC-CREDIT",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "S9(10)V99",
+              "ParsedPic": [
+                "S",
+                "9",
+                "V",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1,
+                10,
+                1,
+                2
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-float",
+              "ComputedSize": 12,
+              "Offset": [
+                78
+              ],
+              "Coordinates": "file://cpy/CVACT01Y.cpy:13:11"
+            },
+            {
+              "Level": 5,
+              "Name": "ACCT-CURR-CYC-DEBIT",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "S9(10)V99",
+              "ParsedPic": [
+                "S",
+                "9",
+                "V",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1,
+                10,
+                1,
+                2
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-float",
+              "ComputedSize": 12,
+              "Offset": [
+                90
+              ],
+              "Coordinates": "file://cpy/CVACT01Y.cpy:14:11"
+            },
+            {
+              "Level": 5,
+              "Name": "ACCT-ADDR-ZIP",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "X(10)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                10
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 10,
+              "Offset": [
+                102
+              ],
+              "Coordinates": "file://cpy/CVACT01Y.cpy:15:11"
+            },
+            {
+              "Level": 5,
+              "Name": "ACCT-GROUP-ID",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "X(10)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                10
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 10,
+              "Offset": [
+                112
+              ],
+              "Coordinates": "file://cpy/CVACT01Y.cpy:16:11"
+            },
+            {
+              "Level": 5,
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "X(178)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                178
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 178,
+              "Offset": [
+                122
+              ],
+              "Coordinates": "file://cpy/CVACT01Y.cpy:17:11"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "ACCTFILE-STATUS",
+          "Division": "DATA DIVISION",
+          "Section": "WORKING-STORAGE SECTION",
+          "ComputedSize": 2,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:76:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "ACCTFILE-STAT1",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "X",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:77:11"
+            },
+            {
+              "Level": 5,
+              "Name": "ACCTFILE-STAT2",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "X",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                1
+              ],
+              "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:78:11"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "IO-STATUS",
+          "Division": "DATA DIVISION",
+          "Section": "WORKING-STORAGE SECTION",
+          "ComputedSize": 2,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://app-mo-db2/cpy/CSMODBWY.cpy:30:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "IO-STAT1",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "X",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://app-mo-db2/cpy/CSMODBWY.cpy:31:11"
+            },
+            {
+              "Level": 5,
+              "Name": "IO-STAT2",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "X",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                1
+              ],
+              "Coordinates": "file://app-mo-db2/cpy/CSMODBWY.cpy:32:11"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "TWO-BYTES-BINARY",
+          "Division": "DATA DIVISION",
+          "Section": "WORKING-STORAGE SECTION",
+          "Pic": "9(4)",
+          "Usage": "COMP",
+          "ParsedPic": [
+            "9"
+          ],
+          "ParsedPicCounts": [
+            4
+          ],
+          "InferredUsage": "COMP",
+          "InferredType": "comp-int",
+          "ComputedSize": 2,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://app-mo-db2/cpy/CSMODBWY.cpy:33:7"
+        },
+        {
+          "Level": 1,
+          "Name": "TWO-BYTES-ALPHA",
+          "Division": "DATA DIVISION",
+          "Section": "WORKING-STORAGE SECTION",
+          "Redefines": "TWO-BYTES-BINARY",
+          "ComputedSize": 2,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://app-mo-db2/cpy/CSMODBWY.cpy:34:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "TWO-BYTES-LEFT",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "X",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://app-mo-db2/cpy/CSMODBWY.cpy:36:11"
+            },
+            {
+              "Level": 5,
+              "Name": "TWO-BYTES-RIGHT",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "X",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                1
+              ],
+              "Coordinates": "file://app-mo-db2/cpy/CSMODBWY.cpy:37:11"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "IO-STATUS-04",
+          "Division": "DATA DIVISION",
+          "Section": "WORKING-STORAGE SECTION",
+          "ComputedSize": 4,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://app-mo-db2/cpy/CSMODBWY.cpy:38:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "IO-STATUS-0401",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "9",
+              "Values": [
+                {
+                  "Literal": "0",
+                  "RawLiteral": [
+                    48
+                  ]
+                }
+              ],
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 1,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://app-mo-db2/cpy/CSMODBWY.cpy:39:11"
+            },
+            {
+              "Level": 5,
+              "Name": "IO-STATUS-0403",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "999",
+              "Values": [
+                {
+                  "Literal": "0",
+                  "RawLiteral": [
+                    48
+                  ]
+                }
+              ],
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                3
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 3,
+              "Offset": [
+                1
+              ],
+              "Coordinates": "file://app-mo-db2/cpy/CSMODBWY.cpy:40:11"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "ABCODE",
+          "Division": "DATA DIVISION",
+          "Section": "WORKING-STORAGE SECTION",
+          "Pic": "S9(9)",
+          "Usage": "COMP",
+          "ParsedPic": [
+            "S",
+            "9"
+          ],
+          "ParsedPicCounts": [
+            1,
+            9
+          ],
+          "InferredUsage": "COMP",
+          "InferredType": "comp-int",
+          "ComputedSize": 4,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://app-mo-db2/cpy/CSMODBWY.cpy:42:7"
+        },
+        {
+          "Level": 1,
+          "Name": "TIMING",
+          "Division": "DATA DIVISION",
+          "Section": "WORKING-STORAGE SECTION",
+          "Pic": "S9(9)",
+          "Usage": "COMP",
+          "ParsedPic": [
+            "S",
+            "9"
+          ],
+          "ParsedPicCounts": [
+            1,
+            9
+          ],
+          "InferredUsage": "COMP",
+          "InferredType": "comp-int",
+          "ComputedSize": 4,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://app-mo-db2/cpy/CSMODBWY.cpy:43:7"
+        },
+        {
+          "Level": 1,
+          "Name": "WS-SQL-ERROR-INFO",
+          "Division": "DATA DIVISION",
+          "Section": "WORKING-STORAGE SECTION",
+          "ComputedSize": 50,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://app-mo-db2/cpy/CSMODBWY.cpy:45:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "WS-SQL-ACTION",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "X(40)",
+              "Values": [
+                {
+                  "Figurative": "SPACE"
+                }
+              ],
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                40
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 40,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://app-mo-db2/cpy/CSMODBWY.cpy:46:11"
+            },
+            {
+              "Level": 5,
+              "Name": "WS-SQL-DISP-CODE",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "-(9)9",
+              "ParsedPic": [
+                "-",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                9,
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 10,
+              "Offset": [
+                40
+              ],
+              "Coordinates": "file://app-mo-db2/cpy/CSMODBWY.cpy:47:11"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "WS-DSNTIAR-MSG",
+          "Division": "DATA DIVISION",
+          "Section": "WORKING-STORAGE SECTION",
+          "ComputedSize": 722,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://app-mo-db2/cpy/CSMODBWY.cpy:49:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "WS-DSNTIAR-LEN",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "S9(4)",
+              "Usage": "COMP",
+              "Values": [
+                {
+                  "Literal": "+720",
+                  "RawLiteral": [
+                    43,
+                    55,
+                    50,
+                    48
+                  ]
+                }
+              ],
+              "ParsedPic": [
+                "S",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1,
+                4
+              ],
+              "InferredUsage": "COMP",
+              "InferredType": "comp-int",
+              "ComputedSize": 2,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://app-mo-db2/cpy/CSMODBWY.cpy:50:11"
+            },
+            {
+              "Level": 5,
+              "Name": "WS-DSNTIAR-TEXT",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "X(72)",
+              "Occurs": {
+                "Type": "Fixed",
+                "Fixed": 10,
+                "IndexedBy": [
+                  "WS-DSNTIAR-IX"
+                ]
+              },
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                72
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 720,
+              "ElementSize": 72,
+              "Offset": [
+                2,
+                72,
+                0
+              ],
+              "Coordinates": "file://app-mo-db2/cpy/CSMODBWY.cpy:52:11"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "WS-DSNTIAR-LRECL",
+          "Division": "DATA DIVISION",
+          "Section": "WORKING-STORAGE SECTION",
+          "Pic": "S9(9)",
+          "Usage": "COMP",
+          "Values": [
+            {
+              "Literal": "+72",
+              "RawLiteral": [
+                43,
+                55,
+                50
+              ]
+            }
+          ],
+          "ParsedPic": [
+            "S",
+            "9"
+          ],
+          "ParsedPicCounts": [
+            1,
+            9
+          ],
+          "InferredUsage": "COMP",
+          "InferredType": "comp-int",
+          "ComputedSize": 4,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://app-mo-db2/cpy/CSMODBWY.cpy:56:7"
+        },
+        {
+          "Level": 1,
+          "Name": "SQLCA",
+          "Division": "DATA DIVISION",
+          "Section": "WORKING-STORAGE SECTION",
+          "ComputedSize": 140,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://SQLCA:2:8",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "SQLCAID",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "X(8)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                8
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 8,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://SQLCA:3:10"
+            },
+            {
+              "Level": 5,
+              "Name": "SQLCABC",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "S9(9)",
+              "Usage": "COMP-5",
+              "ParsedPic": [
+                "S",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1,
+                9
+              ],
+              "InferredUsage": "COMP-5",
+              "InferredType": "comp-int",
+              "ComputedSize": 4,
+              "Offset": [
+                8
+              ],
+              "Coordinates": "file://SQLCA:4:10"
+            },
+            {
+              "Level": 5,
+              "Name": "SQLCODE",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "S9(9)",
+              "Usage": "COMP-5",
+              "ParsedPic": [
+                "S",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1,
+                9
+              ],
+              "InferredUsage": "COMP-5",
+              "InferredType": "comp-int",
+              "ComputedSize": 4,
+              "Offset": [
+                12
+              ],
+              "Coordinates": "file://SQLCA:5:10"
+            },
+            {
+              "Level": 5,
+              "Name": "SQLERRM",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "ComputedSize": 72,
+              "Offset": [
+                16
+              ],
+              "Coordinates": "file://SQLCA:6:10",
+              "Children": [
+                {
+                  "Level": 49,
+                  "Name": "SQLERRML",
+                  "Division": "DATA DIVISION",
+                  "Section": "WORKING-STORAGE SECTION",
+                  "Pic": "S9(4)",
+                  "Usage": "COMP-5",
+                  "ParsedPic": [
+                    "S",
+                    "9"
+                  ],
+                  "ParsedPicCounts": [
+                    1,
+                    4
+                  ],
+                  "InferredUsage": "COMP-5",
+                  "InferredType": "comp-int",
+                  "ComputedSize": 2,
+                  "Offset": [
+                    16
+                  ],
+                  "Coordinates": "file://SQLCA:7:13"
+                },
+                {
+                  "Level": 49,
+                  "Name": "SQLERRMC",
+                  "Division": "DATA DIVISION",
+                  "Section": "WORKING-STORAGE SECTION",
+                  "Pic": "X(70)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    70
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 70,
+                  "Offset": [
+                    18
+                  ],
+                  "Coordinates": "file://SQLCA:8:13"
+                }
+              ]
+            },
+            {
+              "Level": 5,
+              "Name": "SQLERRP",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "X(8)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                8
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 8,
+              "Offset": [
+                88
+              ],
+              "Coordinates": "file://SQLCA:9:10"
+            },
+            {
+              "Level": 5,
+              "Name": "SQLERRD",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "S9(9)",
+              "Occurs": {
+                "Type": "Fixed",
+                "Fixed": 6
+              },
+              "Usage": "COMP-5",
+              "ParsedPic": [
+                "S",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1,
+                9
+              ],
+              "InferredUsage": "COMP-5",
+              "InferredType": "comp-int",
+              "ComputedSize": 24,
+              "ElementSize": 4,
+              "Offset": [
+                96,
+                4,
+                0
+              ],
+              "Coordinates": "file://SQLCA:10:10"
+            },
+            {
+              "Level": 5,
+              "Name": "SQLWARN",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "ComputedSize": 8,
+              "Offset": [
+                120
+              ],
+              "Coordinates": "file://SQLCA:11:10",
+              "Children": [
+                {
+                  "Level": 10,
+                  "Name": "SQLWARN0",
+                  "Division": "DATA DIVISION",
+                  "Section": "WORKING-STORAGE SECTION",
+                  "Pic": "X",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    1
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 1,
+                  "Offset": [
+                    120
+                  ],
+                  "Coordinates": "file://SQLCA:12:13"
+                },
+                {
+                  "Level": 10,
+                  "Name": "SQLWARN1",
+                  "Division": "DATA DIVISION",
+                  "Section": "WORKING-STORAGE SECTION",
+                  "Pic": "X",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    1
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 1,
+                  "Offset": [
+                    121
+                  ],
+                  "Coordinates": "file://SQLCA:13:13"
+                },
+                {
+                  "Level": 10,
+                  "Name": "SQLWARN2",
+                  "Division": "DATA DIVISION",
+                  "Section": "WORKING-STORAGE SECTION",
+                  "Pic": "X",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    1
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 1,
+                  "Offset": [
+                    122
+                  ],
+                  "Coordinates": "file://SQLCA:14:13"
+                },
+                {
+                  "Level": 10,
+                  "Name": "SQLWARN3",
+                  "Division": "DATA DIVISION",
+                  "Section": "WORKING-STORAGE SECTION",
+                  "Pic": "X",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    1
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 1,
+                  "Offset": [
+                    123
+                  ],
+                  "Coordinates": "file://SQLCA:15:13"
+                },
+                {
+                  "Level": 10,
+                  "Name": "SQLWARN4",
+                  "Division": "DATA DIVISION",
+                  "Section": "WORKING-STORAGE SECTION",
+                  "Pic": "X",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    1
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 1,
+                  "Offset": [
+                    124
+                  ],
+                  "Coordinates": "file://SQLCA:16:13"
+                },
+                {
+                  "Level": 10,
+                  "Name": "SQLWARN5",
+                  "Division": "DATA DIVISION",
+                  "Section": "WORKING-STORAGE SECTION",
+                  "Pic": "X",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    1
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 1,
+                  "Offset": [
+                    125
+                  ],
+                  "Coordinates": "file://SQLCA:17:13"
+                },
+                {
+                  "Level": 10,
+                  "Name": "SQLWARN6",
+                  "Division": "DATA DIVISION",
+                  "Section": "WORKING-STORAGE SECTION",
+                  "Pic": "X",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    1
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 1,
+                  "Offset": [
+                    126
+                  ],
+                  "Coordinates": "file://SQLCA:18:13"
+                },
+                {
+                  "Level": 10,
+                  "Name": "SQLWARN7",
+                  "Division": "DATA DIVISION",
+                  "Section": "WORKING-STORAGE SECTION",
+                  "Pic": "X",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    1
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 1,
+                  "Offset": [
+                    127
+                  ],
+                  "Coordinates": "file://SQLCA:19:13"
+                }
+              ]
+            },
+            {
+              "Level": 5,
+              "Name": "SQLEXT",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "ComputedSize": 8,
+              "Offset": [
+                128
+              ],
+              "Coordinates": "file://SQLCA:20:10",
+              "Children": [
+                {
+                  "Level": 10,
+                  "Name": "SQLWARN8",
+                  "Division": "DATA DIVISION",
+                  "Section": "WORKING-STORAGE SECTION",
+                  "Pic": "X",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    1
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 1,
+                  "Offset": [
+                    128
+                  ],
+                  "Coordinates": "file://SQLCA:21:13"
+                },
+                {
+                  "Level": 10,
+                  "Name": "SQLWARN9",
+                  "Division": "DATA DIVISION",
+                  "Section": "WORKING-STORAGE SECTION",
+                  "Pic": "X",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    1
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 1,
+                  "Offset": [
+                    129
+                  ],
+                  "Coordinates": "file://SQLCA:22:13"
+                },
+                {
+                  "Level": 10,
+                  "Name": "SQLWARNA",
+                  "Division": "DATA DIVISION",
+                  "Section": "WORKING-STORAGE SECTION",
+                  "Pic": "X",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    1
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 1,
+                  "Offset": [
+                    130
+                  ],
+                  "Coordinates": "file://SQLCA:23:13"
+                },
+                {
+                  "Level": 10,
+                  "Name": "SQLSTATE",
+                  "Division": "DATA DIVISION",
+                  "Section": "WORKING-STORAGE SECTION",
+                  "Pic": "X(5)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    5
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 5,
+                  "Offset": [
+                    131
+                  ],
+                  "Coordinates": "file://SQLCA:24:13"
+                }
+              ]
+            },
+            {
+              "Level": 5,
+              "Name": "SQL-HCONN",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "S9(9)",
+              "Usage": "COMP-5",
+              "ParsedPic": [
+                "S",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1,
+                9
+              ],
+              "InferredUsage": "COMP-5",
+              "InferredType": "comp-int",
+              "ComputedSize": 4,
+              "Offset": [
+                136
+              ],
+              "Coordinates": "file://SQLCA:25:10"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "DCLTRAN-HIST",
+          "Division": "DATA DIVISION",
+          "Section": "WORKING-STORAGE SECTION",
+          "ComputedSize": 343,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://app-mo-db2/dcl/DCLTRHST.dcl:49:7",
+          "Children": [
+            {
+              "Level": 10,
+              "Name": "DCL-TH-TRAN-ID",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "X(16)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                16
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 16,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://app-mo-db2/dcl/DCLTRHST.dcl:52:11"
+            },
+            {
+              "Level": 10,
+              "Name": "DCL-TH-ACCT-ID",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "S9(11)V",
+              "Usage": "COMP-3",
+              "ParsedPic": [
+                "S",
+                "9",
+                "V"
+              ],
+              "ParsedPicCounts": [
+                1,
+                11,
+                1
+              ],
+              "InferredUsage": "COMP-3",
+              "InferredType": "comp-float",
+              "ComputedSize": 6,
+              "Offset": [
+                16
+              ],
+              "Coordinates": "file://app-mo-db2/dcl/DCLTRHST.dcl:55:11"
+            },
+            {
+              "Level": 10,
+              "Name": "DCL-TH-CARD-NUM",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "X(16)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                16
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 16,
+              "Offset": [
+                22
+              ],
+              "Coordinates": "file://app-mo-db2/dcl/DCLTRHST.dcl:58:11"
+            },
+            {
+              "Level": 10,
+              "Name": "DCL-TH-TYPE-CD",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "X(2)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                2
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 2,
+              "Offset": [
+                38
+              ],
+              "Coordinates": "file://app-mo-db2/dcl/DCLTRHST.dcl:61:11"
+            },
+            {
+              "Level": 10,
+              "Name": "DCL-TH-CAT-CD",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "X(4)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                4
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 4,
+              "Offset": [
+                40
+              ],
+              "Coordinates": "file://app-mo-db2/dcl/DCLTRHST.dcl:64:11"
+            },
+            {
+              "Level": 10,
+              "Name": "DCL-TH-SOURCE",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "X(10)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                10
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 10,
+              "Offset": [
+                44
+              ],
+              "Coordinates": "file://app-mo-db2/dcl/DCLTRHST.dcl:67:11"
+            },
+            {
+              "Level": 10,
+              "Name": "DCL-TH-DESC",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "ComputedSize": 102,
+              "Offset": [
+                54
+              ],
+              "Coordinates": "file://app-mo-db2/dcl/DCLTRHST.dcl:69:11",
+              "Children": [
+                {
+                  "Level": 49,
+                  "Name": "DCL-TH-DESC-LEN",
+                  "Division": "DATA DIVISION",
+                  "Section": "WORKING-STORAGE SECTION",
+                  "Pic": "S9(4)",
+                  "Usage": "COMP",
+                  "ParsedPic": [
+                    "S",
+                    "9"
+                  ],
+                  "ParsedPicCounts": [
+                    1,
+                    4
+                  ],
+                  "InferredUsage": "COMP",
+                  "InferredType": "comp-int",
+                  "ComputedSize": 2,
+                  "Offset": [
+                    54
+                  ],
+                  "Coordinates": "file://app-mo-db2/dcl/DCLTRHST.dcl:71:14"
+                },
+                {
+                  "Level": 49,
+                  "Name": "DCL-TH-DESC-TEXT",
+                  "Division": "DATA DIVISION",
+                  "Section": "WORKING-STORAGE SECTION",
+                  "Pic": "X(100)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    100
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 100,
+                  "Offset": [
+                    56
+                  ],
+                  "Coordinates": "file://app-mo-db2/dcl/DCLTRHST.dcl:74:14"
+                }
+              ]
+            },
+            {
+              "Level": 10,
+              "Name": "DCL-TH-AMT",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "S9(9)V9(2)",
+              "Usage": "COMP-3",
+              "ParsedPic": [
+                "S",
+                "9",
+                "V",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1,
+                9,
+                1,
+                2
+              ],
+              "InferredUsage": "COMP-3",
+              "InferredType": "comp-float",
+              "ComputedSize": 6,
+              "Offset": [
+                156
+              ],
+              "Coordinates": "file://app-mo-db2/dcl/DCLTRHST.dcl:78:11"
+            },
+            {
+              "Level": 10,
+              "Name": "DCL-TH-MERCHANT-ID",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "S9(9)V",
+              "Usage": "COMP-3",
+              "ParsedPic": [
+                "S",
+                "9",
+                "V"
+              ],
+              "ParsedPicCounts": [
+                1,
+                9,
+                1
+              ],
+              "InferredUsage": "COMP-3",
+              "InferredType": "comp-float",
+              "ComputedSize": 5,
+              "Offset": [
+                162
+              ],
+              "Coordinates": "file://app-mo-db2/dcl/DCLTRHST.dcl:81:11"
+            },
+            {
+              "Level": 10,
+              "Name": "DCL-TH-MERCHANT-NAME",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "ComputedSize": 52,
+              "Offset": [
+                167
+              ],
+              "Coordinates": "file://app-mo-db2/dcl/DCLTRHST.dcl:83:11",
+              "Children": [
+                {
+                  "Level": 49,
+                  "Name": "DCL-TH-MERCHANT-NAME-LEN",
+                  "Division": "DATA DIVISION",
+                  "Section": "WORKING-STORAGE SECTION",
+                  "Pic": "S9(4)",
+                  "Usage": "COMP",
+                  "ParsedPic": [
+                    "S",
+                    "9"
+                  ],
+                  "ParsedPicCounts": [
+                    1,
+                    4
+                  ],
+                  "InferredUsage": "COMP",
+                  "InferredType": "comp-int",
+                  "ComputedSize": 2,
+                  "Offset": [
+                    167
+                  ],
+                  "Coordinates": "file://app-mo-db2/dcl/DCLTRHST.dcl:85:14"
+                },
+                {
+                  "Level": 49,
+                  "Name": "DCL-TH-MERCHANT-NAME-TEXT",
+                  "Division": "DATA DIVISION",
+                  "Section": "WORKING-STORAGE SECTION",
+                  "Pic": "X(50)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    50
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 50,
+                  "Offset": [
+                    169
+                  ],
+                  "Coordinates": "file://app-mo-db2/dcl/DCLTRHST.dcl:88:14"
+                }
+              ]
+            },
+            {
+              "Level": 10,
+              "Name": "DCL-TH-MERCHANT-CITY",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "ComputedSize": 52,
+              "Offset": [
+                219
+              ],
+              "Coordinates": "file://app-mo-db2/dcl/DCLTRHST.dcl:91:11",
+              "Children": [
+                {
+                  "Level": 49,
+                  "Name": "DCL-TH-MERCHANT-CITY-LEN",
+                  "Division": "DATA DIVISION",
+                  "Section": "WORKING-STORAGE SECTION",
+                  "Pic": "S9(4)",
+                  "Usage": "COMP",
+                  "ParsedPic": [
+                    "S",
+                    "9"
+                  ],
+                  "ParsedPicCounts": [
+                    1,
+                    4
+                  ],
+                  "InferredUsage": "COMP",
+                  "InferredType": "comp-int",
+                  "ComputedSize": 2,
+                  "Offset": [
+                    219
+                  ],
+                  "Coordinates": "file://app-mo-db2/dcl/DCLTRHST.dcl:93:14"
+                },
+                {
+                  "Level": 49,
+                  "Name": "DCL-TH-MERCHANT-CITY-TEXT",
+                  "Division": "DATA DIVISION",
+                  "Section": "WORKING-STORAGE SECTION",
+                  "Pic": "X(50)",
+                  "ParsedPic": [
+                    "X"
+                  ],
+                  "ParsedPicCounts": [
+                    50
+                  ],
+                  "InferredUsage": "DISPLAY",
+                  "InferredType": "string",
+                  "ComputedSize": 50,
+                  "Offset": [
+                    221
+                  ],
+                  "Coordinates": "file://app-mo-db2/dcl/DCLTRHST.dcl:96:14"
+                }
+              ]
+            },
+            {
+              "Level": 10,
+              "Name": "DCL-TH-MERCHANT-ZIP",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "X(10)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                10
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 10,
+              "Offset": [
+                271
+              ],
+              "Coordinates": "file://app-mo-db2/dcl/DCLTRHST.dcl:100:11"
+            },
+            {
+              "Level": 10,
+              "Name": "DCL-TH-TRAN-DATE",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "X(10)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                10
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 10,
+              "Offset": [
+                281
+              ],
+              "Coordinates": "file://app-mo-db2/dcl/DCLTRHST.dcl:103:11"
+            },
+            {
+              "Level": 10,
+              "Name": "DCL-TH-ORIG-TS",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "X(26)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                26
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 26,
+              "Offset": [
+                291
+              ],
+              "Coordinates": "file://app-mo-db2/dcl/DCLTRHST.dcl:106:11"
+            },
+            {
+              "Level": 10,
+              "Name": "DCL-TH-PROC-TS",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "X(26)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                26
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 26,
+              "Offset": [
+                317
+              ],
+              "Coordinates": "file://app-mo-db2/dcl/DCLTRHST.dcl:109:11"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "DCLACCT-DAILY-BAL",
+          "Division": "DATA DIVISION",
+          "Section": "WORKING-STORAGE SECTION",
+          "ComputedSize": 66,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://app-mo-db2/dcl/DCLACDBL.dcl:44:7",
+          "Children": [
+            {
+              "Level": 10,
+              "Name": "DCL-ADB-ACCT-ID",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "S9(11)V",
+              "Usage": "COMP-3",
+              "ParsedPic": [
+                "S",
+                "9",
+                "V"
+              ],
+              "ParsedPicCounts": [
+                1,
+                11,
+                1
+              ],
+              "InferredUsage": "COMP-3",
+              "InferredType": "comp-float",
+              "ComputedSize": 6,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://app-mo-db2/dcl/DCLACDBL.dcl:47:11"
+            },
+            {
+              "Level": 10,
+              "Name": "DCL-ADB-BAL-DATE",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "X(10)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                10
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 10,
+              "Offset": [
+                6
+              ],
+              "Coordinates": "file://app-mo-db2/dcl/DCLACDBL.dcl:50:11"
+            },
+            {
+              "Level": 10,
+              "Name": "DCL-ADB-OPEN-BAL",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "S9(10)V9(2)",
+              "Usage": "COMP-3",
+              "ParsedPic": [
+                "S",
+                "9",
+                "V",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1,
+                10,
+                1,
+                2
+              ],
+              "InferredUsage": "COMP-3",
+              "InferredType": "comp-float",
+              "ComputedSize": 7,
+              "Offset": [
+                16
+              ],
+              "Coordinates": "file://app-mo-db2/dcl/DCLACDBL.dcl:53:11"
+            },
+            {
+              "Level": 10,
+              "Name": "DCL-ADB-CREDIT-AMT",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "S9(10)V9(2)",
+              "Usage": "COMP-3",
+              "ParsedPic": [
+                "S",
+                "9",
+                "V",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1,
+                10,
+                1,
+                2
+              ],
+              "InferredUsage": "COMP-3",
+              "InferredType": "comp-float",
+              "ComputedSize": 7,
+              "Offset": [
+                23
+              ],
+              "Coordinates": "file://app-mo-db2/dcl/DCLACDBL.dcl:56:11"
+            },
+            {
+              "Level": 10,
+              "Name": "DCL-ADB-DEBIT-AMT",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "S9(10)V9(2)",
+              "Usage": "COMP-3",
+              "ParsedPic": [
+                "S",
+                "9",
+                "V",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1,
+                10,
+                1,
+                2
+              ],
+              "InferredUsage": "COMP-3",
+              "InferredType": "comp-float",
+              "ComputedSize": 7,
+              "Offset": [
+                30
+              ],
+              "Coordinates": "file://app-mo-db2/dcl/DCLACDBL.dcl:59:11"
+            },
+            {
+              "Level": 10,
+              "Name": "DCL-ADB-CLOSE-BAL",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "S9(10)V9(2)",
+              "Usage": "COMP-3",
+              "ParsedPic": [
+                "S",
+                "9",
+                "V",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1,
+                10,
+                1,
+                2
+              ],
+              "InferredUsage": "COMP-3",
+              "InferredType": "comp-float",
+              "ComputedSize": 7,
+              "Offset": [
+                37
+              ],
+              "Coordinates": "file://app-mo-db2/dcl/DCLACDBL.dcl:62:11"
+            },
+            {
+              "Level": 10,
+              "Name": "DCL-ADB-TRAN-CNT",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "S9(9)",
+              "Usage": "COMP",
+              "ParsedPic": [
+                "S",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1,
+                9
+              ],
+              "InferredUsage": "COMP",
+              "InferredType": "comp-int",
+              "ComputedSize": 4,
+              "Offset": [
+                44
+              ],
+              "Coordinates": "file://app-mo-db2/dcl/DCLACDBL.dcl:65:11"
+            },
+            {
+              "Level": 10,
+              "Name": "DCL-ADB-CREDIT-LIMIT",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "S9(10)V9(2)",
+              "Usage": "COMP-3",
+              "ParsedPic": [
+                "S",
+                "9",
+                "V",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1,
+                10,
+                1,
+                2
+              ],
+              "InferredUsage": "COMP-3",
+              "InferredType": "comp-float",
+              "ComputedSize": 7,
+              "Offset": [
+                48
+              ],
+              "Coordinates": "file://app-mo-db2/dcl/DCLACDBL.dcl:68:11"
+            },
+            {
+              "Level": 10,
+              "Name": "DCL-ADB-OVERLIMIT-FLG",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "X(1)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                55
+              ],
+              "Coordinates": "file://app-mo-db2/dcl/DCLACDBL.dcl:71:11"
+            },
+            {
+              "Level": 10,
+              "Name": "DCL-ADB-FLAG-DATE",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "X(10)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                10
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 10,
+              "Offset": [
+                56
+              ],
+              "Coordinates": "file://app-mo-db2/dcl/DCLACDBL.dcl:75:11"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "WS-HOST-VARIABLES",
+          "Division": "DATA DIVISION",
+          "Section": "WORKING-STORAGE SECTION",
+          "ComputedSize": 73,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:92:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "WS-PARM-DATE",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "X(10)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                10
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 10,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:93:11"
+            },
+            {
+              "Level": 5,
+              "Name": "WS-BAL-DATE",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "X(10)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                10
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 10,
+              "Offset": [
+                10
+              ],
+              "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:94:11"
+            },
+            {
+              "Level": 5,
+              "Name": "WS-DAY-CREDITS",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "S9(10)V9(2)",
+              "Usage": "COMP-3",
+              "ParsedPic": [
+                "S",
+                "9",
+                "V",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1,
+                10,
+                1,
+                2
+              ],
+              "InferredUsage": "COMP-3",
+              "InferredType": "comp-float",
+              "ComputedSize": 7,
+              "Offset": [
+                20
+              ],
+              "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:95:11"
+            },
+            {
+              "Level": 5,
+              "Name": "WS-DAY-DEBITS",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "S9(10)V9(2)",
+              "Usage": "COMP-3",
+              "ParsedPic": [
+                "S",
+                "9",
+                "V",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1,
+                10,
+                1,
+                2
+              ],
+              "InferredUsage": "COMP-3",
+              "InferredType": "comp-float",
+              "ComputedSize": 7,
+              "Offset": [
+                27
+              ],
+              "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:96:11"
+            },
+            {
+              "Level": 5,
+              "Name": "WS-DAY-NET",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "S9(10)V9(2)",
+              "Usage": "COMP-3",
+              "ParsedPic": [
+                "S",
+                "9",
+                "V",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1,
+                10,
+                1,
+                2
+              ],
+              "InferredUsage": "COMP-3",
+              "InferredType": "comp-float",
+              "ComputedSize": 7,
+              "Offset": [
+                34
+              ],
+              "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:97:11"
+            },
+            {
+              "Level": 5,
+              "Name": "WS-DAY-COUNT",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "S9(9)",
+              "Usage": "COMP",
+              "ParsedPic": [
+                "S",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1,
+                9
+              ],
+              "InferredUsage": "COMP",
+              "InferredType": "comp-int",
+              "ComputedSize": 4,
+              "Offset": [
+                41
+              ],
+              "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:98:11"
+            },
+            {
+              "Level": 5,
+              "Name": "WS-PREV-BAL-DATE",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "X(10)",
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                10
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 10,
+              "Offset": [
+                45
+              ],
+              "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:99:11"
+            },
+            {
+              "Level": 5,
+              "Name": "WS-IND-PREV-BAL-DATE",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "S9(4)",
+              "Usage": "COMP",
+              "ParsedPic": [
+                "S",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1,
+                4
+              ],
+              "InferredUsage": "COMP",
+              "InferredType": "comp-int",
+              "ComputedSize": 2,
+              "Offset": [
+                55
+              ],
+              "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:100:11"
+            },
+            {
+              "Level": 5,
+              "Name": "WS-PREV-CLOSE-BAL",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "S9(10)V9(2)",
+              "Usage": "COMP-3",
+              "ParsedPic": [
+                "S",
+                "9",
+                "V",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1,
+                10,
+                1,
+                2
+              ],
+              "InferredUsage": "COMP-3",
+              "InferredType": "comp-float",
+              "ComputedSize": 7,
+              "Offset": [
+                57
+              ],
+              "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:101:11"
+            },
+            {
+              "Level": 5,
+              "Name": "WS-LATER-NET",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "S9(10)V9(2)",
+              "Usage": "COMP-3",
+              "ParsedPic": [
+                "S",
+                "9",
+                "V",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1,
+                10,
+                1,
+                2
+              ],
+              "InferredUsage": "COMP-3",
+              "InferredType": "comp-float",
+              "ComputedSize": 7,
+              "Offset": [
+                64
+              ],
+              "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:102:11"
+            },
+            {
+              "Level": 5,
+              "Name": "WS-IND-LATER-NET",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "S9(4)",
+              "Usage": "COMP",
+              "ParsedPic": [
+                "S",
+                "9"
+              ],
+              "ParsedPicCounts": [
+                1,
+                4
+              ],
+              "InferredUsage": "COMP",
+              "InferredType": "comp-int",
+              "ComputedSize": 2,
+              "Offset": [
+                71
+              ],
+              "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:103:11"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "WS-FLAGS",
+          "Division": "DATA DIVISION",
+          "Section": "WORKING-STORAGE SECTION",
+          "ComputedSize": 2,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:125:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "WS-END-OF-CURSOR",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "X(01)",
+              "Values": [
+                {
+                  "Literal": "N",
+                  "RawLiteral": [
+                    78
+                  ]
+                }
+              ],
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:126:11",
+              "Children": [
+                {
+                  "Level": 88,
+                  "Name": "END-OF-CURSOR",
+                  "Division": "DATA DIVISION",
+                  "Section": "WORKING-STORAGE SECTION",
+                  "Values": [
+                    {
+                      "Literal": "Y",
+                      "RawLiteral": [
+                        89
+                      ]
+                    }
+                  ],
+                  "Offset": [
+                    0
+                  ],
+                  "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:127:15"
+                }
+              ]
+            },
+            {
+              "Level": 5,
+              "Name": "WS-ACCOUNT-STATE",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "X(01)",
+              "Values": [
+                {
+                  "Literal": "N",
+                  "RawLiteral": [
+                    78
+                  ]
+                }
+              ],
+              "ParsedPic": [
+                "X"
+              ],
+              "ParsedPicCounts": [
+                1
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "string",
+              "ComputedSize": 1,
+              "Offset": [
+                1
+              ],
+              "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:128:11",
+              "Children": [
+                {
+                  "Level": 88,
+                  "Name": "ACCOUNT-FOUND",
+                  "Division": "DATA DIVISION",
+                  "Section": "WORKING-STORAGE SECTION",
+                  "Values": [
+                    {
+                      "Literal": "Y",
+                      "RawLiteral": [
+                        89
+                      ]
+                    }
+                  ],
+                  "Offset": [
+                    0
+                  ],
+                  "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:129:15"
+                },
+                {
+                  "Level": 88,
+                  "Name": "ACCOUNT-NOT-FOUND",
+                  "Division": "DATA DIVISION",
+                  "Section": "WORKING-STORAGE SECTION",
+                  "Values": [
+                    {
+                      "Literal": "N",
+                      "RawLiteral": [
+                        78
+                      ]
+                    }
+                  ],
+                  "Offset": [
+                    0
+                  ],
+                  "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:130:15"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "WS-COUNTERS",
+          "Division": "DATA DIVISION",
+          "Section": "WORKING-STORAGE SECTION",
+          "ComputedSize": 63,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:132:7",
+          "Children": [
+            {
+              "Level": 5,
+              "Name": "WS-ACCOUNT-COUNT",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "9(09)",
+              "Values": [
+                {
+                  "Literal": "0",
+                  "RawLiteral": [
+                    48
+                  ]
+                }
+              ],
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                9
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 9,
+              "Offset": [
+                0
+              ],
+              "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:133:11"
+            },
+            {
+              "Level": 5,
+              "Name": "WS-INSERT-COUNT",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "9(09)",
+              "Values": [
+                {
+                  "Literal": "0",
+                  "RawLiteral": [
+                    48
+                  ]
+                }
+              ],
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                9
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 9,
+              "Offset": [
+                9
+              ],
+              "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:134:11"
+            },
+            {
+              "Level": 5,
+              "Name": "WS-UPDATE-COUNT",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "9(09)",
+              "Values": [
+                {
+                  "Literal": "0",
+                  "RawLiteral": [
+                    48
+                  ]
+                }
+              ],
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                9
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 9,
+              "Offset": [
+                18
+              ],
+              "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:135:11"
+            },
+            {
+              "Level": 5,
+              "Name": "WS-SEEDED-COUNT",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "9(09)",
+              "Values": [
+                {
+                  "Literal": "0",
+                  "RawLiteral": [
+                    48
+                  ]
+                }
+              ],
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                9
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 9,
+              "Offset": [
+                27
+              ],
+              "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:136:11"
+            },
+            {
+              "Level": 5,
+              "Name": "WS-NOT-FOUND-COUNT",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "9(09)",
+              "Values": [
+                {
+                  "Literal": "0",
+                  "RawLiteral": [
+                    48
+                  ]
+                }
+              ],
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                9
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 9,
+              "Offset": [
+                36
+              ],
+              "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:137:11"
+            },
+            {
+              "Level": 5,
+              "Name": "WS-UNCOMMITTED-COUNT",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "9(09)",
+              "Values": [
+                {
+                  "Literal": "0",
+                  "RawLiteral": [
+                    48
+                  ]
+                }
+              ],
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                9
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 9,
+              "Offset": [
+                45
+              ],
+              "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:138:11"
+            },
+            {
+              "Level": 5,
+              "Name": "WS-COMMIT-COUNT",
+              "Division": "DATA DIVISION",
+              "Section": "WORKING-STORAGE SECTION",
+              "Pic": "9(09)",
+              "Values": [
+                {
+                  "Literal": "0",
+                  "RawLiteral": [
+                    48
+                  ]
+                }
+              ],
+              "ParsedPic": [
+                "9"
+              ],
+              "ParsedPicCounts": [
+                9
+              ],
+              "InferredUsage": "DISPLAY",
+              "InferredType": "disp-int",
+              "ComputedSize": 9,
+              "Offset": [
+                54
+              ],
+              "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:139:11"
+            }
+          ]
+        },
+        {
+          "Level": 1,
+          "Name": "WS-COMMIT-FREQUENCY",
+          "Division": "DATA DIVISION",
+          "Section": "WORKING-STORAGE SECTION",
+          "Pic": "9(09)",
+          "Values": [
+            {
+              "Literal": "100",
+              "RawLiteral": [
+                49,
+                48,
+                48
+              ]
+            }
+          ],
+          "ParsedPic": [
+            "9"
+          ],
+          "ParsedPicCounts": [
+            9
+          ],
+          "InferredUsage": "DISPLAY",
+          "InferredType": "disp-int",
+          "ComputedSize": 9,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:141:7"
+        },
+        {
+          "Level": 1,
+          "Name": "WS-ACCT-ID-DISPLAY",
+          "Division": "DATA DIVISION",
+          "Section": "WORKING-STORAGE SECTION",
+          "Pic": "9(11)",
+          "ParsedPic": [
+            "9"
+          ],
+          "ParsedPicCounts": [
+            11
+          ],
+          "InferredUsage": "DISPLAY",
+          "InferredType": "disp-int",
+          "ComputedSize": 11,
+          "Offset": [
+            0
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:143:7"
+        }
+      ],
+      "Chunks": {
+        "ChunkType": "PROCEDURE_DIVISION",
+        "Range": [483,881],
+        "Sentences": [484,517],
+        "ReferencedProcedures": [
+          {
+            "Name": "0100-READ-PARMS"
+          },
+          {
+            "Name": "0200-VALIDATE-BAL-DATE"
+          },
+          {
+            "Name": "0300-ACCTFILE-OPEN"
+          },
+          {
+            "Name": "1000-OPEN-CURSOR"
+          },
+          {
+            "Name": "1100-FETCH-ACTIVITY"
+          },
+          {
+            "Name": "2000-BUILD-DAILY-BALANCE"
+          },
+          {
+            "Name": "2500-SAVE-DAILY-BALANCE"
+          },
+          {
+            "Name": "1100-FETCH-ACTIVITY"
+          },
+          {
+            "Name": "1200-CLOSE-CURSOR"
+          },
+          {
+            "Name": "3000-COMMIT-WORK"
+          },
+          {
+            "Name": "9300-ACCTFILE-CLOSE"
+          }
+        ],
+        "ReferencedVariables": [
+          {
+            "References": [
+              {
+                "Name": "END-OF-CURSOR"
+              }
+            ],
+            "Range": [462,468]
+          },
+          {
+            "References": [
+              {
+                "Name": "WS-ACCOUNT-COUNT"
+              },
+              {
+                "Name": "WS-INSERT-COUNT"
+              },
+              {
+                "Name": "WS-UPDATE-COUNT"
+              },
+              {
+                "Name": "WS-SEEDED-COUNT"
+              },
+              {
+                "Name": "WS-NOT-FOUND-COUNT"
+              },
+              {
+                "Name": "WS-COMMIT-COUNT"
+              }
+            ],
+            "Range": [469,477]
+          },
+          {
+            "References": [
+              {
+                "Name": "WS-BAL-DATE"
+              }
+            ],
+            "Range": [429,441]
+          }
+        ],
+        "Children": [
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "0100-READ-PARMS",
+            "Range": [517,546],
+            "Sentences": [518,546],
+            "ReferencedProcedures": [
+              {
+                "Name": "9910-DISPLAY-IO-STATUS"
+              },
+              {
+                "Name": "9999-ABEND-PROGRAM"
+              },
+              {
+                "Name": "9999-ABEND-PROGRAM"
+              },
+              {
+                "Name": "9910-DISPLAY-IO-STATUS"
+              },
+              {
+                "Name": "9999-ABEND-PROGRAM"
+              }
+            ],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "PARMFILE-STATUS"
+                  }
+                ],
+                "Range": [112,115]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "IO-STATUS"
+                  }
+                ],
+                "Range": [172,175]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "ABCODE"
+                  }
+                ],
+                "Range": [184,185]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "MODB-PARM-RECORD"
+                  },
+                  {
+                    "Name": "MODB-PARM-START-DATE"
+                  }
+                ],
+                "Range": [104,111]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "WS-PARM-DATE"
+                  }
+                ],
+                "Range": [429,441]
+              }
+            ],
+            "ReferencedFiles": [
+              {
+                "Name": "PARM-FILE",
+                "Range": [59,61]
+              },
+              {
+                "Name": "PARM-FILE",
+                "Range": [59,61]
+              },
+              {
+                "Name": "PARM-FILE",
+                "Range": [59,61]
+              }
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "0200-VALIDATE-BAL-DATE",
+            "Range": [546,566],
+            "Sentences": [547,566],
+            "ReferencedProcedures": [
+              {
+                "Name": "9999-ABEND-PROGRAM"
+              },
+              {
+                "Name": "9800-SQL-ERROR"
+              }
+            ],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "WS-PARM-DATE"
+                  },
+                  {
+                    "Name": "WS-BAL-DATE"
+                  }
+                ],
+                "Range": [429,441]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "SQLCODE"
+                  }
+                ],
+                "Range": [207,231]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "ABCODE"
+                  }
+                ],
+                "Range": [184,185]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "WS-SQL-ACTION"
+                  }
+                ],
+                "Range": [187,190]
+              }
+            ],
+            "SQLRanges": [
+              [547,552]
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "0300-ACCTFILE-OPEN",
+            "Range": [566,576],
+            "Sentences": [567,576],
+            "ReferencedProcedures": [
+              {
+                "Name": "9910-DISPLAY-IO-STATUS"
+              },
+              {
+                "Name": "9999-ABEND-PROGRAM"
+              }
+            ],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "ACCTFILE-STATUS"
+                  }
+                ],
+                "Range": [138,141]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "IO-STATUS"
+                  }
+                ],
+                "Range": [172,175]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "ABCODE"
+                  }
+                ],
+                "Range": [184,185]
+              }
+            ],
+            "ReferencedFiles": [
+              {
+                "Name": "ACCOUNT-FILE",
+                "Range": [62,66]
+              }
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "1000-OPEN-CURSOR",
+            "Range": [576,585],
+            "Sentences": [577,585],
+            "ReferencedProcedures": [
+              {
+                "Name": "9800-SQL-ERROR"
+              }
+            ],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "SQLCODE"
+                  }
+                ],
+                "Range": [207,231]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "WS-SQL-ACTION"
+                  }
+                ],
+                "Range": [187,190]
+              }
+            ],
+            "SQLRanges": [
+              [577,580]
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "1100-FETCH-ACTIVITY",
+            "Range": [585,604],
+            "Sentences": [586,604],
+            "ReferencedProcedures": [
+              {
+                "Name": "9800-SQL-ERROR"
+              }
+            ],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "DCL-TH-ACCT-ID"
+                  }
+                ],
+                "Range": [281,342]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "WS-DAY-CREDITS"
+                  },
+                  {
+                    "Name": "WS-DAY-DEBITS"
+                  },
+                  {
+                    "Name": "WS-DAY-NET"
+                  },
+                  {
+                    "Name": "WS-DAY-COUNT"
+                  }
+                ],
+                "Range": [429,441]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "SQLCODE"
+                  }
+                ],
+                "Range": [207,231]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "END-OF-CURSOR"
+                  }
+                ],
+                "Range": [462,468]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "WS-SQL-ACTION"
+                  }
+                ],
+                "Range": [187,190]
+              }
+            ],
+            "SQLRanges": [
+              [586,594]
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "1200-CLOSE-CURSOR",
+            "Range": [604,613],
+            "Sentences": [605,613],
+            "ReferencedProcedures": [
+              {
+                "Name": "9800-SQL-ERROR"
+              }
+            ],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "SQLCODE"
+                  }
+                ],
+                "Range": [207,231]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "WS-SQL-ACTION"
+                  }
+                ],
+                "Range": [187,190]
+              }
+            ],
+            "SQLRanges": [
+              [605,608]
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "2000-BUILD-DAILY-BALANCE",
+            "Range": [613,695],
+            "Sentences": [614,695],
+            "ReferencedProcedures": [
+              {
+                "Name": "9910-DISPLAY-IO-STATUS"
+              },
+              {
+                "Name": "9999-ABEND-PROGRAM"
+              },
+              {
+                "Name": "9800-SQL-ERROR"
+              },
+              {
+                "Name": "2100-SUM-LATER-ACTIVITY"
+              },
+              {
+                "Name": "9800-SQL-ERROR"
+              }
+            ],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "DCL-TH-ACCT-ID"
+                  }
+                ],
+                "Range": [281,342]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "FD-ACCT-ID"
+                  }
+                ],
+                "Range": [63,66]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "ACCOUNT-RECORD"
+                  },
+                  {
+                    "Name": "ACCT-CURR-BAL"
+                  },
+                  {
+                    "Name": "ACCT-CREDIT-LIMIT"
+                  }
+                ],
+                "Range": [120,134]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "ACCTFILE-STATUS"
+                  }
+                ],
+                "Range": [138,141]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "ACCOUNT-FOUND"
+                  },
+                  {
+                    "Name": "ACCOUNT-NOT-FOUND"
+                  }
+                ],
+                "Range": [462,468]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "WS-NOT-FOUND-COUNT"
+                  },
+                  {
+                    "Name": "WS-SEEDED-COUNT"
+                  }
+                ],
+                "Range": [469,477]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "WS-ACCT-ID-DISPLAY"
+                  }
+                ],
+                "Range": [480,481]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "IO-STATUS"
+                  }
+                ],
+                "Range": [172,175]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "ABCODE"
+                  }
+                ],
+                "Range": [184,185]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "WS-PREV-BAL-DATE"
+                  },
+                  {
+                    "Name": "WS-IND-PREV-BAL-DATE"
+                  },
+                  {
+                    "Name": "WS-BAL-DATE"
+                  },
+                  {
+                    "Name": "WS-LATER-NET"
+                  },
+                  {
+                    "Name": "WS-PREV-CLOSE-BAL"
+                  },
+                  {
+                    "Name": "WS-DAY-CREDITS"
+                  },
+                  {
+                    "Name": "WS-DAY-DEBITS"
+                  },
+                  {
+                    "Name": "WS-DAY-NET"
+                  },
+                  {
+                    "Name": "WS-DAY-COUNT"
+                  }
+                ],
+                "Range": [429,441]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "SQLCODE"
+                  }
+                ],
+                "Range": [207,231]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "WS-SQL-ACTION"
+                  }
+                ],
+                "Range": [187,190]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "DCL-ADB-OPEN-BAL"
+                  },
+                  {
+                    "Name": "DCL-ADB-ACCT-ID"
+                  },
+                  {
+                    "Name": "DCL-ADB-BAL-DATE"
+                  },
+                  {
+                    "Name": "DCL-ADB-CREDIT-AMT"
+                  },
+                  {
+                    "Name": "DCL-ADB-DEBIT-AMT"
+                  },
+                  {
+                    "Name": "DCL-ADB-CLOSE-BAL"
+                  },
+                  {
+                    "Name": "DCL-ADB-TRAN-CNT"
+                  },
+                  {
+                    "Name": "DCL-ADB-CREDIT-LIMIT"
+                  }
+                ],
+                "Range": [391,423]
+              }
+            ],
+            "ReferencedFiles": [
+              {
+                "Name": "ACCOUNT-FILE",
+                "Range": [62,66]
+              }
+            ],
+            "SQLRanges": [
+              [639,646],
+              [666,673]
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "2100-SUM-LATER-ACTIVITY",
+            "Range": [695,712],
+            "Sentences": [696,712],
+            "ReferencedProcedures": [
+              {
+                "Name": "9800-SQL-ERROR"
+              }
+            ],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "WS-LATER-NET"
+                  },
+                  {
+                    "Name": "WS-IND-LATER-NET"
+                  },
+                  {
+                    "Name": "WS-BAL-DATE"
+                  }
+                ],
+                "Range": [429,441]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "DCL-TH-ACCT-ID"
+                  }
+                ],
+                "Range": [281,342]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "SQLCODE"
+                  }
+                ],
+                "Range": [207,231]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "WS-SQL-ACTION"
+                  }
+                ],
+                "Range": [187,190]
+              }
+            ],
+            "SQLRanges": [
+              [696,703]
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "2500-SAVE-DAILY-BALANCE",
+            "Range": [712,757],
+            "Sentences": [713,757],
+            "ReferencedProcedures": [
+              {
+                "Name": "2600-REPLACE-DAILY-BALANCE"
+              },
+              {
+                "Name": "9800-SQL-ERROR"
+              },
+              {
+                "Name": "3000-COMMIT-WORK"
+              }
+            ],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "DCL-ADB-ACCT-ID"
+                  },
+                  {
+                    "Name": "DCL-ADB-BAL-DATE"
+                  },
+                  {
+                    "Name": "DCL-ADB-OPEN-BAL"
+                  },
+                  {
+                    "Name": "DCL-ADB-CREDIT-AMT"
+                  },
+                  {
+                    "Name": "DCL-ADB-DEBIT-AMT"
+                  },
+                  {
+                    "Name": "DCL-ADB-CLOSE-BAL"
+                  },
+                  {
+                    "Name": "DCL-ADB-TRAN-CNT"
+                  },
+                  {
+                    "Name": "DCL-ADB-CREDIT-LIMIT"
+                  }
+                ],
+                "Range": [391,423]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "SQLCODE"
+                  }
+                ],
+                "Range": [207,231]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "WS-INSERT-COUNT"
+                  },
+                  {
+                    "Name": "WS-UNCOMMITTED-COUNT"
+                  }
+                ],
+                "Range": [469,477]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "WS-SQL-ACTION"
+                  }
+                ],
+                "Range": [187,190]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "WS-COMMIT-FREQUENCY"
+                  }
+                ],
+                "Range": [478,479]
+              }
+            ],
+            "SQLRanges": [
+              [713,739]
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "2600-REPLACE-DAILY-BALANCE",
+            "Range": [757,778],
+            "Sentences": [758,778],
+            "ReferencedProcedures": [
+              {
+                "Name": "9800-SQL-ERROR"
+              }
+            ],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "DCL-ADB-OPEN-BAL"
+                  },
+                  {
+                    "Name": "DCL-ADB-CREDIT-AMT"
+                  },
+                  {
+                    "Name": "DCL-ADB-DEBIT-AMT"
+                  },
+                  {
+                    "Name": "DCL-ADB-CLOSE-BAL"
+                  },
+                  {
+                    "Name": "DCL-ADB-TRAN-CNT"
+                  },
+                  {
+                    "Name": "DCL-ADB-CREDIT-LIMIT"
+                  },
+                  {
+                    "Name": "DCL-ADB-ACCT-ID"
+                  },
+                  {
+                    "Name": "DCL-ADB-BAL-DATE"
+                  }
+                ],
+                "Range": [391,423]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "SQLCODE"
+                  }
+                ],
+                "Range": [207,231]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "WS-UPDATE-COUNT"
+                  }
+                ],
+                "Range": [469,477]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "WS-SQL-ACTION"
+                  }
+                ],
+                "Range": [187,190]
+              }
+            ],
+            "SQLRanges": [
+              [758,771]
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "3000-COMMIT-WORK",
+            "Range": [778,789],
+            "Sentences": [779,789],
+            "ReferencedProcedures": [
+              {
+                "Name": "9800-SQL-ERROR"
+              }
+            ],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "SQLCODE"
+                  }
+                ],
+                "Range": [207,231]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "WS-SQL-ACTION"
+                  }
+                ],
+                "Range": [187,190]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "WS-COMMIT-COUNT"
+                  },
+                  {
+                    "Name": "WS-UNCOMMITTED-COUNT"
+                  }
+                ],
+                "Range": [469,477]
+              }
+            ],
+            "SQLRanges": [
+              [779,782]
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "9300-ACCTFILE-CLOSE",
+            "Range": [789,801],
+            "Sentences": [790,801],
+            "ReferencedProcedures": [
+              {
+                "Name": "9910-DISPLAY-IO-STATUS"
+              },
+              {
+                "Name": "9999-ABEND-PROGRAM"
+              }
+            ],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "ACCTFILE-STATUS"
+                  }
+                ],
+                "Range": [138,141]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "IO-STATUS"
+                  }
+                ],
+                "Range": [172,175]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "ABCODE"
+                  }
+                ],
+                "Range": [184,185]
+              }
+            ],
+            "ReferencedFiles": [
+              {
+                "Name": "ACCOUNT-FILE",
+                "Range": [62,66]
+              }
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "9800-SQL-ERROR",
+            "Range": [801,840],
+            "Sentences": [802,840],
+            "ReferencedProcedures": [
+              {
+                "Name": "9810-DISPLAY-SQL-ERROR"
+              },
+              {
+                "Name": "9999-ABEND-PROGRAM"
+              }
+            ],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "ABCODE"
+                  }
+                ],
+                "Range": [184,185]
+              }
+            ],
+            "SQLRanges": [
+              [803,806]
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "9810-DISPLAY-SQL-ERROR",
+            "Range": [840,859],
+            "Sentences": [841,859],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "SQLCODE"
+                  },
+                  {
+                    "Name": "SQLSTATE"
+                  },
+                  {
+                    "Name": "SQLCA"
+                  }
+                ],
+                "Range": [207,231]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "WS-SQL-DISP-CODE"
+                  },
+                  {
+                    "Name": "WS-SQL-ACTION"
+                  }
+                ],
+                "Range": [187,190]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "WS-DSNTIAR-MSG"
+                  },
+                  {
+                    "Name": "WS-DSNTIAR-TEXT"
+                  }
+                ],
+                "Range": [191,195]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "WS-DSNTIAR-LRECL"
+                  }
+                ],
+                "Range": [198,199]
+              }
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "9910-DISPLAY-IO-STATUS",
+            "Range": [859,875],
+            "Sentences": [860,875],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "IO-STATUS"
+                  },
+                  {
+                    "Name": "IO-STAT1"
+                  },
+                  {
+                    "Name": "IO-STAT2"
+                  }
+                ],
+                "Range": [172,175]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "IO-STATUS-04"
+                  },
+                  {
+                    "Name": "IO-STATUS-0403"
+                  }
+                ],
+                "Range": [180,183]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "TWO-BYTES-BINARY"
+                  }
+                ],
+                "Range": [175,176]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "TWO-BYTES-RIGHT"
+                  }
+                ],
+                "Range": [176,180]
+              }
+            ]
+          },
+          {
+            "ChunkType": "PARAGRAPH",
+            "Name": "9999-ABEND-PROGRAM",
+            "Range": [875,881],
+            "Sentences": [876,881],
+            "ReferencedVariables": [
+              {
+                "References": [
+                  {
+                    "Name": "ABCODE"
+                  }
+                ],
+                "Range": [184,185]
+              },
+              {
+                "References": [
+                  {
+                    "Name": "TIMING"
+                  }
+                ],
+                "Range": [185,186]
+              }
+            ]
+          }
+        ]
+      },
+      "MoveStatements": [
+        {
+          "Value": {
+            "Literal": "4",
+            "RawLiteral": [
+              52
+            ]
+          },
+          "Targets": null,
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:173:14"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "IO-STATUS"
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:184:14"
+        },
+        {
+          "Value": {
+            "Literal": "999",
+            "RawLiteral": [
+              57,
+              57,
+              57
+            ]
+          },
+          "Targets": [
+            "ABCODE"
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:186:14"
+        },
+        {
+          "Value": {
+            "Literal": "997",
+            "RawLiteral": [
+              57,
+              57,
+              55
+            ]
+          },
+          "Targets": [
+            "ABCODE"
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:195:17"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "IO-STATUS"
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:199:17"
+        },
+        {
+          "Value": {
+            "Literal": "999",
+            "RawLiteral": [
+              57,
+              57,
+              57
+            ]
+          },
+          "Targets": [
+            "ABCODE"
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:201:17"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "WS-PARM-DATE"
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:205:11"
+        },
+        {
+          "Value": {
+            "Literal": "997",
+            "RawLiteral": [
+              57,
+              57,
+              55
+            ]
+          },
+          "Targets": [
+            "ABCODE"
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:222:17"
+        },
+        {
+          "Value": {
+            "Literal": "VALIDATE BALANCE DATE",
+            "RawLiteral": [
+              86,
+              65,
+              76,
+              73,
+              68,
+              65,
+              84,
+              69,
+              32,
+              66,
+              65,
+              76,
+              65,
+              78,
+              67,
+              69,
+              32,
+              68,
+              65,
+              84,
+              69
+            ]
+          },
+          "Targets": [
+            "WS-SQL-ACTION"
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:225:17"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "IO-STATUS"
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:233:14"
+        },
+        {
+          "Value": {
+            "Literal": "999",
+            "RawLiteral": [
+              57,
+              57,
+              57
+            ]
+          },
+          "Targets": [
+            "ABCODE"
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:235:14"
+        },
+        {
+          "Value": {
+            "Literal": "OPEN CURSOR C-DAY-ACTIVITY",
+            "RawLiteral": [
+              79,
+              80,
+              69,
+              78,
+              32,
+              67,
+              85,
+              82,
+              83,
+              79,
+              82,
+              32,
+              67,
+              45,
+              68,
+              65,
+              89,
+              45,
+              65,
+              67,
+              84,
+              73,
+              86,
+              73,
+              84,
+              89
+            ]
+          },
+          "Targets": [
+            "WS-SQL-ACTION"
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:244:14"
+        },
+        {
+          "Value": {
+            "Literal": "Y",
+            "RawLiteral": [
+              89
+            ]
+          },
+          "Targets": [
+            "WS-END-OF-CURSOR"
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:261:17"
+        },
+        {
+          "Value": {
+            "Literal": "FETCH CURSOR C-DAY-ACTIVITY",
+            "RawLiteral": [
+              70,
+              69,
+              84,
+              67,
+              72,
+              32,
+              67,
+              85,
+              82,
+              83,
+              79,
+              82,
+              32,
+              67,
+              45,
+              68,
+              65,
+              89,
+              45,
+              65,
+              67,
+              84,
+              73,
+              86,
+              73,
+              84,
+              89
+            ]
+          },
+          "Targets": [
+            "WS-SQL-ACTION"
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:263:17"
+        },
+        {
+          "Value": {
+            "Literal": "CLOSE CURSOR C-DAY-ACTIVITY",
+            "RawLiteral": [
+              67,
+              76,
+              79,
+              83,
+              69,
+              32,
+              67,
+              85,
+              82,
+              83,
+              79,
+              82,
+              32,
+              67,
+              45,
+              68,
+              65,
+              89,
+              45,
+              65,
+              67,
+              84,
+              73,
+              86,
+              73,
+              84,
+              89
+            ]
+          },
+          "Targets": [
+            "WS-SQL-ACTION"
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:272:14"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "FD-ACCT-ID"
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:278:11"
+        },
+        {
+          "Value": {
+            "Literal": "Y",
+            "RawLiteral": [
+              89
+            ]
+          },
+          "Targets": [
+            "WS-ACCOUNT-STATE"
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:285:17"
+        },
+        {
+          "Value": {
+            "Literal": "N",
+            "RawLiteral": [
+              78
+            ]
+          },
+          "Targets": [
+            "WS-ACCOUNT-STATE"
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:287:17"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "WS-ACCT-ID-DISPLAY"
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:289:17"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "IO-STATUS"
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:294:17"
+        },
+        {
+          "Value": {
+            "Literal": "999",
+            "RawLiteral": [
+              57,
+              57,
+              57
+            ]
+          },
+          "Targets": [
+            "ABCODE"
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:296:17"
+        },
+        {
+          "Value": {
+            "Literal": "SELECT MAX(ADB_BAL_DATE)",
+            "RawLiteral": [
+              83,
+              69,
+              76,
+              69,
+              67,
+              84,
+              32,
+              77,
+              65,
+              88,
+              40,
+              65,
+              68,
+              66,
+              95,
+              66,
+              65,
+              76,
+              95,
+              68,
+              65,
+              84,
+              69,
+              41
+            ]
+          },
+          "Targets": [
+            "WS-SQL-ACTION"
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:310:14"
+        },
+        {
+          "Value": {
+            "Figurative": "ZERO"
+          },
+          "Targets": [
+            "DCL-ADB-OPEN-BAL"
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:325:17"
+        },
+        {
+          "Value": {
+            "Literal": "SELECT PREVIOUS ADB_CLOSE_BAL",
+            "RawLiteral": [
+              83,
+              69,
+              76,
+              69,
+              67,
+              84,
+              32,
+              80,
+              82,
+              69,
+              86,
+              73,
+              79,
+              85,
+              83,
+              32,
+              65,
+              68,
+              66,
+              95,
+              67,
+              76,
+              79,
+              83,
+              69,
+              95,
+              66,
+              65,
+              76
+            ]
+          },
+          "Targets": [
+            "WS-SQL-ACTION"
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:337:17"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "DCL-ADB-OPEN-BAL"
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:340:14"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "DCL-ADB-ACCT-ID"
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:343:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "DCL-ADB-BAL-DATE"
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:344:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "DCL-ADB-CREDIT-AMT"
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:345:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "DCL-ADB-DEBIT-AMT"
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:346:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "DCL-ADB-TRAN-CNT"
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:348:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "DCL-ADB-CREDIT-LIMIT"
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:350:14"
+        },
+        {
+          "Value": {
+            "Figurative": "ZERO"
+          },
+          "Targets": [
+            "DCL-ADB-CREDIT-LIMIT"
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:352:14"
+        },
+        {
+          "Value": {
+            "Literal": "SELECT SUM(TH_AMT) ON OR AFTER DATE",
+            "RawLiteral": [
+              83,
+              69,
+              76,
+              69,
+              67,
+              84,
+              32,
+              83,
+              85,
+              77,
+              40,
+              84,
+              72,
+              95,
+              65,
+              77,
+              84,
+              41,
+              32,
+              79,
+              78,
+              32,
+              79,
+              82,
+              32,
+              65,
+              70,
+              84,
+              69,
+              82,
+              32,
+              68,
+              65,
+              84,
+              69
+            ]
+          },
+          "Targets": [
+            "WS-SQL-ACTION"
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:367:14"
+        },
+        {
+          "Value": {
+            "Figurative": "ZERO"
+          },
+          "Targets": [
+            "WS-LATER-NET"
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:372:14"
+        },
+        {
+          "Value": {
+            "Literal": "INSERT INTO CARDDEMO.ACCT_DAILY_BAL",
+            "RawLiteral": [
+              73,
+              78,
+              83,
+              69,
+              82,
+              84,
+              32,
+              73,
+              78,
+              84,
+              79,
+              32,
+              67,
+              65,
+              82,
+              68,
+              68,
+              69,
+              77,
+              79,
+              46,
+              65,
+              67,
+              67,
+              84,
+              95,
+              68,
+              65,
+              73,
+              76,
+              89,
+              95,
+              66,
+              65,
+              76
+            ]
+          },
+          "Targets": [
+            "WS-SQL-ACTION"
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:410:17"
+        },
+        {
+          "Value": {
+            "Literal": "UPDATE CARDDEMO.ACCT_DAILY_BAL",
+            "RawLiteral": [
+              85,
+              80,
+              68,
+              65,
+              84,
+              69,
+              32,
+              67,
+              65,
+              82,
+              68,
+              68,
+              69,
+              77,
+              79,
+              46,
+              65,
+              67,
+              67,
+              84,
+              95,
+              68,
+              65,
+              73,
+              76,
+              89,
+              95,
+              66,
+              65,
+              76
+            ]
+          },
+          "Targets": [
+            "WS-SQL-ACTION"
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:437:14"
+        },
+        {
+          "Value": {
+            "Literal": "COMMIT",
+            "RawLiteral": [
+              67,
+              79,
+              77,
+              77,
+              73,
+              84
+            ]
+          },
+          "Targets": [
+            "WS-SQL-ACTION"
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:446:14"
+        },
+        {
+          "Value": {
+            "Literal": "0",
+            "RawLiteral": [
+              48
+            ]
+          },
+          "Targets": [
+            "WS-UNCOMMITTED-COUNT"
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:450:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "IO-STATUS"
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:456:14"
+        },
+        {
+          "Value": {
+            "Literal": "999",
+            "RawLiteral": [
+              57,
+              57,
+              57
+            ]
+          },
+          "Targets": [
+            "ABCODE"
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:458:14"
+        },
+        {
+          "Value": {
+            "Literal": "998",
+            "RawLiteral": [
+              57,
+              57,
+              56
+            ]
+          },
+          "Targets": [
+            "ABCODE"
+          ],
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:469:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "WS-SQL-DISP-CODE"
+          ],
+          "Coordinates": "file://app-mo-db2/cpy/CSMODBPY.cpy:32:11"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "IO-STATUS-04"
+          ],
+          "Coordinates": "file://app-mo-db2/cpy/CSMODBPY.cpy:53:15"
+        },
+        {
+          "Value": {
+            "Literal": "0",
+            "RawLiteral": [
+              48
+            ]
+          },
+          "Targets": [
+            "TWO-BYTES-BINARY"
+          ],
+          "Coordinates": "file://app-mo-db2/cpy/CSMODBPY.cpy:54:15"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "TWO-BYTES-RIGHT"
+          ],
+          "Coordinates": "file://app-mo-db2/cpy/CSMODBPY.cpy:55:15"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "IO-STATUS-0403"
+          ],
+          "Coordinates": "file://app-mo-db2/cpy/CSMODBPY.cpy:56:15"
+        },
+        {
+          "Value": {
+            "Literal": "0000",
+            "RawLiteral": [
+              48,
+              48,
+              48,
+              48
+            ]
+          },
+          "Targets": [
+            "IO-STATUS-04"
+          ],
+          "Coordinates": "file://app-mo-db2/cpy/CSMODBPY.cpy:59:15"
+        },
+        {
+          "Value": {
+            
+          },
+          "Targets": [
+            "IO-STATUS-04"
+          ],
+          "Coordinates": "file://app-mo-db2/cpy/CSMODBPY.cpy:60:15"
+        },
+        {
+          "Value": {
+            "Literal": "0",
+            "RawLiteral": [
+              48
+            ]
+          },
+          "Targets": [
+            "TIMING"
+          ],
+          "Coordinates": "file://app-mo-db2/cpy/CSMODBPY.cpy:68:11"
+        }
+      ],
+      "FileIO": [
+        {
+          "FileVariable": "PARM-FILE",
+          "Optional": false,
+          "IsSortFile": false,
+          "DDNames": [
+            "PARMFILE"
+          ],
+          "RecordVariables": [
+            {
+              "Name": "FD-PARM-REC",
+              "Range": "file://app-mo-db2/cbl/CBMOD02C.cbl:60:0-60:0"
+            },
+            {
+              "Name": "MODB-PARM-RECORD",
+              "Range": "file://app-mo-db2/cpy/CVMOD01Y.cpy:34:0-40:0"
+            }
+          ],
+          "Mode": "INPUT",
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:46:11"
+        },
+        {
+          "FileVariable": "ACCOUNT-FILE",
+          "Optional": false,
+          "IsSortFile": false,
+          "DDNames": [
+            "ACCTFILE"
+          ],
+          "RecordVariables": [
+            {
+              "Name": "FD-ACCTFILE-REC",
+              "Range": "file://app-mo-db2/cbl/CBMOD02C.cbl:63:0-65:0"
+            },
+            {
+              "Name": "ACCOUNT-RECORD",
+              "Range": "file://cpy/CVACT01Y.cpy:4:0-17:0"
+            }
+          ],
+          "Mode": "INPUT",
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:51:11"
+        }
+      ],
+      "Copybooks": [
+        {
+          "ArtifactKind": "COPYBOOK",
+          "ShortName": "CVMOD01Y",
+          "Language": "COBOL",
+          "Name": "CVMOD01Y",
+          "Division": "DATA DIVISION",
+          "Section": "WORKING-STORAGE SECTION",
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:70:7"
+        },
+        {
+          "ArtifactKind": "COPYBOOK",
+          "ShortName": "CVACT01Y",
+          "Language": "COBOL",
+          "Name": "CVACT01Y",
+          "Division": "DATA DIVISION",
+          "Section": "WORKING-STORAGE SECTION",
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:75:7"
+        },
+        {
+          "ArtifactKind": "COPYBOOK",
+          "ShortName": "CSMODBWY",
+          "Language": "COBOL",
+          "Name": "CSMODBWY",
+          "Division": "DATA DIVISION",
+          "Section": "WORKING-STORAGE SECTION",
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:80:7"
+        },
+        {
+          "ArtifactKind": "COPYBOOK",
+          "ShortName": "SQLCA",
+          "Language": "COBOL",
+          "Name": "SQLCA",
+          "Division": "DATA DIVISION",
+          "Section": "WORKING-STORAGE SECTION",
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:85:7"
+        },
+        {
+          "ArtifactKind": "COPYBOOK",
+          "ShortName": "DCLTRHST",
+          "Language": "COBOL",
+          "Name": "DCLTRHST",
+          "Division": "DATA DIVISION",
+          "Section": "WORKING-STORAGE SECTION",
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:87:7"
+        },
+        {
+          "ArtifactKind": "COPYBOOK",
+          "ShortName": "DCLACDBL",
+          "Language": "COBOL",
+          "Name": "DCLACDBL",
+          "Division": "DATA DIVISION",
+          "Section": "WORKING-STORAGE SECTION",
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:89:7"
+        },
+        {
+          "ArtifactKind": "COPYBOOK",
+          "ShortName": "CSMODBPY",
+          "Language": "COBOL",
+          "Name": "CSMODBPY",
+          "Division": "PROCEDURE DIVISION",
+          "Section": "",
+          "Coordinates": "file://app-mo-db2/cbl/CBMOD02C.cbl:472:7"
+        }
+      ]
+    }
+  ]
+}
