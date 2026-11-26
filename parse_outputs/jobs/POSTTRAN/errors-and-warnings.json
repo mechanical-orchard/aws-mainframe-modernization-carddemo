@@ -2,7 +2,7 @@
   "ShabakehVersion": "0.94.66",
   "ShabakehConfig": {
     "ClientProject": "aws-carddemo",
-    "ClientProjectSHA": "50c7c274972cf4d2b762b20e4f2bd8f95b897c9e",
+    "ClientProjectSHA": "efc72ccd490bf1312dbcd6bbee84de46f20c95f0",
     "CorpusHash": "sha256:d431c02eeba940d8ffd54749566d25dd00ba09f931a1912185913cf034e82d59",
     "Targets": [
       "job://POSTTRAN"
