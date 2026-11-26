@@ -1,0 +1,41 @@
+{
+  "ShabakehVersion": "0.94.66",
+  "ShabakehConfig": {
+    "ClientProject": "aws-carddemo",
+    "ClientProjectSHA": "da519d26a7d860cf7024ebfe2a661daa79d2a44c",
+    "CorpusHash": "sha256:d431c02eeba940d8ffd54749566d25dd00ba09f931a1912185913cf034e82d59",
+    "Targets": [
+      "job://MODBMNT"
+    ],
+    "Invocation": "extract -call-trees=parse_outputs/jobs/MODBMNT/call-trees.json -errors-and-warnings=parse_outputs/jobs/MODBMNT/errors-and-warnings.json --include-params job://MODBMNT",
+    "IncludeParams": true
+  },
+  "ErrorsAndWarnings": {
+    "EntryPointCounts": {
+      "OK": 0,
+      "Warnings": 0,
+      "Errors": 1
+    },
+    "PrefixCounts": {
+      "MODBMNT": {
+      "OK": 0,
+      "Warnings": 0,
+      "Errors": 1
+    }
+    },
+    "UniqueErrors": {
+      "Unhandled operation: EXPORT": 1
+    },
+    "Errors": [
+      {
+        "Message": "Unhandled operation: EXPORT",
+        "Coordinates": "file://app-mo-db2/jcl/MODBMNT.jcl:47:4",
+        "EntryPoint": "MODBMNT",
+        "EntryPointContext": "JCL"
+      }
+    ]
+  },
+  "DebugInformation": {
+    
+  }
+}
