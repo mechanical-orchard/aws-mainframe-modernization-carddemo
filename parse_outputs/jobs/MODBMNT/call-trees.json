@@ -2,7 +2,7 @@
   "ShabakehVersion": "0.94.66",
   "ShabakehConfig": {
     "ClientProject": "aws-carddemo",
-    "ClientProjectSHA": "da519d26a7d860cf7024ebfe2a661daa79d2a44c",
+    "ClientProjectSHA": "07887c478fb5d846327a15f47e6a1669977f3930",
     "CorpusHash": "sha256:d431c02eeba940d8ffd54749566d25dd00ba09f931a1912185913cf034e82d59",
     "Targets": [
       "job://MODBMNT"
