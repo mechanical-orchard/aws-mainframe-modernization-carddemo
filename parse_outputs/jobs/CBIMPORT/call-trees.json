@@ -2,7 +2,7 @@
   "ShabakehVersion": "0.94.71",
   "ShabakehConfig": {
     "ClientProject": "aws-carddemo",
-    "ClientProjectSHA": "8c20897bc8364fc47d71948e3c590f763c3adc68",
+    "ClientProjectSHA": "11352abd3334bcd341d503906d29d9a9d86f7ee9",
     "CorpusHash": "sha256:d431c02eeba940d8ffd54749566d25dd00ba09f931a1912185913cf034e82d59",
     "Targets": [
       "job://CBIMPORT"
