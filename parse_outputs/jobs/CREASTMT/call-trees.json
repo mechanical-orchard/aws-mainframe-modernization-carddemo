@@ -2,7 +2,7 @@
   "ShabakehVersion": "0.94.71",
   "ShabakehConfig": {
     "ClientProject": "aws-carddemo",
-    "ClientProjectSHA": "748fc2ac9c3c19bf840cce6d7aff4bf3a375fdcf",
+    "ClientProjectSHA": "b39443c2107611665eb2ba222e22a60f6a327df9",
     "CorpusHash": "sha256:d431c02eeba940d8ffd54749566d25dd00ba09f931a1912185913cf034e82d59",
     "Targets": [
       "job://CREASTMT"
